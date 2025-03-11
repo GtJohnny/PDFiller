@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDFiller", "PDFiller.csproj", "{0465DF5C-56C0-45ED-8784-6A32CFD35664}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0465DF5C-56C0-45ED-8784-6A32CFD35664}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0465DF5C-56C0-45ED-8784-6A32CFD35664}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0465DF5C-56C0-45ED-8784-6A32CFD35664}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0465DF5C-56C0-45ED-8784-6A32CFD35664}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {82BCD673-7EB6-47D3-A784-71AAC96123FB}
+	EndGlobalSection
+EndGlobal
