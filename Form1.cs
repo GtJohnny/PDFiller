@@ -22,6 +22,7 @@ using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
 
+
 namespace PDFiller
 {
     public partial class Form1 : Form
@@ -134,6 +135,7 @@ namespace PDFiller
 
 
         public void WriteOnPage(List<Order.topper> toppere, PdfPage page)
+     
         {
 
             XGraphics gfx = XGraphics.FromPdfPage(page);
@@ -150,6 +152,7 @@ namespace PDFiller
                 gfx.DrawString(topper.tQuantity+" buc: "+topper.tName, font, brush,50,page.Height/2+150+15*(i++), XStringFormats.CenterLeft);
 
             }
+
 
         }
 
@@ -174,12 +177,13 @@ namespace PDFiller
                     }
                 }
 
-             //   if (!found)
+
+                if (!found)
                 {
                     textBox1.Text += "One zip file was found that was not extracted.\r\n" + zip.FullName + "\r\nExtracting it now.\r\n";
                     ZipArchive archive = new ZipArchive(new FileStream(zip.FullName, FileMode.Open), ZipArchiveMode.Read);
                     string extractedDir = zip.FullName.Replace(".zip", "");
-              //      archive.ExtractToDirectory(extractedDir);
+                    archive.ExtractToDirectory(extractedDir);
 
                     List<Order> orders = ReadExcel(excel);
                     WriteOnDirectory(new DirectoryInfo(extractedDir), orders);
@@ -234,11 +238,7 @@ namespace PDFiller
             {
                 textBox1.Text += "All PDF files were filled, the merged PDF should open.\r\n";
             }
-
-
-
         }
-
 
 
 
@@ -293,6 +293,7 @@ namespace PDFiller
             catch (IndexOutOfRangeException)
             {
                 textBox1.Text += "EMPTY DIRECTORY, NOTHING TO CHECK\r\n";
+
                 return;
             }
             catch (Exception e)
