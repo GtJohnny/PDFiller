@@ -17,9 +17,6 @@ using ICSharpCode.SharpZipLib.Zip;
 using System.IO.Compression;
 using Excel = Microsoft.Office.Interop.Excel;
 using Microsoft.Office.Interop.Excel;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 
 
@@ -339,6 +336,27 @@ namespace PDFiller
             {
                 textBox1.Text = "Root Directory not found. Please select one, then your current work Directory";
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://cel.ro");
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://emag.ro");
+
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://eawb.sameday.ro");
         }
     }
 }
