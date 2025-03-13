@@ -358,6 +358,16 @@ namespace PDFiller
         {
             Process.Start("https://eawb.sameday.ro");
         }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            pageSetupDialog1.ShowDialog();
+        }
     }
 }
 
