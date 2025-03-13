@@ -80,6 +80,7 @@
             this.tabControl1.Controls.Add(this.filePage);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.tabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabControl1.Location = new System.Drawing.Point(544, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -90,10 +91,10 @@
             // 
             this.tabPage2.Controls.Add(this.groupBox1);
             this.tabPage2.Controls.Add(this.groupBox2);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Location = new System.Drawing.Point(4, 29);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(186, 632);
+            this.tabPage2.Size = new System.Drawing.Size(186, 625);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Directories";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -139,10 +140,10 @@
             this.filePage.Controls.Add(this.groupBox5);
             this.filePage.Controls.Add(this.groupBox4);
             this.filePage.Controls.Add(groupBox3);
-            this.filePage.Location = new System.Drawing.Point(4, 22);
+            this.filePage.Location = new System.Drawing.Point(4, 29);
             this.filePage.Name = "filePage";
             this.filePage.Padding = new System.Windows.Forms.Padding(3);
-            this.filePage.Size = new System.Drawing.Size(186, 632);
+            this.filePage.Size = new System.Drawing.Size(186, 625);
             this.filePage.TabIndex = 0;
             this.filePage.Text = "Files";
             this.filePage.UseVisualStyleBackColor = true;
@@ -232,10 +233,10 @@
             // tabPage4
             // 
             this.tabPage4.Controls.Add(label2);
-            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Location = new System.Drawing.Point(4, 27);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(536, 632);
+            this.tabPage4.Size = new System.Drawing.Size(536, 627);
             this.tabPage4.TabIndex = 2;
             this.tabPage4.Text = "ExcelPreview";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -286,9 +287,9 @@
             this.groupBox1.Controls.Add(this.button9);
             this.groupBox1.Controls.Add(this.button8);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox1.Location = new System.Drawing.Point(3, 256);
+            this.groupBox1.Location = new System.Drawing.Point(3, 264);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(180, 373);
+            this.groupBox1.Size = new System.Drawing.Size(180, 358);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Services";
@@ -318,7 +319,7 @@
             // 
             groupBox3.Controls.Add(this.checkBox1);
             groupBox3.Dock = System.Windows.Forms.DockStyle.Bottom;
-            groupBox3.Location = new System.Drawing.Point(3, 529);
+            groupBox3.Location = new System.Drawing.Point(3, 522);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new System.Drawing.Size(180, 100);
             groupBox3.TabIndex = 0;
@@ -345,7 +346,7 @@
             this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox5.Location = new System.Drawing.Point(3, 317);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(180, 212);
+            this.groupBox5.Size = new System.Drawing.Size(180, 205);
             this.groupBox5.TabIndex = 2;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Work";
@@ -416,6 +417,7 @@
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "PDFiller";
+            this.TopMost = true;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Shown += new System.EventHandler(this.Form1_Shown);
             this.tabControl1.ResumeLayout(false);
