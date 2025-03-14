@@ -357,27 +357,6 @@ namespace PDFiller
         }
 
 
-        private void button8_Click(object sender, EventArgs e)
-        {
-            Process.Start("https://cel.ro");
-        }
-
-        private void button10_Click(object sender, EventArgs e)
-        {
-            Process.Start("https://emag.ro");
-
-        }
-
-        private void button9_Click(object sender, EventArgs e)
-        {
-            Process.Start("https://eawb.sameday.ro");
-        }
-
-        private void label10_Click(object sender, EventArgs e)
-        {
-
-        }
-
 
         private void zipButton_Click(object sender, EventArgs e)
         {
@@ -481,20 +460,54 @@ namespace PDFiller
                         fileCountLabel.Text +="s";
 
                     }
-
-
-
-
-                    //   excelPathBox.Text = excel_path = ofd.FileName;
-                    //   textBox1.Text += "Found excel summary at:\r\n" + excel_path + "\r\n";
                     break;
                 default:
                     break;
             }
         }
 
-        private void zipLabel_Click(object sender, EventArgs e)
+
+        private void emagBtn_Click(object sender, EventArgs e)
         {
+            Process.Start("https://emag.ro");
+
+        }
+
+
+        private void CelBtn_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://cel.ro");
+
+        }
+
+        private void SamedayBtn_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://eawb.sameday.ro");
+
+        }
+
+        private void rootButton_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog()
+            {
+                Filter = "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*",
+                Multiselect = false,
+                Title = "Please select the new root directory.",
+                DefaultExt = ".xlsx",
+                InitialDirectory = workdir_path,
+                RestoreDirectory = true,
+            };
+            DialogResult res = ofd.ShowDialog();
+
+            switch (res)
+            {
+                case DialogResult.OK:
+                    excelPathBox.Text = excel_path = ofd.FileName;
+                    textBox1.Text += "Found excel summary at:\r\n" + excel_path + "\r\n";
+                    break;
+                default:
+                    break;
+            }
 
         }
     }

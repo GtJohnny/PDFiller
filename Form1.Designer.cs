@@ -54,12 +54,12 @@
             this.zipButton = new System.Windows.Forms.Button();
             this.ConfigPage = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.button10 = new System.Windows.Forms.Button();
-            this.button9 = new System.Windows.Forms.Button();
-            this.button8 = new System.Windows.Forms.Button();
+            this.emagBtn = new System.Windows.Forms.Button();
+            this.SamedayBtn = new System.Windows.Forms.Button();
+            this.CelBtn = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.workButton = new System.Windows.Forms.Button();
+            this.rootButton = new System.Windows.Forms.Button();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -242,7 +242,6 @@
             label10.Size = new System.Drawing.Size(280, 15);
             label10.TabIndex = 9;
             label10.Text = "poate o baza de date locala...muuch later+statistica";
-            label10.Click += new System.EventHandler(this.label10_Click);
             // 
             // tabControlMenu
             // 
@@ -395,9 +394,9 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.button10);
-            this.groupBox1.Controls.Add(this.button9);
-            this.groupBox1.Controls.Add(this.button8);
+            this.groupBox1.Controls.Add(this.emagBtn);
+            this.groupBox1.Controls.Add(this.SamedayBtn);
+            this.groupBox1.Controls.Add(this.CelBtn);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox1.Location = new System.Drawing.Point(3, 295);
             this.groupBox1.Name = "groupBox1";
@@ -406,49 +405,49 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Sites";
             // 
-            // button10
+            // emagBtn
             // 
-            this.button10.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.button10.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
-            this.button10.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.button10.Location = new System.Drawing.Point(38, 47);
-            this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(135, 43);
-            this.button10.TabIndex = 9;
-            this.button10.Text = "Open Emag";
-            this.button10.UseVisualStyleBackColor = false;
-            this.button10.Click += new System.EventHandler(this.button10_Click);
+            this.emagBtn.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.emagBtn.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
+            this.emagBtn.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.emagBtn.Location = new System.Drawing.Point(38, 47);
+            this.emagBtn.Name = "emagBtn";
+            this.emagBtn.Size = new System.Drawing.Size(135, 43);
+            this.emagBtn.TabIndex = 9;
+            this.emagBtn.Text = "Open Emag";
+            this.emagBtn.UseVisualStyleBackColor = false;
+            this.emagBtn.Click += new System.EventHandler(this.emagBtn_Click);
             // 
-            // button9
+            // SamedayBtn
             // 
-            this.button9.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.button9.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
-            this.button9.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.button9.Location = new System.Drawing.Point(40, 192);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(135, 43);
-            this.button9.TabIndex = 8;
-            this.button9.Text = "Open Sameday";
-            this.button9.UseVisualStyleBackColor = false;
-            this.button9.Click += new System.EventHandler(this.button9_Click);
+            this.SamedayBtn.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.SamedayBtn.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
+            this.SamedayBtn.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.SamedayBtn.Location = new System.Drawing.Point(40, 192);
+            this.SamedayBtn.Name = "SamedayBtn";
+            this.SamedayBtn.Size = new System.Drawing.Size(135, 43);
+            this.SamedayBtn.TabIndex = 8;
+            this.SamedayBtn.Text = "Open Sameday";
+            this.SamedayBtn.UseVisualStyleBackColor = false;
+            this.SamedayBtn.Click += new System.EventHandler(this.SamedayBtn_Click);
             // 
-            // button8
+            // CelBtn
             // 
-            this.button8.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.button8.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
-            this.button8.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.button8.Location = new System.Drawing.Point(38, 119);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(137, 43);
-            this.button8.TabIndex = 7;
-            this.button8.Text = "Open Cel.ro";
-            this.button8.UseVisualStyleBackColor = false;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
+            this.CelBtn.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.CelBtn.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
+            this.CelBtn.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.CelBtn.Location = new System.Drawing.Point(38, 119);
+            this.CelBtn.Name = "CelBtn";
+            this.CelBtn.Size = new System.Drawing.Size(137, 43);
+            this.CelBtn.TabIndex = 7;
+            this.CelBtn.Text = "Open Cel.ro";
+            this.CelBtn.UseVisualStyleBackColor = false;
+            this.CelBtn.Click += new System.EventHandler(this.CelBtn_Click);
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.button6);
-            this.groupBox2.Controls.Add(this.button3);
+            this.groupBox2.Controls.Add(this.workButton);
+            this.groupBox2.Controls.Add(this.rootButton);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
@@ -457,29 +456,30 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Paths";
             // 
-            // button6
+            // workButton
             // 
-            this.button6.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.button6.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
-            this.button6.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.button6.Location = new System.Drawing.Point(39, 168);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(135, 52);
-            this.button6.TabIndex = 6;
-            this.button6.Text = "Select Work Directory";
-            this.button6.UseVisualStyleBackColor = false;
+            this.workButton.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.workButton.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
+            this.workButton.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.workButton.Location = new System.Drawing.Point(39, 168);
+            this.workButton.Name = "workButton";
+            this.workButton.Size = new System.Drawing.Size(135, 52);
+            this.workButton.TabIndex = 6;
+            this.workButton.Text = "Select Work Directory";
+            this.workButton.UseVisualStyleBackColor = false;
             // 
-            // button3
+            // rootButton
             // 
-            this.button3.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.button3.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
-            this.button3.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.button3.Location = new System.Drawing.Point(39, 66);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(135, 52);
-            this.button3.TabIndex = 3;
-            this.button3.Text = "Select Root Directory";
-            this.button3.UseVisualStyleBackColor = false;
+            this.rootButton.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.rootButton.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
+            this.rootButton.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.rootButton.Location = new System.Drawing.Point(39, 66);
+            this.rootButton.Name = "rootButton";
+            this.rootButton.Size = new System.Drawing.Size(135, 52);
+            this.rootButton.TabIndex = 3;
+            this.rootButton.Text = "Select Root Directory";
+            this.rootButton.UseVisualStyleBackColor = false;
+            this.rootButton.Click += new System.EventHandler(this.rootButton_Click);
             // 
             // tabControl2
             // 
@@ -625,7 +625,6 @@
             this.zipLabel.Size = new System.Drawing.Size(110, 23);
             this.zipLabel.TabIndex = 0;
             this.zipLabel.Text = "Zip File:";
-            this.zipLabel.Click += new System.EventHandler(this.zipLabel_Click);
             // 
             // Form1
             // 
@@ -679,15 +678,14 @@
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Button unzippedButton;
         private System.Windows.Forms.TabPage ConfigPage;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button workButton;
+        private System.Windows.Forms.Button rootButton;
         private System.Windows.Forms.TabControl tabControl2;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.TabPage tabPage4;
-        private System.Windows.Forms.Button button8;
-        private System.Windows.Forms.Button button10;
-        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button CelBtn;
+        private System.Windows.Forms.Button emagBtn;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TextBox textBox1;
@@ -709,6 +707,7 @@
         private System.Windows.Forms.TextBox excelPathBox;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button button12;
+        private System.Windows.Forms.Button SamedayBtn;
     }
 }
 
