@@ -121,7 +121,7 @@
             groupBox3.Dock = System.Windows.Forms.DockStyle.Bottom;
             groupBox3.Location = new System.Drawing.Point(3, 358);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new System.Drawing.Size(212, 145);
+            groupBox3.Size = new System.Drawing.Size(206, 145);
             groupBox3.TabIndex = 0;
             groupBox3.TabStop = false;
             groupBox3.Text = "Options";
@@ -211,7 +211,7 @@
             groupBox6.Dock = System.Windows.Forms.DockStyle.Top;
             groupBox6.Location = new System.Drawing.Point(3, 3);
             groupBox6.Name = "groupBox6";
-            groupBox6.Size = new System.Drawing.Size(212, 439);
+            groupBox6.Size = new System.Drawing.Size(206, 439);
             groupBox6.TabIndex = 3;
             groupBox6.TabStop = false;
             groupBox6.Text = "Auto";
@@ -221,9 +221,10 @@
             this.autoFillBtn.BackColor = System.Drawing.SystemColors.ControlLight;
             this.autoFillBtn.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
             this.autoFillBtn.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.autoFillBtn.Location = new System.Drawing.Point(28, 193);
+            this.autoFillBtn.Location = new System.Drawing.Point(6, 167);
             this.autoFillBtn.Name = "autoFillBtn";
-            this.autoFillBtn.Size = new System.Drawing.Size(157, 45);
+            this.autoFillBtn.Size = new System.Drawing.Size(151, 39);
+
             this.autoFillBtn.TabIndex = 8;
             this.autoFillBtn.Text = "AutoFill";
             this.autoFillBtn.UseVisualStyleBackColor = false;
@@ -267,7 +268,8 @@
             this.tabControlMenu.Location = new System.Drawing.Point(579, 0);
             this.tabControlMenu.Name = "tabControlMenu";
             this.tabControlMenu.SelectedIndex = 0;
-            this.tabControlMenu.Size = new System.Drawing.Size(177, 537);
+            this.tabControlMenu.Size = new System.Drawing.Size(220, 537);
+
             this.tabControlMenu.TabIndex = 3;
             // 
             // AutoFillPage
@@ -277,7 +279,9 @@
             this.AutoFillPage.Location = new System.Drawing.Point(4, 27);
             this.AutoFillPage.Name = "AutoFillPage";
             this.AutoFillPage.Padding = new System.Windows.Forms.Padding(3);
-            this.AutoFillPage.Size = new System.Drawing.Size(218, 506);
+            this.AutoFillPage.Size = new System.Drawing.Size(212, 506);
+
+
             this.AutoFillPage.TabIndex = 2;
             this.AutoFillPage.Text = "AutoFill";
             this.AutoFillPage.UseVisualStyleBackColor = true;
@@ -403,7 +407,7 @@
             this.ConfigPage.Location = new System.Drawing.Point(4, 27);
             this.ConfigPage.Name = "ConfigPage";
             this.ConfigPage.Padding = new System.Windows.Forms.Padding(3);
-            this.ConfigPage.Size = new System.Drawing.Size(218, 560);
+            this.ConfigPage.Size = new System.Drawing.Size(169, 506);
             this.ConfigPage.TabIndex = 1;
             this.ConfigPage.Text = "Config";
             this.ConfigPage.UseVisualStyleBackColor = true;
@@ -414,9 +418,9 @@
             this.groupBox1.Controls.Add(this.SamedayBtn);
             this.groupBox1.Controls.Add(this.CelBtn);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox1.Location = new System.Drawing.Point(3, 275);
+            this.groupBox1.Location = new System.Drawing.Point(3, 221);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(212, 282);
+            this.groupBox1.Size = new System.Drawing.Size(163, 282);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Sites";
@@ -467,7 +471,7 @@
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(212, 302);
+            this.groupBox2.Size = new System.Drawing.Size(163, 302);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Paths";
@@ -541,7 +545,9 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 26);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(797, 561);
+            this.tabPage3.Size = new System.Drawing.Size(572, 507);
+
+
             this.tabPage3.TabIndex = 1;
             this.tabPage3.Text = "MergedPreview";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -552,7 +558,9 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 26);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(797, 561);
+            this.tabPage4.Size = new System.Drawing.Size(572, 507);
+
+
             this.tabPage4.TabIndex = 2;
             this.tabPage4.Text = "ExcelPreview";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -563,7 +571,9 @@
             this.tabPage5.Controls.Add(label4);
             this.tabPage5.Location = new System.Drawing.Point(4, 26);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(797, 561);
+            this.tabPage5.Size = new System.Drawing.Size(572, 507);
+
+
             this.tabPage5.TabIndex = 3;
             this.tabPage5.Text = "Summary";
             // 
@@ -574,7 +584,8 @@
             this.tabPage6.Location = new System.Drawing.Point(4, 26);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(797, 561);
+            this.tabPage6.Size = new System.Drawing.Size(572, 507);
+
             this.tabPage6.TabIndex = 4;
             this.tabPage6.Text = "History";
             this.tabPage6.UseVisualStyleBackColor = true;
@@ -592,7 +603,9 @@
             this.groupBox8.Font = new System.Drawing.Font("Monotype Corsiva", 12F, System.Drawing.FontStyle.Italic);
             this.groupBox8.Location = new System.Drawing.Point(0, 534);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(756, 156);
+            this.groupBox8.Size = new System.Drawing.Size(799, 156);
+
+
             this.groupBox8.TabIndex = 5;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Paths";
@@ -649,7 +662,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.ClientSize = new System.Drawing.Size(756, 690);
+            this.ClientSize = new System.Drawing.Size(799, 690);
+
+
             this.Controls.Add(this.groupBox8);
             this.Controls.Add(this.tabControlMenu);
             this.Controls.Add(this.tabControl2);
