@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.IO.Compression;
+using PdfSharpCore.Pdf.IO;
+using System.Diagnostics;
 
 
 
@@ -39,8 +41,6 @@ namespace PDFiller
         }
 
 
-
-
         static public Menu getInstance()
         {
             if (menu == null)
@@ -60,6 +60,34 @@ namespace PDFiller
 
 
         //        menu.UpdateWorkDir(ofd.SelectedPath);
+
+        public void UpdateRootDir(string selectedPath)
+        {
+            if (!Directory.Exists(selectedPath))
+            {
+                MessageBox.Show("Directory doesn't exist");
+                return;
+            }
+            this.rootDir = new DirectoryInfo(selectedPath);
+            DirectoryInfo workDir = rootDir.GetDirectories().OrderByDescending(x => x.CreationTime).First();
+            UpdateWorkDir(workDir);
+        }
+
+        public DirectoryInfo UpdateWorkDir()
+        {
+            if (rootDir == null || !rootDir.Exists)
+            {
+                throw new Exception("Root no longer exists!\r\n");
+            }
+            DirectoryInfo[] dirs = rootDir.GetDirectories();
+            if (dirs.Length == 0) throw new Exception("Root Directory contains no subdirectories.\r\n");
+
+            dirs = dirs.OrderByDescending(d=>d.CreationTime).ToArray();
+            return this.workDir = dirs.First();
+            
+ //           excel = FindExcel(workDir);
+ //           zip = FindZipsUnzipped(workDir);
+        }
         public void UpdateWorkDir(string selectedPath)
         {
             if (!Directory.Exists(selectedPath))
@@ -68,12 +96,26 @@ namespace PDFiller
                 MessageBox.Show("Directory doesn't exist");
                 return;
             }
+            workDir = new DirectoryInfo(selectedPath);
+            excel = FindExcel(workDir);
+            zip = FindZipsUnzipped(workDir);
+        }
+
+        public void UpdateWorkDir(DirectoryInfo workDir)
+        {
+            if (!workDir.Exists)
+            {
+                //  workDir = new DirectoryInfo(selectedPath);
+                MessageBox.Show("Directory doesn't exist");
+                return;
+            }
+            this.workDir = workDir;
             excel = FindExcel(workDir);
             zip = FindZipsUnzipped(workDir);
         }
 
 
-
+        /*
 
         public void MergeFill()
         {
@@ -82,6 +124,8 @@ namespace PDFiller
                 form.textBox1.Text += "Root Directory provided doesn't exist!\r\n";
             }
             form.textBox1.Text = "Root Directory found at: \r\n" + rootDir.FullName + "\r\n";
+            .textBox1.Text = "Root Directory found at: \r\n" + rootDir.FullName + "\r\n";
+
 
             try
             {
@@ -116,6 +160,7 @@ namespace PDFiller
 
 
         }
+        */
         public FileInfo FindExcel(DirectoryInfo workDir)
         {
             FileInfo excel = null;
@@ -126,8 +171,7 @@ namespace PDFiller
             }
             catch(IndexOutOfRangeException)
             {
-                form.textBox1.Text += "ZIP FILE WAS NOT FOUND HERE!\r\n";
-                return null;
+                throw new Exception("NO EXCEL FILE WAS FOUND HERE!\r\n");
             }
             return excel;
         }
@@ -195,57 +239,106 @@ namespace PDFiller
             }
         }
 
-        public FileInfo[] UnzipArchive(FileInfo zip)
+        public List<FileInfo> UnzipArchive(FileInfo zip,ref string extractedZip)
         {
-            if(zip==null || !zip.Exists)   return null;
-            string extractedZip = zip.FullName.Replace(".zip", "");
+            if (zip == null || !zip.Exists) throw new Exception("Zip Archive doesn't exist");
+            extractedZip = zip.FullName.Replace(".zip", "");
             ZipFile.ExtractToDirectory(zip.FullName, extractedZip);
-            return new DirectoryInfo(extractedZip).GetFiles();
+            return new DirectoryInfo(extractedZip).GetFiles().ToList();
         }
 
 
 
         public FileInfo FindZipsUnzipped(DirectoryInfo workDir)
         {
+            if (workDir == null || !workDir.Exists) {
+                throw new Exception("Work Directory no longer exists!\r\n");
+            }
             FileInfo[] zips = workDir.GetFiles().Where(x => x.Extension == ".zip").ToArray();
             DirectoryInfo[] extractedZips = workDir.GetDirectories().ToArray();
 
-           // bool found = false;
+            bool found = false;
             foreach (FileInfo zip in zips)
             {
                 foreach (DirectoryInfo dir in extractedZips)
                 {
-                    if (dir.Name == zip.Name.Replace(".zip", "")) //zip was not unzipped
+                    if (dir.Name == zip.Name.Replace(".zip", "")) //zip was unzipped
                     {
-               //         found = true;
-                        form.zipPathBox.Text = zip.FullName;
-                        form.textBox1.Text += "One zip file was found that was not extracted.\r\n" + zip.FullName + "\r\n";
-                        return zip;
+                        found = true;
+                        break;
                     }
                 }
-
+                if (!found) return zip;
             }
             return null;
         }
 
-        public void WriteOnPage(List<Order.topper> toppere, PdfPage page)
-
+        /// <summary>
+        /// Filles all the unzipped pdfs with the coresponding orders and saves the merged pdf.
+        /// If Open pdf in browser is checked, it also opens it.
+        /// Returns a refference to the pdf file.
+        /// </summary>
+        /// <param name="unzippedList">The list of all unzipped pdf files.</param>
+        /// <param name="orders">The list of all orders coresponding to those pdf files, taken from an excel sheet.</param>
+        /// <param name="saveDir">The directory where we save the merged pdf to.</param>
+        /// <returns></returns>
+        public string WriteOnOrders(List<FileInfo> unzippedList, List<Order> orders, string saveDir)
         {
-
-            XGraphics gfx = XGraphics.FromPdfPage(page);
-
-            XFont font = new XFont("Times New Roman", 15);
-            XSolidBrush brush = new XSolidBrush(XColor.FromKnownColor(XKnownColor.Black));
-
-            XRect rect = new XRect(0, page.Height / 2 - 15, page.Width, page.Height / 2 + 15);
-            gfx.DrawRectangle(XBrushes.White, rect);
-
-            int i = 0;
-            foreach (var topper in toppere)
+            int failed = 0;
+            PdfDocument doc = new PdfDocument();
+            
+            foreach(Order o in orders)
             {
-                gfx.DrawString(topper.tQuantity + " buc: " + topper.tName, font, brush, 50, page.Height / 2 + 150 + 15 * (i++), XStringFormats.CenterLeft);
-
+                FileInfo file = unzippedList.Find(p => p.Name.StartsWith(o.id) && p.Name.EndsWith(o.awb + "001.pdf"));
+                unzippedList.Remove(file);
+                PdfDocument pdf = PdfReader.Open(file.FullName, PdfDocumentOpenMode.Import);
+                PdfPage page = pdf.Pages[0];
+                doc.AddPage(page);
+                if(WriteOnPage(doc.Pages[doc.PageCount - 1], o.toppere))
+                {
+                    failed++;
+                }
             }
+            doc.Save(saveDir + "\\Merged&Filled.pdf");
+            doc.Close();
+            if (failed > 0)
+            {
+                form.textBox1.Text = failed + " files failed being filled, please check them.\r\n";
+            }
+            else
+            {
+                form.textBox1.Text = "All files filled sucessfully.\r\n";
+            }
+            return saveDir + "\\Merged&Filled.pdf";
+        }
+
+        public bool WriteOnPage(PdfPage page, List<Order.topper> toppere)
+        {
+            if (page == null || toppere == null) {
+                return false;
+            }
+            try
+            {
+                XGraphics gfx = XGraphics.FromPdfPage(page);
+
+                XFont font = new XFont("Times New Roman", 15);
+                XSolidBrush brush = new XSolidBrush(XColor.FromKnownColor(XKnownColor.Black));
+
+                XRect rect = new XRect(0, page.Height / 2 - 15, page.Width, page.Height / 2 + 15);
+                gfx.DrawRectangle(XBrushes.White, rect);
+
+                int i = 0;
+                foreach (var topper in toppere)
+                {
+                    gfx.DrawString(topper.tQuantity + " buc: " + topper.tName, font, brush, 50, page.Height / 2 + 150 + 15 * (i++), XStringFormats.CenterLeft);
+                }
+            }
+            catch (Exception ex)
+            {
+                form.textBox1.Text+=ex.Message+"\r\n";
+                return true;
+            }
+            return false;
         }
     }
 }
