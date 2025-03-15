@@ -69,6 +69,7 @@ namespace PDFiller
                 return;
             }
             this.rootDir = new DirectoryInfo(selectedPath);
+            form.rootTextBox.Text = selectedPath;
             DirectoryInfo workDir = rootDir.GetDirectories().OrderByDescending(x => x.CreationTime).First();
             UpdateWorkDir(workDir);
         }
@@ -79,13 +80,17 @@ namespace PDFiller
             {
                 throw new Exception("Root no longer exists!\r\n");
             }
+            form.textBox1.Text += "Root directory found at:\r\n " + rootDir.FullName + "\r\n";
+            form.rootTextBox.Text = rootDir.FullName;
+
             DirectoryInfo[] dirs = rootDir.GetDirectories();
             if (dirs.Length == 0) throw new Exception("Root Directory contains no subdirectories.\r\n");
 
-            dirs = dirs.OrderByDescending(d=>d.CreationTime).ToArray();
-            return this.workDir = dirs.First();
+            this.workDir = dirs.OrderByDescending(d=>d.CreationTime).ToArray().First();
+            form.textBox1.Text+="Work directory found at:\r\n"+
+                workDir.FullName + "\r\n";
+            return this.workDir;
 
-            form.textBox1.Text += "Root directory found at " + rootDir.FullName + "\r\n";
         }
         public void UpdateWorkDir(string selectedPath)
         {
@@ -95,6 +100,10 @@ namespace PDFiller
                 MessageBox.Show("Directory doesn't exist");
                 return;
             }
+            form.rootTextBox.Text = rootDir.FullName;
+
+            form.textBox1.Text += "Work directory found at:\r\n" +
+               workDir.FullName + "\r\n";
             workDir = new DirectoryInfo(selectedPath);
             excel = FindExcel(workDir);
             zip = FindZipsUnzipped(workDir);
@@ -108,6 +117,8 @@ namespace PDFiller
                 MessageBox.Show("Directory doesn't exist");
                 return;
             }
+            form.textBox1.Text += "Work directory found at:\r\n" +
+               workDir.FullName + "\r\n";
             this.workDir = workDir;
             excel = FindExcel(workDir);
             zip = FindZipsUnzipped(workDir);
@@ -167,11 +178,15 @@ namespace PDFiller
             try
             {
                 excel = workDir.GetFiles().Where(o => o.Extension == ".xlsx").OrderByDescending(o => o.CreationTime).ToArray().First();
+                form.textBox1.Text+= "Excel file found at:\r\n"+
+                    excel.FullName + "\r\n";
+
             }
             catch(IndexOutOfRangeException)
             {
                 throw new Exception("NO EXCEL FILE WAS FOUND HERE!\r\n");
             }
+            form.excelPathBox.Text = excel.FullName;
             return excel;
         }
 
@@ -194,6 +209,7 @@ namespace PDFiller
 
 
                 Order lastOrder = new Order();
+                int i = 0;
                 while (true)
                 {
                     string id = sheet.Cells[row, IDCOL].Value2;
@@ -210,12 +226,18 @@ namespace PDFiller
                         if (id == lastOrder.id)
                         {
                             lastOrder.toppere.Add(new Order.topper(name, qnt));
+                    //        form.textBox1.Text += "-> " + qnt + ". " + name + "\r\n";
                         }
                         else
                         {
                             if (lastOrder.id != "")
                                 orders.Add(lastOrder);
                             lastOrder = new Order(id, awb, name, qnt);
+
+                            //form.textBox1.Text += ++i + ". " + awb + ":\r\n" +
+                            //    "-> " + qnt + ". " + name + "\r\n";
+
+
                         }
                     }
                     else
@@ -228,7 +250,11 @@ namespace PDFiller
 
                 book.Close();
                 app.Quit();
+
+
+
                 return orders;
+
             }
             catch (Exception ex)
             {
@@ -237,25 +263,49 @@ namespace PDFiller
                 throw ex;
             }
         }
-
-        public List<FileInfo> UnzipArchive(FileInfo zip,ref string extractedZip)
+        /// <summary>
+        /// Extracts the archive per se.
+        /// </summary>
+        /// <param name="zip">The zip file</param>
+        /// <param name="extractedZip">A refference to the folder that was extracted, for convenience</param>
+        /// <returns>A list containing all the pdf files extracted.</returns>
+        /// <exception cref="Exception"></exception>
+        internal List<FileInfo> UnzipArchive(FileInfo zip,ref string extractedZip)
         {
             if (zip == null || !zip.Exists) throw new Exception("Zip Archive doesn't exist");
             extractedZip = zip.FullName.Replace(".zip", "");
             ZipFile.ExtractToDirectory(zip.FullName, extractedZip);
-            return new DirectoryInfo(extractedZip).GetFiles().ToList();
+            form.textBox1.Text += "Found zip file:\r\n" + zip.FullName + "\r\n";
+            List<FileInfo> fileInfos = new DirectoryInfo(extractedZip).GetFiles().ToList();
+            form.textBox1.Text += "Extracted " + fileInfos.Count + " files.\r\n";
+
+            return fileInfos;
         }
 
 
-
+        /// <summary>
+        /// Looks to find the zip files that do not have a matching unzipped folder.
+        /// Then proceeds to extract it.
+        /// </summary>
+        /// <param name="workDir"></param>
+        /// <returns>The file that represents the zip file found, or null if not found.</returns>
+        /// <exception cref="Exception"></exception>
         public FileInfo FindZipsUnzipped(DirectoryInfo workDir)
         {
             if (workDir == null || !workDir.Exists) {
                 throw new Exception("Work Directory no longer exists!\r\n");
             }
-            FileInfo[] zips = workDir.GetFiles().Where(x => x.Extension == ".zip").ToArray();
-            DirectoryInfo[] extractedZips = workDir.GetDirectories().ToArray();
-
+            FileInfo[] zips;
+            DirectoryInfo[] extractedZips;
+            try
+            {
+                zips = workDir.GetFiles().Where(x => x.Extension == ".zip").ToArray();
+                extractedZips = workDir.GetDirectories().ToArray();
+            }
+            catch (Exception ex)
+            {
+                throw (new Exception("No zip files exist"));
+            }
             bool found = false;
             foreach (FileInfo zip in zips)
             {
@@ -267,9 +317,14 @@ namespace PDFiller
                         break;
                     }
                 }
-                if (!found) return zip;
+                if (!found)
+                {
+                    form.zipLabel.Text = "Zip File:\r\n";
+                    form.zipPathBox.Text = zip.FullName;
+                    return zip;
+                }
             }
-            return null;
+            throw new Exception("No zip file that wasn't already extracted exists\r\n");
         }
 
         /// <summary>
@@ -280,7 +335,7 @@ namespace PDFiller
         /// <param name="unzippedList">The list of all unzipped pdf files.</param>
         /// <param name="orders">The list of all orders coresponding to those pdf files, taken from an excel sheet.</param>
         /// <param name="saveDir">The directory where we save the merged pdf to.</param>
-        /// <returns></returns>
+        /// <returns>Path to the merged pdf</returns>
         public string WriteOnOrders(List<FileInfo> unzippedList, List<Order> orders, string saveDir)
         {
             int failed = 0;
@@ -302,16 +357,22 @@ namespace PDFiller
             doc.Close();
             if (failed > 0)
             {
-                form.textBox1.Text = failed + " files failed being filled, please check them.\r\n";
+                form.textBox1.Text += failed + " files failed being filled, please check them.\r\n";
             }
             else
             {
-                form.textBox1.Text = "All files filled sucessfully.\r\n";
+                form.textBox1.Text += "All pdfs completed and merged with success.\r\n";
             }
+            form.textBox1.Text += "Merged pdf saved at:\r\n" + saveDir + "\\Merged&Filled.pdf";
             return saveDir + "\\Merged&Filled.pdf";
         }
-
-        public bool WriteOnPage(PdfPage page, List<Order.topper> toppere)
+        /// <summary>
+        /// Writes on each individual page.
+        /// </summary>
+        /// <param name="page">Page to be written on</param>
+        /// <param name="toppere">What to write on the page (qnt + name)</param>
+        /// <returns></returns>
+        private bool WriteOnPage(PdfPage page, List<Order.topper> toppere)
         {
             if (page == null || toppere == null) {
                 return false;
