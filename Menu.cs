@@ -84,9 +84,8 @@ namespace PDFiller
 
             dirs = dirs.OrderByDescending(d=>d.CreationTime).ToArray();
             return this.workDir = dirs.First();
-            
- //           excel = FindExcel(workDir);
- //           zip = FindZipsUnzipped(workDir);
+
+            form.textBox1.Text += "Root directory found at " + rootDir.FullName + "\r\n";
         }
         public void UpdateWorkDir(string selectedPath)
         {
