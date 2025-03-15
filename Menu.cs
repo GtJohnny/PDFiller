@@ -17,13 +17,13 @@ namespace PDFiller
 {
     internal class Menu
     {
-        DirectoryInfo rootDir=null ;
-        DirectoryInfo workDir=null;
-        FileInfo zip=null;
-        FileInfo excel = null;
-        List<FileInfo> unzipped_list = null;
+        internal DirectoryInfo rootDir=null ;
+        internal DirectoryInfo workDir =null;
+        internal FileInfo zip =null;
+        internal FileInfo excel = null;
+        internal List<FileInfo> unzippedList = null;
         Form1 form=null;
-        Menu menu=null;
+        static Menu menu=null;
 
 
 
@@ -41,7 +41,7 @@ namespace PDFiller
 
 
 
-        public Menu getInstance()
+        static public Menu getInstance()
         {
             if (menu == null)
             {
@@ -49,7 +49,7 @@ namespace PDFiller
             }
             return menu;
         }
-        public Menu getInstance(Form1 form)
+        public static Menu getInstance(Form1 form)
         {
             if (menu == null)
             {
@@ -57,6 +57,23 @@ namespace PDFiller
             }
             return menu;
         }
+
+
+        //        menu.UpdateWorkDir(ofd.SelectedPath);
+        public void UpdateWorkDir(string selectedPath)
+        {
+            if (!Directory.Exists(selectedPath))
+            {
+                //  workDir = new DirectoryInfo(selectedPath);
+                MessageBox.Show("Directory doesn't exist");
+                return;
+            }
+            excel = FindExcel(workDir);
+            zip = FindZipsUnzipped(workDir);
+        }
+
+
+
 
         public void MergeFill()
         {
@@ -83,23 +100,40 @@ namespace PDFiller
             form.textBox1.Text += "Work Directory found at: \r\n" + workDir.FullName + "\r\n";
             form.textBox1.Text += "The most recent directory is \"" + workDir.Name + "\" created on \"" + workDir.CreationTime + "\" or \r\n";
 
-            if ((DateTime.Now - workdir.CreationTime).Days > 0)
+            if ((DateTime.Now - workDir.CreationTime).Days > 0)
             {
-                textBox1.Text += (DateTime.Now - workdir.CreationTime).Days + " days ago. \r\n";
+                form.textBox1.Text += (DateTime.Now - workDir.CreationTime).Days + " days ago. \r\n";
             }
             else
             {
-                textBox1.Text += (DateTime.Now - workdir.CreationTime).Minutes + " minutes ago. \r\n";
+                form.textBox1.Text += (DateTime.Now - workDir.CreationTime).Minutes + " minutes ago. \r\n";
             }
 
 
-            FileInfo excel = FindExcel();
-            FindZipsUnzipped(workdir, excel);
-            excelPathBox.Text = excel.FullName;
+            excel = FindExcel(workDir);
+            zip = FindZipsUnzipped(workDir);
+            form.excelPathBox.Text = excel.FullName;
 
 
         }
-        public List<Order> ReadExcel()
+        public FileInfo FindExcel(DirectoryInfo workDir)
+        {
+            FileInfo excel = null;
+            if (workDir == null || !workDir.Exists) return null;
+            try
+            {
+                excel = workDir.GetFiles().Where(o => o.Extension == ".xlsx").OrderByDescending(o => o.CreationTime).ToArray().First();
+            }
+            catch(IndexOutOfRangeException)
+            {
+                form.textBox1.Text += "ZIP FILE WAS NOT FOUND HERE!\r\n";
+                return null;
+            }
+            return excel;
+        }
+
+
+        public List<Order> ReadExcel(FileInfo excel)
         {
 
             Excel.Application app = new Excel.Application();
@@ -155,46 +189,44 @@ namespace PDFiller
             }
             catch (Exception ex)
             {
-                int x = Form11.
-                textBox1.Text += ex.Message;
+                form.textBox1.Text += ex.Message;
                 book.Close();
                 throw ex;
             }
         }
 
-        public bool FindZipsUnzipped(DirectoryInfo workdir, FileInfo excel)
+        public FileInfo[] UnzipArchive(FileInfo zip)
         {
-            FileInfo[] zips = workdir.GetFiles().Where(x => x.Extension == ".zip").ToArray();
-            DirectoryInfo[] extractedZips = workdir.GetDirectories().ToArray();
+            if(zip==null || !zip.Exists)   return null;
+            string extractedZip = zip.FullName.Replace(".zip", "");
+            ZipFile.ExtractToDirectory(zip.FullName, extractedZip);
+            return new DirectoryInfo(extractedZip).GetFiles();
+        }
 
-            bool found = false;
+
+
+        public FileInfo FindZipsUnzipped(DirectoryInfo workDir)
+        {
+            FileInfo[] zips = workDir.GetFiles().Where(x => x.Extension == ".zip").ToArray();
+            DirectoryInfo[] extractedZips = workDir.GetDirectories().ToArray();
+
+           // bool found = false;
             foreach (FileInfo zip in zips)
             {
                 foreach (DirectoryInfo dir in extractedZips)
                 {
                     if (dir.Name == zip.Name.Replace(".zip", "")) //zip was not unzipped
                     {
-                        found = true;
-                        zipPathBox.Text = zip.FullName;
-                        break;
+               //         found = true;
+                        form.zipPathBox.Text = zip.FullName;
+                        form.textBox1.Text += "One zip file was found that was not extracted.\r\n" + zip.FullName + "\r\n";
+                        return zip;
                     }
                 }
 
-
-                if (!found)
-                {
-                    textBox1.Text += "One zip file was found that was not extracted.\r\n" + zip.FullName + "\r\nExtracting it now.\r\n";
-                    ZipArchive archive = new ZipArchive(new FileStream(zip.FullName, FileMode.Open), ZipArchiveMode.Read);
-                    string extractedDir = zip.FullName.Replace(".zip", "");
-                    archive.ExtractToDirectory(extractedDir);
-
-                    List<Order> orders = ReadExcel(excel);
-                    WriteOnDirectory(new DirectoryInfo(extractedDir), orders);
-                }
             }
-            return found;
+            return null;
         }
-        public int failed = 0;
 
         public void WriteOnPage(List<Order.topper> toppere, PdfPage page)
 
@@ -214,12 +246,6 @@ namespace PDFiller
                 gfx.DrawString(topper.tQuantity + " buc: " + topper.tName, font, brush, 50, page.Height / 2 + 150 + 15 * (i++), XStringFormats.CenterLeft);
 
             }
-
-
         }
-
-
-
-
     }
 }

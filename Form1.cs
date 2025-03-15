@@ -44,6 +44,7 @@ namespace PDFiller
 
         private void Form1_Shown(object sender, EventArgs e)
         {
+          //  Menu menu = PDFiller.Menu
             Menu menu = PDFiller.Menu.getInstance();
             if (autoFillCheck.Checked)
             {
