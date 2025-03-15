@@ -124,7 +124,8 @@ namespace PDFiller
         private void unzippedButton_Click(object sender, EventArgs e)
         {
             Menu menu = PDFiller.Menu.getInstance();
-            List<FileInfo> unzippedLists = menu.unzippedList;
+            List<FileInfo> unzippedLists = new List<FileInfo>();
+            menu.unzippedList = unzippedLists;
 
             OpenFileDialog ofd = new OpenFileDialog()
             {
@@ -139,8 +140,6 @@ namespace PDFiller
             switch (ofd.ShowDialog())
             {
                 case DialogResult.OK:
-                    zipLabel.Font = new System.Drawing.Font(zipLabel.Font, FontStyle.Strikeout);
-                    menu.unzippedList.Clear();
                     foreach(string fname in ofd.FileNames)
                     {
                         FileInfo t = new FileInfo(fname);
@@ -241,7 +240,7 @@ namespace PDFiller
             //apply conditions for paths
          //   menu.MergeFill();
         }
-
+        //TODO
 
         private void mergeFillButton_Click(object sender, EventArgs e)
         {
@@ -283,6 +282,11 @@ namespace PDFiller
 
             AutoFill();
         //    if(autoFillCheck.Checked) //print 
+        }
+
+        private void groupBox8_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }
