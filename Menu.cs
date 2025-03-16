@@ -12,6 +12,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 using System.IO.Compression;
 using PdfSharpCore.Pdf.IO;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 
 
@@ -19,11 +20,7 @@ namespace PDFiller
 {
     internal class Menu
     {
-        internal DirectoryInfo rootDir=null ;
-        internal DirectoryInfo workDir =null;
-        internal FileInfo zip =null;
-        internal FileInfo excel = null;
-        internal List<FileInfo> unzippedList = null;
+
         Form1 form=null;
         static Menu menu=null;
 
@@ -37,9 +34,22 @@ namespace PDFiller
         private Menu(Form1 form)
         {
             this.form = form;
-            this.rootDir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\AWB\\");
+          //  this.rootDir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\AWB\\");
         }
+        internal DirectoryInfo init()
+        {
+            //     FileStream fs = new FileStream("options.ini", FileMode.Open, FileAccess.Read);
+            try
+            {
+                StreamReader sr = new StreamReader(new FileStream("options.ini", FileMode.Open, FileAccess.Read));
+            }
+            catch (FileNotFoundException)
+            {
+                throw new FileNotFoundException("options.ini was not found.")
+            }
+            
 
+        }
 
         static public Menu getInstance()
         {
@@ -61,139 +71,115 @@ namespace PDFiller
 
         //        menu.UpdateWorkDir(ofd.SelectedPath);
 
-        public void UpdateRootDir(string selectedPath)
-        {
-            if (!Directory.Exists(selectedPath))
-            {
-                MessageBox.Show("Directory doesn't exist");
-                return;
-            }
-            this.rootDir = new DirectoryInfo(selectedPath);
-            form.rootTextBox.Text = selectedPath;
-            DirectoryInfo workDir = rootDir.GetDirectories().OrderByDescending(x => x.CreationTime).First();
-            UpdateWorkDir(workDir);
-        }
+        //public void UpdateRootDir(string selectedPath)
+        //{
+        //    if (!Directory.Exists(selectedPath))
+        //    {
+        //        MessageBox.Show("Directory doesn't exist");
+        //        return;
+        //    }
+        //    rootDir = new DirectoryInfo(selectedPath);
+        //    form.rootTextBox.Text = selectedPath;
+        //    workDir = rootDir.GetDirectories().OrderByDescending(x => x.CreationTime).First();
+        //    form.textBox1.Text += "Work directory found at:\r\n" +
+        //                  workDir.FullName + "\r\n";
+        //    excel = FindExcel(workDir);
+        //    zip = FindZipsUnzipped(workDir);
+        //}
 
-        public DirectoryInfo UpdateWorkDir()
+        /// <summary>
+        /// Given the root directory, find the work directory.
+        /// </summary>
+        /// <param name="rootDir">The root directory that would contain all workdirectories.</param>
+        /// <returns>A reference to the newest created subdirectory</returns>
+        /// <exception cref="ArgumentNullException">Is thrown if the root directory is null or doesn't exist.</exception>
+        /// <exception cref="DirectoryNotFoundException">Is thrown if the root directory contains no subdirectories.</exception>
+        public DirectoryInfo FindWorkDir(DirectoryInfo rootDir)
         {
             if (rootDir == null || !rootDir.Exists)
             {
-                throw new Exception("Root no longer exists!\r\n");
+                throw new ArgumentNullException("Root no longer exists!\r\n");
             }
-            form.textBox1.Text += "Root directory found at:\r\n " + rootDir.FullName + "\r\n";
-            form.rootTextBox.Text = rootDir.FullName;
-
+      //      form.textBox1.Text += "Root directory found at:\r\n " + rootDir.FullName + "\r\n";
+      //      form.rootTextBox.Text = rootDir.FullName;
             DirectoryInfo[] dirs = rootDir.GetDirectories();
-            if (dirs.Length == 0) throw new Exception("Root Directory contains no subdirectories.\r\n");
-
-            this.workDir = dirs.OrderByDescending(d=>d.CreationTime).ToArray().First();
-            form.textBox1.Text+="Work directory found at:\r\n"+
-                workDir.FullName + "\r\n";
-            return this.workDir;
-
+            if (dirs.Length == 0) throw new DirectoryNotFoundException("Root Directory contains no subdirectories.\r\n");
+            DirectoryInfo workDir;
+            workDir = dirs.OrderByDescending(d=>d.CreationTime).ToArray().First();
+      //      form.textBox1.Text+="Work directory found at:\r\n"+
+       //         workDir.FullName + "\r\n";
+            return workDir;
         }
-        public void UpdateWorkDir(string selectedPath)
-        {
-            if (!Directory.Exists(selectedPath))
-            {
-                //  workDir = new DirectoryInfo(selectedPath);
-                MessageBox.Show("Directory doesn't exist");
-                return;
-            }
-            form.rootTextBox.Text = rootDir.FullName;
 
-            form.textBox1.Text += "Work directory found at:\r\n" +
-               workDir.FullName + "\r\n";
+
+
+        /// <summary>
+        /// Given a path, find a given directory.
+        /// </summary>
+        /// <returns>A reference to the workdirectory specified by user.</returns>
+        /// <param name="selectedPath">Selected path from directory dialogue"</param>
+        /// <exception cref="ArgumentNullException">No path was given.</exception>
+        /// <exception cref="DirectoryNotFoundException">Directory somehow doesn't exist.</exception>
+        public DirectoryInfo FindWorkDir(string selectedPath)
+        {
+            if(selectedPath == null) throw new ArgumentNullException("No path was provided."); 
+            if(!Directory.Exists(selectedPath)) throw new DirectoryNotFoundException("Work directory doesn't exist");
+       //     form.rootTextBox.Text = rootDir.FullName;
+
+       //     form.textBox1.Text += "Work directory found at:\r\n" +
+        //       workDir.FullName + "\r\n";
+/*
             workDir = new DirectoryInfo(selectedPath);
             excel = FindExcel(workDir);
             zip = FindZipsUnzipped(workDir);
+  */    
+            return new DirectoryInfo(selectedPath); 
         }
 
-        public void UpdateWorkDir(DirectoryInfo workDir)
-        {
-            if (!workDir.Exists)
-            {
-                //  workDir = new DirectoryInfo(selectedPath);
-                MessageBox.Show("Directory doesn't exist");
-                return;
-            }
-            form.textBox1.Text += "Work directory found at:\r\n" +
-               workDir.FullName + "\r\n";
-            this.workDir = workDir;
-            excel = FindExcel(workDir);
-            zip = FindZipsUnzipped(workDir);
-        }
+        //public void UpdateWorkDir(DirectoryInfo workDir)
+        //{
+        //    if (!workDir.Exists)
+        //    {
+        //        //  workDir = new DirectoryInfo(selectedPath);
+        //        MessageBox.Show("Directory doesn't exist");
+        //        return;
+        //    }
+        //    form.textBox1.Text += "Work directory found at:\r\n" +
+        //       workDir.FullName + "\r\n";
+        //    excel = FindExcel(workDir);
+        //    zip = FindZipsUnzipped(workDir);
+        //}
 
-
-        /*
-
-        public void MergeFill()
-        {
-            if (  rootDir == null || !rootDir.Exists )
-            {
-                form.textBox1.Text += "Root Directory provided doesn't exist!\r\n";
-            }
-            form.textBox1.Text = "Root Directory found at: \r\n" + rootDir.FullName + "\r\n";
-            .textBox1.Text = "Root Directory found at: \r\n" + rootDir.FullName + "\r\n";
-
-
-            try
-            {
-                workDir = rootDir.GetDirectories().OrderByDescending(x => x.CreationTime).ToArray()[0];
-            }
-            catch (IndexOutOfRangeException)
-            {
-                form.textBox1.Text += "EMPTY DIRECTORY, NOTHING TO CHECK\r\n";
-
-                return;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            form.textBox1.Text += "Work Directory found at: \r\n" + workDir.FullName + "\r\n";
-            form.textBox1.Text += "The most recent directory is \"" + workDir.Name + "\" created on \"" + workDir.CreationTime + "\" or \r\n";
-
-            if ((DateTime.Now - workDir.CreationTime).Days > 0)
-            {
-                form.textBox1.Text += (DateTime.Now - workDir.CreationTime).Days + " days ago. \r\n";
-            }
-            else
-            {
-                form.textBox1.Text += (DateTime.Now - workDir.CreationTime).Minutes + " minutes ago. \r\n";
-            }
-
-
-            excel = FindExcel(workDir);
-            zip = FindZipsUnzipped(workDir);
-            form.excelPathBox.Text = excel.FullName;
-
-
-        }
-        */
+        /// <summary>
+        /// Given the workDirectory, find the excel file.
+        /// </summary>
+        /// <param name="workDir">The work directory</param>
+        /// <returns>A reference to the newest created excel file in the work directory.</returns>
+        /// <exception cref="ArgumentNullException">Work directory doesn't exist.</exception>
+        /// <exception cref="FileNotFoundException">No excel file exists in work directory.</exception>
         public FileInfo FindExcel(DirectoryInfo workDir)
         {
-            FileInfo excel = null;
-            if (workDir == null || !workDir.Exists) return null;
+            if (workDir == null || !workDir.Exists) throw new ArgumentNullException("Work directory doesn't exist.");
+            FileInfo excel;
             try
             {
                 excel = workDir.GetFiles().Where(o => o.Extension == ".xlsx").OrderByDescending(o => o.CreationTime).ToArray().First();
-                form.textBox1.Text+= "Excel file found at:\r\n"+
-                    excel.FullName + "\r\n";
-
             }
             catch(IndexOutOfRangeException)
             {
-                throw new Exception("NO EXCEL FILE WAS FOUND HERE!\r\n");
+                throw new FileNotFoundException("No excel file was found within the work directory!\r\n");
             }
-            form.excelPathBox.Text = excel.FullName;
+      //      form.excelPathBox.Text = excel.FullName;
             return excel;
         }
 
-
+        /// <summary>
+        /// Read the excel file, and return a list of orders.
+        /// </summary>
+        /// <param name="excel">The excel file to be read</param>
+        /// <returns>A list of `Order` objects</returns>
         public List<Order> ReadExcel(FileInfo excel)
         {
-
             Excel.Application app = new Excel.Application();
             List<Order> orders = new List<Order>();
             Workbook book = app.Workbooks.Open(excel.FullName);
@@ -226,7 +212,6 @@ namespace PDFiller
                         if (id == lastOrder.id)
                         {
                             lastOrder.toppere.Add(new Order.topper(name, qnt));
-                    //        form.textBox1.Text += "-> " + qnt + ". " + name + "\r\n";
                         }
                         else
                         {
@@ -250,16 +235,13 @@ namespace PDFiller
 
                 book.Close();
                 app.Quit();
-
-
-
                 return orders;
-
             }
             catch (Exception ex)
             {
                 form.textBox1.Text += ex.Message;
                 book.Close();
+                app.Quit();
                 throw ex;
             }
         }
@@ -272,12 +254,12 @@ namespace PDFiller
         /// <exception cref="Exception"></exception>
         internal List<FileInfo> UnzipArchive(FileInfo zip,ref string extractedZip)
         {
-            if (zip == null || !zip.Exists) throw new Exception("Zip Archive doesn't exist");
+            if (zip == null || !zip.Exists) throw new ArgumentNullException("Zip Archive doesn't exist");
             extractedZip = zip.FullName.Replace(".zip", "");
             ZipFile.ExtractToDirectory(zip.FullName, extractedZip);
-            form.textBox1.Text += "Found zip file:\r\n" + zip.FullName + "\r\n";
+     //       form.textBox1.Text += "Found zip file:\r\n" + zip.FullName + "\r\n";
             List<FileInfo> fileInfos = new DirectoryInfo(extractedZip).GetFiles().ToList();
-            form.textBox1.Text += "Extracted " + fileInfos.Count + " files.\r\n";
+     //       form.textBox1.Text += "Extracted " + fileInfos.Count + " files.\r\n";
 
             return fileInfos;
         }
@@ -287,13 +269,13 @@ namespace PDFiller
         /// Looks to find the zip files that do not have a matching unzipped folder.
         /// Then proceeds to extract it.
         /// </summary>
-        /// <param name="workDir"></param>
-        /// <returns>The file that represents the zip file found, or null if not found.</returns>
-        /// <exception cref="Exception"></exception>
+        /// <param name="workDir">Work directory.</param>
+        /// <returns>The referece that represents the newest zip file found, or null if not found.</returns>
+        /// <exception cref="ArgumentNullException">Work directory doesn't exist.</exception>
         public FileInfo FindZipsUnzipped(DirectoryInfo workDir)
         {
             if (workDir == null || !workDir.Exists) {
-                throw new Exception("Work Directory no longer exists!\r\n");
+                throw new ArgumentNullException("Work Directory no longer exists!\r\n");
             }
             FileInfo[] zips;
             DirectoryInfo[] extractedZips;
@@ -302,9 +284,9 @@ namespace PDFiller
                 zips = workDir.GetFiles().Where(x => x.Extension == ".zip").ToArray();
                 extractedZips = workDir.GetDirectories().ToArray();
             }
-            catch (Exception ex)
+            catch (IndexOutOfRangeException ex)
             {
-                throw (new Exception("No zip files exist"));
+                throw (new FileNotFoundException("No zip files exist"));
             }
             bool found = false;
             foreach (FileInfo zip in zips)
@@ -324,7 +306,7 @@ namespace PDFiller
                     return zip;
                 }
             }
-            throw new Exception("No zip file that wasn't already extracted exists\r\n");
+            throw new FileNotFoundException("No zip file that wasn't already extracted exists\r\n");
         }
 
         /// <summary>

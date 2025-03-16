@@ -53,6 +53,13 @@ namespace PDFiller
         }
 
 
+        internal DirectoryInfo rootDir = null;
+        internal DirectoryInfo workDir = null;
+        internal FileInfo zip = null;
+        internal FileInfo excel = null;
+        internal List<FileInfo> unzippedList = null;
+
+
 
         private void zipButton_Click(object sender, EventArgs e)
         {
