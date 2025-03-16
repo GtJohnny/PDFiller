@@ -34,39 +34,81 @@ namespace PDFiller
 
 
 
+        private void writeOptions()
+        {
 
-   
+
+        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //init
-
-            StreamReader sr;
+            StreamReader sr = null;
             try
             {
-                string path = Environment.CurrentDirectory.Replace("bin\\Debug","options.ini");
-                sr = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read));
+                sr = new StreamReader(new FileStream("options.ini", FileMode.Open, FileAccess.Read));
             }
-            catch (Exception ex)
+            catch (FileNotFoundException ex)
             {
-                throw ex;
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\AWB";
+                if (!Directory.Exists(path)) { 
+                    Directory.CreateDirectory(path);
+                }
+                writeOptions();
+                rootDir = new DirectoryInfo(path);
+                return;
+
             }
-            string[] line = sr.ReadLine().Split("=".ToCharArray(), 2);
-            switch (line[0])
-            {
-                case "root":
-                    rootDir = new DirectoryInfo(line[1]);
-                    break;
-                case "database":
-                    //do sth
-                    break;
-                default:
-                    throw new Exception("options.ini was corrupted");
+            while (!sr.EndOfStream) {
+                string[] line = sr.ReadLine().Split("=".ToCharArray(), 2);
+                switch (line[0])
+                {
+                    case "root":
+                        rootDir = new DirectoryInfo(line[1]);
+                        textBox1.Text += "Root directory found at:\r\n" + rootDir.FullName + "\r\n";
+                        break;
+                    case "autofill":
+                        bool fill = true;
+                        if (Boolean.TryParse(line[1],out fill))
+                        {
+                            autoFillCheck.Checked = fill;
+                        }
+                        else
+                        {
+                            autoFillCheck.Checked= true;
+                        }
+                        break;
+                    case "print":
+                        bool print = true;
+                        if (Boolean.TryParse(line[1], out print))
+                        {
+                            PrintCheck.Checked =print;
+                        }
+                        else
+                        {
+                            PrintCheck.Checked = true;
+                        }
+                        break;
+                    case "open":
+                        bool res = true;
+                        if (Boolean.TryParse(line[1], out res))
+                        {
+                            openPdfCheck.Checked = res;
+                        }
+                        else
+                        {
+                            openPdfCheck.Checked = true;
+                        }
+                        break;
+                    default:
+                        return;
+                        throw new Exception("options.ini was corrupted");
+                }
             }
         }
 
         private void Form1_Shown(object sender, EventArgs e)
         {
+
             Menu menu = PDFiller.Menu.getInstance(this);
 
             if (autoFillCheck.Checked)
@@ -93,13 +135,14 @@ namespace PDFiller
                 Multiselect = false,
                 Title = "Please select order zip archive.",
                 DefaultExt = ".zip",
-                InitialDirectory = workDir.FullName,
+                InitialDirectory = rootDir.FullName,
                 RestoreDirectory = true,
             };
 
             switch (ofd.ShowDialog())
             {
                 case DialogResult.OK:
+                    manualSelect = false;
                     zipPathBox.Text  = ofd.FileName;
                     zip = new FileInfo(ofd.FileName);
                     textBox1.Text += "Found zip archive at:\r\n" + zip.FullName + "\r\n";
@@ -109,7 +152,6 @@ namespace PDFiller
                 default:
                     break;
             }
-
         }
 
         private void zipPathBox_DoubleClick(object sender, EventArgs e)
@@ -133,7 +175,7 @@ namespace PDFiller
                 Multiselect = false,
                 Title = "Please select order summary excel file.",
                 DefaultExt = ".xlsx",
-                InitialDirectory = workDir.FullName,
+                InitialDirectory = rootDir.FullName,
                 RestoreDirectory = true,
             };
       
@@ -151,6 +193,7 @@ namespace PDFiller
 
         }
 
+        private bool manualSelect = false;
         private void unzippedButton_Click(object sender, EventArgs e)
         {
             Menu menu = PDFiller.Menu.getInstance();
@@ -170,6 +213,7 @@ namespace PDFiller
             switch (ofd.ShowDialog())
             {
                 case DialogResult.OK:
+                    manualSelect = true;
                     foreach(string fname in ofd.FileNames)
                     {
                         FileInfo t = new FileInfo(fname);
@@ -213,7 +257,6 @@ namespace PDFiller
 
         private void rootButton_Click(object sender, EventArgs e)
         {
-            Menu menu = PDFiller.Menu.getInstance();
             FolderBrowserDialog ofd = new FolderBrowserDialog();
             ofd.RootFolder = Environment.SpecialFolder.MyComputer;
             ofd.Description = "This where you'd make folders daily:\r\n" +
@@ -222,14 +265,16 @@ namespace PDFiller
                 DateTime.Now.Date.ToString("dd.MM.yyyy")+"\\your pdfs.";
             ofd.ShowNewFolderButton = true;
 
-                //   string root2 = "C:\\Users\\KZE PC\\Desktop\\VIsual studio projects\\AWBFiller\\bin\\Debug\\";
-
+         
             switch (ofd.ShowDialog())
             {
                 case DialogResult.OK:
                     rootDir = new DirectoryInfo(ofd.SelectedPath);
                     textBox1.Text += "New root folder set at:\r\n" + (rootDir.FullName) + "\r\n";
-
+                    rootTextBox.Text = ofd.SelectedPath;
+                    StreamWriter sw = new StreamWriter(new FileStream("options.ini", FileMode.OpenOrCreate,FileAccess.Write));
+                    sw.WriteLine("root=" + ofd.SelectedPath);
+                    sw.Close();
                     break;
                 default:
                     break;
@@ -256,8 +301,10 @@ namespace PDFiller
             switch (ofd.ShowDialog())
             {
                 case DialogResult.OK:
-                    menu.FindWorkDir(ofd.SelectedPath);
-                    textBox1.Text += "New root folder set at:\r\n" + (workDir.FullName) + "\r\n";
+                    workDir = menu.FindWorkDir(ofd.SelectedPath);
+                    textBox1.Text += "New work directory set at:\r\n" + (workDir.FullName) + "\r\n";
+                    excel = menu.FindExcel(workDir);
+                    zip = menu.FindZipsUnzipped(workDir);
                     break;
                 default:
                     break;
@@ -274,23 +321,49 @@ namespace PDFiller
 
         private void mergeFillButton_Click(object sender, EventArgs e)
         {
-            Menu menu = PDFiller.Menu.getInstance();
-            FileInfo pdf = excel;
-            if (pdf == null || !pdf.Exists) {
-                throw new FileNotFoundException("PDF could not be found, something happened to it",pdf.FullName);
-            }
-            List<FileInfo> orders =unzippedList;
-            if(orders == null ||  orders.Count == 0 )
+            try
             {
-               // orders = menu.
-             //   throw new Exception("There are no orders to be processed");
+                if (excel == null || !excel.Exists)
+                {
+                    throw new FileNotFoundException("Excel could not be found, something happened to it.");
+                }
+                Menu menu = PDFiller.Menu.getInstance();
+                string folderRef =null;
+                if (!manualSelect)
+                {
+                    if(zip == null|| !zip.Exists)
+                    {
+                        throw new FileNotFoundException("Zip archive could not be found, something happened to it.");
+                    }
+                    unzippedList = menu.UnzipArchive(zip,ref folderRef);
+                    textBox1.Text += "Extracted archive: " + zip.Name + "\r\n";
+                    textBox1.Text += "Extracted " + unzippedList.Count + " files.\r\n";
+;                }
+
+                foreach (FileInfo pdf in unzippedList)
+                {
+                    if (!pdf.Exists)
+                    {
+                        textBox1.Text += pdf.Name + "could not be found, something happened to it.";
+                        unzippedList.Remove(pdf);
+                    }
+                }
+                List<Order> orders = menu.ReadExcel(excel);
+                string path = menu.WriteOnOrders(unzippedList, orders, folderRef);
+                textBox1.Text +="Merged order PDF was saved at location:\r\n"+path;
+            } catch (Exception ex) {
+         //       textBox1.Text += ex.ToString()+"\r\n";
+                textBox1.Text += ex.Message + "\r\n";
+                return;
             }
+
         }
 
         private void AutoFill()
         {
             try
             {
+                manualSelect = false;
                 Menu menu = PDFiller.Menu.getInstance(this);
                 DirectoryInfo workDir = menu.FindWorkDir(rootDir);
                 FileInfo excel = menu.FindExcel(workDir);
