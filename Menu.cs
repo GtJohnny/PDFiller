@@ -36,20 +36,7 @@ namespace PDFiller
             this.form = form;
           //  this.rootDir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\AWB\\");
         }
-        internal DirectoryInfo init()
-        {
-            //     FileStream fs = new FileStream("options.ini", FileMode.Open, FileAccess.Read);
-            try
-            {
-                StreamReader sr = new StreamReader(new FileStream("options.ini", FileMode.Open, FileAccess.Read));
-            }
-            catch (FileNotFoundException)
-            {
-                throw new FileNotFoundException("options.ini was not found.")
-            }
-            
 
-        }
 
         static public Menu getInstance()
         {
