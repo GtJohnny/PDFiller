@@ -36,20 +36,7 @@ namespace PDFiller
             this.form = form;
           //  this.rootDir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\AWB\\");
         }
-        internal DirectoryInfo init()
-        {
-            //     FileStream fs = new FileStream("options.ini", FileMode.Open, FileAccess.Read);
-            try
-            {
-                StreamReader sr = new StreamReader(new FileStream("options.ini", FileMode.Open, FileAccess.Read));
-            }
-            catch (FileNotFoundException)
-            {
-                throw new FileNotFoundException("options.ini was not found.")
-            }
-            
-
-        }
+   
 
         static public Menu getInstance()
         {
@@ -124,15 +111,6 @@ namespace PDFiller
         {
             if(selectedPath == null) throw new ArgumentNullException("No path was provided."); 
             if(!Directory.Exists(selectedPath)) throw new DirectoryNotFoundException("Work directory doesn't exist");
-       //     form.rootTextBox.Text = rootDir.FullName;
-
-       //     form.textBox1.Text += "Work directory found at:\r\n" +
-        //       workDir.FullName + "\r\n";
-/*
-            workDir = new DirectoryInfo(selectedPath);
-            excel = FindExcel(workDir);
-            zip = FindZipsUnzipped(workDir);
-  */    
             return new DirectoryInfo(selectedPath); 
         }
 
