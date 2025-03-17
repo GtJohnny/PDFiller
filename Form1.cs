@@ -206,7 +206,7 @@ namespace PDFiller
                 Multiselect = true,
                 Title = "Please select all your unzipped files.",
                 DefaultExt = ".pdf",
-                InitialDirectory = workDir.FullName,
+              //  InitialDirectory = envi.FullName,
                 RestoreDirectory = true
             };
 
@@ -222,7 +222,7 @@ namespace PDFiller
 
                     }
                     zipPathBox.Text = unzippedList[0].Name;
-                    zipLabel.Text = unzippedList.Count + "file";
+                    zipLabel.Text = unzippedList.Count + " file";
                     if (unzippedList.Count > 1)
                     {
                         zipPathBox.Text+=" +" + (unzippedList.Count - 1) + " others";
@@ -327,18 +327,19 @@ namespace PDFiller
                 {
                     throw new FileNotFoundException("Excel could not be found, something happened to it.");
                 }
-                Menu menu = PDFiller.Menu.getInstance();
-                string folderRef =null;
+                Menu menu = null; ;
+                string saveDir =null;
                 if (!manualSelect)
                 {
                     if(zip == null|| !zip.Exists)
                     {
                         throw new FileNotFoundException("Zip archive could not be found, something happened to it.");
                     }
-                    unzippedList = menu.UnzipArchive(zip,ref folderRef);
+                    menu = PDFiller.Menu.getInstance();
+                    unzippedList = menu.UnzipArchive(zip,ref saveDir);
                     textBox1.Text += "Extracted archive: " + zip.Name + "\r\n";
                     textBox1.Text += "Extracted " + unzippedList.Count + " files.\r\n";
-;                }
+;               }
 
                 foreach (FileInfo pdf in unzippedList)
                 {
@@ -348,11 +349,20 @@ namespace PDFiller
                         unzippedList.Remove(pdf);
                     }
                 }
+                menu = PDFiller.Menu.getInstance();
+                saveDir = excel.DirectoryName;
                 List<Order> orders = menu.ReadExcel(excel);
-                string path = menu.WriteOnOrders(unzippedList, orders, folderRef);
-                textBox1.Text +="Merged order PDF was saved at location:\r\n"+path;
+                int failed = 0;
+                
+                string path = menu.WriteOnOrders(unzippedList, orders, saveDir,out failed);
+                textBox1.Text += "Merged order PDF was saved at location:\r\n" + saveDir + "\r\n" ;
+                if (openPdfCheck.Checked)
+                {
+                    textBox1.Text += "The pdf should open about now:\r\n";
+                    Process.Start(path);
+
+                }
             } catch (Exception ex) {
-         //       textBox1.Text += ex.ToString()+"\r\n";
                 textBox1.Text += ex.Message + "\r\n";
                 return;
             }
@@ -365,14 +375,34 @@ namespace PDFiller
             {
                 manualSelect = false;
                 Menu menu = PDFiller.Menu.getInstance(this);
-                DirectoryInfo workDir = menu.FindWorkDir(rootDir);
-                FileInfo excel = menu.FindExcel(workDir);
-                FileInfo zip = menu.FindZipsUnzipped(workDir);
+                workDir = menu.FindWorkDir(rootDir);
+                textBox1.Text += "Found work directory at:\r\n" + workDir.FullName + "\r\n";
+                excel = menu.FindExcel(workDir);
+                textBox1.Text += "Found excel file at:\r\n" + excel.FullName + "\r\n";
+                excelPathBox.Text = excel.FullName;
+                zip = menu.FindZipsUnzipped(workDir);
+                textBox1.Text += "Found zip archive at:\r\n" + zip.FullName + "\r\n";
+                zipPathBox.Text = zip.FullName;
                 string extractedDir = null;
-                List<FileInfo> unzippedList = menu.UnzipArchive(zip,ref extractedDir);
-                List<Order> orders = menu.ReadExcel(excel);
-                string path = menu.WriteOnOrders(unzippedList, orders,extractedDir);
-                if (openPdfCheck.Checked) Process.Start(path);
+                unzippedList = menu.UnzipArchive(zip,ref extractedDir);
+                textBox1.Text += "Found " + unzippedList.Count + " orders.\r\n";
+                List<Order>orders = menu.ReadExcel(excel);
+                int failed;
+                string path = menu.WriteOnOrders(unzippedList, orders,extractedDir,out failed);
+                if (failed > 0)
+                {
+                    textBox1.Text += failed + " files failed being filled, please check them.\r\n";
+                }
+                else
+                {
+                    textBox1.Text += "All pdfs completed and merged with success.\r\n";
+                }
+                textBox1.Text += "Merged pdf was saved at " + path + "\r\n";
+                if (openPdfCheck.Checked)
+                {
+                    textBox1.Text += "It should open about now.\r\n";
+                    Process.Start(path);
+                }
             }
             catch (Exception ex)
             {
@@ -388,6 +418,16 @@ namespace PDFiller
         }
 
         private void groupBox8_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void openPdfCheck_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tabControlMenu_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
