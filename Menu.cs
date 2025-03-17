@@ -281,7 +281,7 @@ namespace PDFiller
                     return zip;
                 }
             }
-            throw new FileNotFoundException("No zip file that wasn't already extracted exists\r\n");
+            throw new FileNotFoundException("All zip files already extracted.\r\n");
         }
 
         /// <summary>
@@ -293,34 +293,35 @@ namespace PDFiller
         /// <param name="orders">The list of all orders coresponding to those pdf files, taken from an excel sheet.</param>
         /// <param name="saveDir">The directory where we save the merged pdf to.</param>
         /// <returns>Path to the merged pdf</returns>
-        public string WriteOnOrders(List<FileInfo> unzippedList, List<Order> orders, string saveDir)
+        public string WriteOnOrders(List<FileInfo> unzippedList, List<Order> orders, string saveDir,out int failed)
         {
-            int failed = 0;
+            failed = 0;
             PdfDocument doc = new PdfDocument();
-            
-            foreach(Order o in orders)
+
+            foreach (FileInfo file in unzippedList)
             {
-                FileInfo file = unzippedList.Find(p => p.Name.StartsWith(o.id) && p.Name.EndsWith(o.awb + "001.pdf"));
-                unzippedList.Remove(file);
-                PdfDocument pdf = PdfReader.Open(file.FullName, PdfDocumentOpenMode.Import);
-                PdfPage page = pdf.Pages[0];
-                doc.AddPage(page);
-                if(WriteOnPage(doc.Pages[doc.PageCount - 1], o.toppere))
+                Order o = null; ;
+                try
+                {
+                   o = orders.Find(p => p.id == file.Name.Substring(0, 9));
+
+                    PdfDocument pdf = PdfReader.Open(file.FullName, PdfDocumentOpenMode.Import);
+                    PdfPage page = pdf.Pages[0];
+                    doc.AddPage(page);
+                }
+                catch (Exception ex)
+                {
+                    failed++;
+                    throw ex;
+                }
+                if (WriteOnPage(doc.Pages[doc.PageCount - 1], o.toppere))
                 {
                     failed++;
                 }
+
             }
             doc.Save(saveDir + "\\Merged&Filled.pdf");
             doc.Close();
-            if (failed > 0)
-            {
-                form.textBox1.Text += failed + " files failed being filled, please check them.\r\n";
-            }
-            else
-            {
-                form.textBox1.Text += "All pdfs completed and merged with success.\r\n";
-            }
-            form.textBox1.Text += "Merged pdf saved at:\r\n" + saveDir + "\\Merged&Filled.pdf";
             return saveDir + "\\Merged&Filled.pdf";
         }
         /// <summary>

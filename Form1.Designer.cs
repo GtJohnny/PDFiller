@@ -138,6 +138,7 @@
             this.openPdfCheck.TabIndex = 8;
             this.openPdfCheck.Text = "Open pdf in browser";
             this.openPdfCheck.UseVisualStyleBackColor = true;
+            this.openPdfCheck.CheckedChanged += new System.EventHandler(this.openPdfCheck_CheckedChanged);
             // 
             // PrintCheck
             // 
@@ -269,6 +270,7 @@
             this.tabControlMenu.SelectedIndex = 0;
             this.tabControlMenu.Size = new System.Drawing.Size(220, 537);
             this.tabControlMenu.TabIndex = 3;
+            this.tabControlMenu.SelectedIndexChanged += new System.EventHandler(this.tabControlMenu_SelectedIndexChanged);
             // 
             // AutoFillPage
             // 
