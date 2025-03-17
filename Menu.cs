@@ -140,7 +140,7 @@ namespace PDFiller
             {
                 excel = workDir.GetFiles().Where(o => o.Extension == ".xlsx").OrderByDescending(o => o.CreationTime).ToArray().First();
             }
-            catch(IndexOutOfRangeException)
+            catch(Exception ex)
             {
                 throw new FileNotFoundException("No excel file was found within the work directory!\r\n");
             }
@@ -170,7 +170,6 @@ namespace PDFiller
 
 
                 Order lastOrder = new Order();
-                int i = 0;
                 while (true)
                 {
                     string id = sheet.Cells[row, IDCOL].Value2;
@@ -231,10 +230,9 @@ namespace PDFiller
         {
             if (zip == null || !zip.Exists) throw new ArgumentNullException("Zip Archive doesn't exist");
             extractedZip = zip.FullName.Replace(".zip", "");
+            if (Directory.Exists(extractedZip))Directory.Delete(extractedZip, true);
             ZipFile.ExtractToDirectory(zip.FullName, extractedZip);
-     //       form.textBox1.Text += "Found zip file:\r\n" + zip.FullName + "\r\n";
             List<FileInfo> fileInfos = new DirectoryInfo(extractedZip).GetFiles().ToList();
-     //       form.textBox1.Text += "Extracted " + fileInfos.Count + " files.\r\n";
 
             return fileInfos;
         }
@@ -259,7 +257,7 @@ namespace PDFiller
                 zips = workDir.GetFiles().Where(x => x.Extension == ".zip").ToArray();
                 extractedZips = workDir.GetDirectories().ToArray();
             }
-            catch (IndexOutOfRangeException ex)
+            catch (IndexOutOfRangeException)
             {
                 throw (new FileNotFoundException("No zip files exist"));
             }
@@ -293,18 +291,22 @@ namespace PDFiller
         /// <param name="orders">The list of all orders coresponding to those pdf files, taken from an excel sheet.</param>
         /// <param name="saveDir">The directory where we save the merged pdf to.</param>
         /// <returns>Path to the merged pdf</returns>
-        public string WriteOnOrders(List<FileInfo> unzippedList, List<Order> orders, string saveDir,out int failed)
+        public string WriteOnOrders(List<FileInfo> unzippedList, List<Order> orders, string saveDir,out int failed,string name)
         {
             failed = 0;
             PdfDocument doc = new PdfDocument();
 
             foreach (FileInfo file in unzippedList)
             {
-                Order o = null; ;
+                Order o = null;
                 try
                 {
-                   o = orders.Find(p => p.id == file.Name.Substring(0, 9));
-
+                    o = orders.Find(p => p.id == file.Name.Substring(0, 9));
+                    if (o == null)
+                    {
+                        failed++;
+                        continue;
+                    }
                     PdfDocument pdf = PdfReader.Open(file.FullName, PdfDocumentOpenMode.Import);
                     PdfPage page = pdf.Pages[0];
                     doc.AddPage(page);
@@ -320,9 +322,13 @@ namespace PDFiller
                 }
 
             }
-            doc.Save(saveDir + "\\Merged&Filled.pdf");
+            if (doc.PageCount == 0)
+            {
+                throw new ArgumentException("None of the orders in the excel matched the pdf files.\r\n");
+            }
+            doc.Save(saveDir + "\\" + name + ".pdf");
             doc.Close();
-            return saveDir + "\\Merged&Filled.pdf";
+            return saveDir + "\\" + name + ".pdf";
         }
         /// <summary>
         /// Writes on each individual page.
