@@ -23,9 +23,6 @@ namespace PDFiller
 
         Form1 form=null;
         static Menu menu=null;
-
-
-
         private Menu()
         {
 

@@ -32,34 +32,42 @@ namespace PDFiller
             InitializeComponent();
         }
 
-
+        private DirectoryInfo rootDir = null;
+        private DirectoryInfo workDir = null;
+        private FileInfo zip = null;
+        private FileInfo excel = null;
+        private List<FileInfo> unzippedList = null;
 
         private void writeOptions()
-        {
-
-
+        {//for update
+            StreamWriter sw = new StreamWriter(new FileStream("options.ini", FileMode.OpenOrCreate, FileAccess.Write));
+            sw.WriteLine("root=" + rootDir.FullName);
+            sw.WriteLine("autofill=" + autoFillCheck.Checked);
+            sw.WriteLine("print=" + PrintCheck.Checked);
+            sw.WriteLine("open=" + openPdfCheck.Checked);
+            sw.Close();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             StreamReader sr = null;
-            try
+            if(File.Exists("options.ini"))
             {
                 sr = new StreamReader(new FileStream("options.ini", FileMode.Open, FileAccess.Read));
             }
-            catch (FileNotFoundException ex)
+            else
             {
                 string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\AWB";
-                if (!Directory.Exists(path)) { 
+                if (!Directory.Exists(path)) {
                     Directory.CreateDirectory(path);
                 }
-                writeOptions();
                 rootDir = new DirectoryInfo(path);
-                return;
-
+                rootTextBox.Text = rootDir.FullName;
+                writeOptions();
             }
             while (!sr.EndOfStream) {
                 string[] line = sr.ReadLine().Split("=".ToCharArray(), 2);
+
                 switch (line[0])
                 {
                     case "root":
@@ -99,11 +107,14 @@ namespace PDFiller
                             openPdfCheck.Checked = true;
                         }
                         break;
+                    case "":
+                        break;
                     default:
-                        return;
+                        sr.Close();
                         throw new Exception("options.ini was corrupted");
                 }
             }
+            sr.Close();
         }
 
         private void Form1_Shown(object sender, EventArgs e)
@@ -117,12 +128,6 @@ namespace PDFiller
             }
         }
 
-
-        internal DirectoryInfo rootDir = null;
-        internal DirectoryInfo workDir = null;
-        internal FileInfo zip = null;
-        internal FileInfo excel = null;
-        internal List<FileInfo> unzippedList = null;
 
 
 
@@ -384,12 +389,13 @@ namespace PDFiller
         {
 
             AutoFill();
-        //    if(autoFillCheck.Checked) //print 
         }
 
-        private void groupBox8_Enter(object sender, EventArgs e)
-        {
 
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            writeOptions();
         }
     }
 }
