@@ -108,6 +108,8 @@
     </Compile>
     <None Include="bin\Debug\PDFiller.exe.config" />
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\Order.datasource" />
+    <None Include="Properties\DataSources\Order.topper.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

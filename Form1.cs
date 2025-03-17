@@ -37,6 +37,7 @@ namespace PDFiller
         private FileInfo zip = null;
         private FileInfo excel = null;
         private List<FileInfo> unzippedList = null;
+        private List<Order> orders = null;
 
         private void writeOptions()
         {
@@ -172,7 +173,7 @@ namespace PDFiller
             tabControlMenu.SelectedTab = filePage;
             excelButton.PerformClick();
         }
-
+        internal bool newExcel = false;
         private void excelButton_Click(object sender, EventArgs e)
         {
             Menu menu = PDFiller.Menu.getInstance();
@@ -191,7 +192,9 @@ namespace PDFiller
                 case DialogResult.OK:
                     excelPathBox.Text = ofd.FileName;
                     excel = new FileInfo(ofd.FileName);
+                    newExcel = true;
                     textBox1.Text += "Found excel summary at:\r\n" + excel.FullName + "\r\n";
+                    updateTabIndex();
                     break;
                 default:
                     break;
@@ -199,6 +202,7 @@ namespace PDFiller
 
 
         }
+
 
         private bool manualSelect = false;
         private void unzippedButton_Click(object sender, EventArgs e)
@@ -245,20 +249,20 @@ namespace PDFiller
 
         private void emagBtn_Click(object sender, EventArgs e)
         {
-            Process.Start("https://emag.ro");
+            Process.Start("https://marketplace.emag.ro/order/list-xb");
 
         }
 
 
         private void CelBtn_Click(object sender, EventArgs e)
         {
-            Process.Start("https://cel.ro");
+            Process.Start("https://marketplace.cel.ro/vanzari/comenzi");
 
         }
 
         private void SamedayBtn_Click(object sender, EventArgs e)
         {
-            Process.Start("https://eawb.sameday.ro");
+            Process.Start("https://eawb.sameday.ro/awb");
 
         }
 
@@ -289,11 +293,6 @@ namespace PDFiller
 
         }
 
-        private void rootButton_MouseHover(object sender, EventArgs e)
-        {
-    
-
-        }
 
         private void workButton_Click(object sender, EventArgs e)
         {
@@ -313,7 +312,9 @@ namespace PDFiller
                     try
                     {
                         excel = menu.FindExcel(workDir);
+                        excelPathBox.Text = excel.FullName;
                         zip = menu.FindZipsUnzipped(workDir);
+                        zipPathBox.Text = zip.FullName;
                     }
                     catch (Exception ex)
                     {
@@ -359,8 +360,8 @@ namespace PDFiller
                     }
                 }
                 menu = PDFiller.Menu.getInstance();
-                saveDir = excel.DirectoryName;
-                List<Order> orders = menu.ReadExcel(excel);
+                orders = menu.ReadExcel(excel);
+                saveDir = unzippedList[0].DirectoryName;
                 int failed = 0;
                 string path = menu.WriteOnOrders(unzippedList, orders, saveDir,out failed,"CustomPDF");
                 if (failed > 0)
@@ -372,7 +373,7 @@ namespace PDFiller
                     textBox1.Text +="All were filled succesfully.\r\n";
                 }
 
-                textBox1.Text += "Merged order PDF was saved at location:\r\n" + saveDir + "\r\n" ;
+                textBox1.Text += "Merged order PDF was saved at location:\r\n" + path + "\r\n" ;
                 if (openPdfCheck.Checked)
                 {
                     textBox1.Text += "The pdf should open about now:\r\n";
@@ -402,7 +403,7 @@ namespace PDFiller
                 string extractedDir = null;
                 unzippedList = menu.UnzipArchive(zip,ref extractedDir);
                 textBox1.Text += "Found " + unzippedList.Count + " orders.\r\n";
-                List<Order>orders = menu.ReadExcel(excel);
+                orders = menu.ReadExcel(excel);
                 int failed;
                 string path = menu.WriteOnOrders(unzippedList, orders,extractedDir,out failed,"Merged&Filled");
                 if (failed > 0)
@@ -428,7 +429,6 @@ namespace PDFiller
 
         private void autoFillBtn_Click(object sender, EventArgs e)
         {
-
             AutoFill();
         }
 
@@ -439,12 +439,39 @@ namespace PDFiller
             writeOptions();
         }
 
-        private void openPdfCheck_CheckedChanged(object sender, EventArgs e)
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
         }
 
-        private void tabControlMenu_SelectedIndexChanged(object sender, EventArgs e)
+        private void dataGridView1_Paint(object sender, PaintEventArgs e)
+        {
+        }
+
+
+        private void updateTabIndex()
+        {
+            switch (tabControl2.SelectedIndex)
+            {
+                case 2:
+                    if (!newExcel || excel == null) return;
+                    newExcel = false;
+                    Menu menu = PDFiller.Menu.getInstance();
+                    this.orders = menu.ReadExcel(excel);
+                    menu.ReadExcelTable(orders, excelGridView.Rows);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+        private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            updateTabIndex(); 
+        }
+
+        private void excelTab_Click(object sender, EventArgs e)
         {
 
         }

@@ -13,6 +13,7 @@ using System.IO.Compression;
 using PdfSharpCore.Pdf.IO;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Data;
 
 
 
@@ -144,7 +145,8 @@ namespace PDFiller
             {
                 throw new FileNotFoundException("No excel file was found within the work directory!\r\n");
             }
-      //      form.excelPathBox.Text = excel.FullName;
+            //      form.excelPathBox.Text = excel.FullName;
+            form.newExcel = true;
             return excel;
         }
 
@@ -165,8 +167,9 @@ namespace PDFiller
                 int row = 2;
                 const string IDCOL = "A";
                 const string AWBCOL = "C";
-                const string NAMECOL = "D";
-                const string QNTCOL = "G";
+                const string NAMECOL = "T";
+                const string TNAMECOL = "D";
+                const string TQNTCOL = "G";
 
 
                 Order lastOrder = new Order();
@@ -179,19 +182,21 @@ namespace PDFiller
                     {
                         string awb = sheet.Cells[row, AWBCOL].Value2;
                         string name = sheet.Cells[row, NAMECOL].Value2;
-                        name = name.Remove(name.Length - 32);
-                        int qnt = (int)sheet.Cells[row, QNTCOL].Value2;
+                        string tname = sheet.Cells[row, TNAMECOL].Value2;
+
+                        tname = tname.Remove(tname.Length - 32);
+                        int qnt = (int)sheet.Cells[row, TQNTCOL].Value2;
 
 
                         if (id == lastOrder.id)
                         {
-                            lastOrder.toppere.Add(new Order.topper(name, qnt));
+                            lastOrder.toppere.Add(new Order.topper(tname, qnt));
                         }
                         else
                         {
                             if (lastOrder.id != "")
                                 orders.Add(lastOrder);
-                            lastOrder = new Order(id, awb, name, qnt);
+                            lastOrder = new Order(id, awb,name, tname, qnt);
 
                             //form.textBox1.Text += ++i + ". " + awb + ":\r\n" +
                             //    "-> " + qnt + ". " + name + "\r\n";
@@ -219,6 +224,35 @@ namespace PDFiller
                 throw ex;
             }
         }
+
+
+
+
+
+
+        internal void ReadExcelTable(List<Order> orders, DataGridViewRowCollection rows)
+        {
+            //    System.Data.DataTable dt = new System.Data.DataTable("Order Preview");
+            rows.Clear();
+            foreach (Order o in orders)
+            {
+                rows.Add( o.name, o.toppere[0].tName, o.toppere[0].tQuantity );
+                foreach (Order.topper tp in o.toppere.GetRange(1, o.toppere.Count - 1))
+                {
+                    rows.Add( null, tp.tName, tp.tQuantity);
+                }
+            }
+
+
+        }
+
+
+
+
+
+
+
+
         /// <summary>
         /// Extracts the archive per se.
         /// </summary>
