@@ -138,6 +138,7 @@
             this.openPdfCheck.TabIndex = 8;
             this.openPdfCheck.Text = "Open pdf in browser";
             this.openPdfCheck.UseVisualStyleBackColor = true;
+            this.openPdfCheck.CheckedChanged += new System.EventHandler(this.openPdfCheck_CheckedChanged);
             // 
             // PrintCheck
             // 
@@ -211,7 +212,7 @@
             groupBox6.Dock = System.Windows.Forms.DockStyle.Top;
             groupBox6.Location = new System.Drawing.Point(3, 3);
             groupBox6.Name = "groupBox6";
-            groupBox6.Size = new System.Drawing.Size(206, 439);
+            groupBox6.Size = new System.Drawing.Size(206, 361);
             groupBox6.TabIndex = 3;
             groupBox6.TabStop = false;
             groupBox6.Text = "Auto";
@@ -221,7 +222,7 @@
             this.autoFillBtn.BackColor = System.Drawing.SystemColors.ControlLight;
             this.autoFillBtn.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
             this.autoFillBtn.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.autoFillBtn.Location = new System.Drawing.Point(28, 200);
+            this.autoFillBtn.Location = new System.Drawing.Point(28, 161);
             this.autoFillBtn.Name = "autoFillBtn";
             this.autoFillBtn.Size = new System.Drawing.Size(151, 39);
             this.autoFillBtn.TabIndex = 8;
@@ -269,6 +270,7 @@
             this.tabControlMenu.SelectedIndex = 0;
             this.tabControlMenu.Size = new System.Drawing.Size(220, 537);
             this.tabControlMenu.TabIndex = 3;
+            this.tabControlMenu.SelectedIndexChanged += new System.EventHandler(this.tabControlMenu_SelectedIndexChanged);
             // 
             // AutoFillPage
             // 
@@ -597,7 +599,6 @@
             this.groupBox8.TabIndex = 5;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Paths";
-            this.groupBox8.Enter += new System.EventHandler(this.groupBox8_Enter);
             // 
             // rootTextBox
             // 
@@ -661,6 +662,7 @@
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "PDFiller";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Shown += new System.EventHandler(this.Form1_Shown);
             groupBox3.ResumeLayout(false);
