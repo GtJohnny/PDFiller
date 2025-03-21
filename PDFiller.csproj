@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>AppPDF.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib, Version=1.4.2.13, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>packages\SharpZipLib.1.4.2\lib\netstandard2.0\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -144,6 +147,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AppPDF.ico" />
     <Content Include="bin\Debug\PDFiller.exe" />
     <Content Include="bin\Debug\PDFiller.pdb" />
   </ItemGroup>
