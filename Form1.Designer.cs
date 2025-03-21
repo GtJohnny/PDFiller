@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.GroupBox groupBox3;
             System.Windows.Forms.Label label3;
             System.Windows.Forms.GroupBox groupBox6;
             System.Windows.Forms.Label label6;
             System.Windows.Forms.Label label4;
             System.Windows.Forms.Label label1;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.openPdfCheck = new System.Windows.Forms.CheckBox();
             this.PrintCheck = new System.Windows.Forms.CheckBox();
             this.autoFillCheck = new System.Windows.Forms.CheckBox();
@@ -67,14 +67,13 @@
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.excelTab = new System.Windows.Forms.TabPage();
             this.excelGridView = new System.Windows.Forms.DataGridView();
-            this.topperBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.numeCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.nameCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.qntCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.tabControl2 = new System.Windows.Forms.TabControl();
-            this.numeCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.nameCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.qntCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             groupBox3 = new System.Windows.Forms.GroupBox();
             label3 = new System.Windows.Forms.Label();
             groupBox6 = new System.Windows.Forms.GroupBox();
@@ -95,7 +94,6 @@
             this.tabPage5.SuspendLayout();
             this.excelTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.excelGridView)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.topperBindingSource)).BeginInit();
             this.tabPage3.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabControl2.SuspendLayout();
@@ -564,9 +562,35 @@
             this.excelGridView.TabIndex = 7;
             this.excelGridView.Paint += new System.Windows.Forms.PaintEventHandler(this.dataGridView1_Paint);
             // 
-            // topperBindingSource
+            // numeCol
             // 
-            this.topperBindingSource.DataSource = typeof(PDFiller.Order.topper);
+            this.numeCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.numeCol.HeaderText = "Name";
+            this.numeCol.Name = "numeCol";
+            this.numeCol.ReadOnly = true;
+            this.numeCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.numeCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.numeCol.Width = 48;
+            // 
+            // nameCol
+            // 
+            this.nameCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.nameCol.HeaderText = "Topper";
+            this.nameCol.Name = "nameCol";
+            this.nameCol.ReadOnly = true;
+            this.nameCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.nameCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // qntCol
+            // 
+            this.qntCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.qntCol.HeaderText = "Quantity";
+            this.qntCol.MinimumWidth = 20;
+            this.qntCol.Name = "qntCol";
+            this.qntCol.ReadOnly = true;
+            this.qntCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.qntCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.qntCol.Width = 62;
             // 
             // tabPage3
             // 
@@ -616,36 +640,6 @@
             this.tabControl2.TabIndex = 4;
             this.tabControl2.SelectedIndexChanged += new System.EventHandler(this.tabControl2_SelectedIndexChanged);
             // 
-            // numeCol
-            // 
-            this.numeCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.numeCol.HeaderText = "Name";
-            this.numeCol.Name = "numeCol";
-            this.numeCol.ReadOnly = true;
-            this.numeCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.numeCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.numeCol.Width = 48;
-            // 
-            // nameCol
-            // 
-            this.nameCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.nameCol.HeaderText = "Topper";
-            this.nameCol.Name = "nameCol";
-            this.nameCol.ReadOnly = true;
-            this.nameCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.nameCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // qntCol
-            // 
-            this.qntCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.qntCol.HeaderText = "Quantity";
-            this.qntCol.MinimumWidth = 20;
-            this.qntCol.Name = "qntCol";
-            this.qntCol.ReadOnly = true;
-            this.qntCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.qntCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.qntCol.Width = 62;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -657,6 +651,7 @@
             this.Controls.Add(this.tabControl2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.HelpButton = true;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -681,7 +676,6 @@
             this.tabPage5.PerformLayout();
             this.excelTab.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.excelGridView)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.topperBindingSource)).EndInit();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
             this.tabPage1.ResumeLayout(false);
@@ -727,7 +721,6 @@
         private System.Windows.Forms.TabPage tabPage1;
         internal System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TabControl tabControl2;
-        private System.Windows.Forms.BindingSource topperBindingSource;
         internal System.Windows.Forms.DataGridView excelGridView;
         private System.Windows.Forms.DataGridViewTextBoxColumn numeCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn nameCol;

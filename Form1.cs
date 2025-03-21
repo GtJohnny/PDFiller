@@ -194,7 +194,8 @@ namespace PDFiller
                     excel = new FileInfo(ofd.FileName);
                     newExcel = true;
                     textBox1.Text += "Found excel summary at:\r\n" + excel.FullName + "\r\n";
-                    updateTabIndex();
+                    if(tabControl2.SelectedIndex==2)
+                        updateTabIndex();
                     break;
                 default:
                     break;
@@ -394,16 +395,20 @@ namespace PDFiller
                 Menu menu = PDFiller.Menu.getInstance(this);
                 workDir = menu.FindWorkDir(rootDir);
                 textBox1.Text += "Found work directory at:\r\n" + workDir.FullName + "\r\n";
-                excel = menu.FindExcel(workDir);
-                textBox1.Text += "Found excel file at:\r\n" + excel.FullName + "\r\n";
-                excelPathBox.Text = excel.FullName;
                 zip = menu.FindZipsUnzipped(workDir);
                 textBox1.Text += "Found zip archive at:\r\n" + zip.FullName + "\r\n";
                 zipPathBox.Text = zip.FullName;
                 string extractedDir = null;
-                unzippedList = menu.UnzipArchive(zip,ref extractedDir);
+                unzippedList = menu.UnzipArchive(zip, ref extractedDir);
                 textBox1.Text += "Found " + unzippedList.Count + " orders.\r\n";
-                orders = menu.ReadExcel(excel);
+                if (!newExcel || orders==null)
+                {
+                    excel = menu.FindExcel(workDir);
+                    textBox1.Text += "Found excel file at:\r\n" + excel.FullName + "\r\n";
+                    excelPathBox.Text = excel.FullName;
+                    orders = menu.ReadExcel(excel);
+                }
+
                 int failed;
                 string path = menu.WriteOnOrders(unzippedList, orders,extractedDir,out failed,"Merged&Filled");
                 if (failed > 0)
@@ -451,17 +456,13 @@ namespace PDFiller
 
         private void updateTabIndex()
         {
-            switch (tabControl2.SelectedIndex)
+            if (tabControl2.SelectedIndex == 2)
             {
-                case 2:
-                    if (!newExcel || excel == null) return;
-                    newExcel = false;
-                    Menu menu = PDFiller.Menu.getInstance();
-                    this.orders = menu.ReadExcel(excel);
-                    menu.ReadExcelTable(orders, excelGridView.Rows);
-                    break;
-                default:
-                    break;
+                if (!newExcel || excel == null) return;
+                newExcel = false;
+                Menu menu = PDFiller.Menu.getInstance();
+                this.orders = menu.ReadExcel(excel);
+                menu.ReadExcelTable(orders, excelGridView.Rows);
             }
         }
 
