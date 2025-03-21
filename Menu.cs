@@ -141,7 +141,7 @@ namespace PDFiller
             {
                 excel = workDir.GetFiles().Where(o => o.Extension == ".xlsx").OrderByDescending(o => o.CreationTime).ToArray().First();
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 throw new FileNotFoundException("No excel file was found within the work directory!\r\n");
             }
