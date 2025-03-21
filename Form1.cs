@@ -22,11 +22,12 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 
 
+
 namespace PDFiller
 {
-   internal partial class Form1 : Form
+    internal partial class Form1 : Form
     {
-       
+
         public Form1()
         {
             InitializeComponent();
@@ -38,6 +39,7 @@ namespace PDFiller
         private FileInfo excel = null;
         private List<FileInfo> unzippedList = null;
         private List<Order> orders = null;
+        private string mergedPath = null;
 
         private void writeOptions()
         {
@@ -52,14 +54,15 @@ namespace PDFiller
         private void Form1_Load(object sender, EventArgs e)
         {
             StreamReader sr = null;
-            if(File.Exists("options.ini"))
+            if (File.Exists("options.ini"))
             {
                 sr = new StreamReader(new FileStream("options.ini", FileMode.Open, FileAccess.Read));
             }
             else
             {
                 string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\AWB";
-                if (!Directory.Exists(path)) {
+                if (!Directory.Exists(path))
+                {
                     Directory.CreateDirectory(path);
                 }
                 rootDir = new DirectoryInfo(path);
@@ -67,7 +70,8 @@ namespace PDFiller
                 writeOptions();
                 return;
             }
-            while (!sr.EndOfStream) {
+            while (!sr.EndOfStream)
+            {
                 string[] line = sr.ReadLine().Split("=".ToCharArray(), 2);
 
                 switch (line[0])
@@ -75,24 +79,24 @@ namespace PDFiller
                     case "root":
                         rootDir = new DirectoryInfo(line[1]);
                         textBox1.Text += "Root directory found at:\r\n" + line[1] + "\r\n";
-                        rootTextBox.Text=line[1];
+                        rootTextBox.Text = line[1];
                         break;
                     case "autofill":
                         bool fill = true;
-                        if (Boolean.TryParse(line[1],out fill))
+                        if (Boolean.TryParse(line[1], out fill))
                         {
                             autoFillCheck.Checked = fill;
                         }
                         else
                         {
-                            autoFillCheck.Checked= true;
+                            autoFillCheck.Checked = true;
                         }
                         break;
                     case "print":
                         bool print = true;
                         if (Boolean.TryParse(line[1], out print))
                         {
-                            PrintCheck.Checked =print;
+                            PrintCheck.Checked = print;
                         }
                         else
                         {
@@ -151,11 +155,10 @@ namespace PDFiller
             {
                 case DialogResult.OK:
                     manualSelect = false;
-                    zipPathBox.Text  = ofd.FileName;
+                    zipPathBox.Text = ofd.FileName;
                     zip = new FileInfo(ofd.FileName);
                     textBox1.Text += "Found zip archive at:\r\n" + zip.FullName + "\r\n";
                     zipLabel.Font = new System.Drawing.Font(zipLabel.Font, FontStyle.Regular);
-                //    f.Visible = false;
                     break;
                 default:
                     break;
@@ -178,7 +181,8 @@ namespace PDFiller
         {
             Menu menu = PDFiller.Menu.getInstance();
 
-            OpenFileDialog ofd = new OpenFileDialog() {
+            OpenFileDialog ofd = new OpenFileDialog()
+            {
                 Filter = "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*",
                 Multiselect = false,
                 Title = "Please select order summary excel file.",
@@ -186,7 +190,7 @@ namespace PDFiller
                 InitialDirectory = rootDir.FullName,
                 RestoreDirectory = true,
             };
-      
+
             switch (ofd.ShowDialog())
             {
                 case DialogResult.OK:
@@ -194,7 +198,7 @@ namespace PDFiller
                     excel = new FileInfo(ofd.FileName);
                     newExcel = true;
                     textBox1.Text += "Found excel summary at:\r\n" + excel.FullName + "\r\n";
-                    if(tabControl2.SelectedIndex==2)
+                    if (tabControl2.SelectedIndex == 2)
                         updateTabIndex();
                     break;
                 default:
@@ -218,7 +222,7 @@ namespace PDFiller
                 Multiselect = true,
                 Title = "Please select all your unzipped files.",
                 DefaultExt = ".pdf",
-              //  InitialDirectory = envi.FullName,
+                //  InitialDirectory = envi.FullName,
                 RestoreDirectory = true
             };
 
@@ -226,7 +230,7 @@ namespace PDFiller
             {
                 case DialogResult.OK:
                     manualSelect = true;
-                    foreach(string fname in ofd.FileNames)
+                    foreach (string fname in ofd.FileNames)
                     {
                         FileInfo t = new FileInfo(fname);
                         unzippedList.Add(t);
@@ -237,8 +241,8 @@ namespace PDFiller
                     zipLabel.Text = unzippedList.Count + " file";
                     if (unzippedList.Count > 1)
                     {
-                        zipPathBox.Text+=" + " + (unzippedList.Count - 1) + " others";
-                        zipLabel.Text +="s";
+                        zipPathBox.Text += " + " + (unzippedList.Count - 1) + " others";
+                        zipLabel.Text += "s";
 
                     }
                     break;
@@ -272,19 +276,19 @@ namespace PDFiller
             FolderBrowserDialog ofd = new FolderBrowserDialog();
             ofd.RootFolder = Environment.SpecialFolder.MyComputer;
             ofd.Description = "This where you'd make folders daily:\r\n" +
-                Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+"\\AWB\r\n" +
+                Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\AWB\r\n" +
                 "and today you'd create:" +
-                DateTime.Now.Date.ToString("dd.MM.yyyy")+"\\your pdfs.";
+                DateTime.Now.Date.ToString("dd.MM.yyyy") + "\\your pdfs.";
             ofd.ShowNewFolderButton = true;
 
-         
+
             switch (ofd.ShowDialog())
             {
                 case DialogResult.OK:
                     rootDir = new DirectoryInfo(ofd.SelectedPath);
                     textBox1.Text += "New root folder set at:\r\n" + (rootDir.FullName) + "\r\n";
                     rootTextBox.Text = ofd.SelectedPath;
-                    StreamWriter sw = new StreamWriter(new FileStream("options.ini", FileMode.OpenOrCreate,FileAccess.Write));
+                    StreamWriter sw = new StreamWriter(new FileStream("options.ini", FileMode.OpenOrCreate, FileAccess.Write));
                     sw.WriteLine("root=" + ofd.SelectedPath);
                     sw.Close();
                     break;
@@ -299,8 +303,8 @@ namespace PDFiller
         {
             Menu menu = PDFiller.Menu.getInstance();
             FolderBrowserDialog ofd = new FolderBrowserDialog();
-            ofd.Description = "This is where we will look the .zip and .excel files today!!\r\n"+
-                              "Either use this or select said files manually.\r\n"+
+            ofd.Description = "This is where we will look the .zip and .excel files today!!\r\n" +
+                              "Either use this or select said files manually.\r\n" +
                               "Press \"Fill&Merge\" when you're done";
             ofd.ShowNewFolderButton = true;
 
@@ -338,19 +342,20 @@ namespace PDFiller
                     throw new FileNotFoundException("Excel could not be found.");
                 }
                 Menu menu = null; ;
-                string saveDir =null;
+                string saveDir = null;
                 if (!manualSelect)
                 {
-                    if(zip == null|| !zip.Exists)
+                    if (zip == null || !zip.Exists)
                     {
                         throw new FileNotFoundException("Zip archive could not be found.");
                     }
                     menu = PDFiller.Menu.getInstance();
 
-                    unzippedList = menu.UnzipArchive(zip,ref saveDir);
+                    unzippedList = menu.UnzipArchive(zip, ref saveDir);
                     textBox1.Text += "Extracted archive: " + zip.Name + "\r\n";
                     textBox1.Text += "Extracted " + unzippedList.Count + " files.\r\n";
-;               }
+                    ;
+                }
 
                 foreach (FileInfo pdf in unzippedList)
                 {
@@ -364,23 +369,25 @@ namespace PDFiller
                 orders = menu.ReadExcel(excel);
                 saveDir = unzippedList[0].DirectoryName;
                 int failed = 0;
-                string path = menu.WriteOnOrders(unzippedList, orders, saveDir,out failed,"CustomPDF");
+                string path = mergedPath = menu.WriteOnOrders(unzippedList, orders, saveDir, out failed, "CustomPDF");
                 if (failed > 0)
                 {
                     textBox1.Text += failed + " files failed being filled.\r\n";
                 }
                 else
                 {
-                    textBox1.Text +="All were filled succesfully.\r\n";
+                    textBox1.Text += "All were filled succesfully.\r\n";
                 }
-
-                textBox1.Text += "Merged order PDF was saved at location:\r\n" + path + "\r\n" ;
+                textBox1.Text += "Merged order PDF was saved at location:\r\n" + path + "\r\n";
+                if (tabControl2.SelectedIndex == 1) updateTabIndex();
                 if (openPdfCheck.Checked)
                 {
                     textBox1.Text += "The pdf should open about now:\r\n";
                     Process.Start(path);
                 }
-            }catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 textBox1.Text += ex.Message + "\r\n";
                 return;
             }
@@ -401,7 +408,7 @@ namespace PDFiller
                 string extractedDir = null;
                 unzippedList = menu.UnzipArchive(zip, ref extractedDir);
                 textBox1.Text += "Found " + unzippedList.Count + " orders.\r\n";
-                if (!newExcel || orders==null)
+                if (!newExcel || orders == null)
                 {
                     excel = menu.FindExcel(workDir);
                     textBox1.Text += "Found excel file at:\r\n" + excel.FullName + "\r\n";
@@ -410,7 +417,7 @@ namespace PDFiller
                 }
 
                 int failed;
-                string path = menu.WriteOnOrders(unzippedList, orders,extractedDir,out failed,"Merged&Filled");
+                string path = mergedPath = menu.WriteOnOrders(unzippedList, orders, extractedDir, out failed, "Merged&Filled");
                 if (failed > 0)
                 {
                     textBox1.Text += failed + " files failed being filled, please check them.\r\n";
@@ -435,6 +442,7 @@ namespace PDFiller
         private void autoFillBtn_Click(object sender, EventArgs e)
         {
             AutoFill();
+
         }
 
 
@@ -442,6 +450,7 @@ namespace PDFiller
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             writeOptions();
+            if (tabControl2.SelectedIndex == 1) updateTabIndex();
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -456,23 +465,51 @@ namespace PDFiller
 
         private void updateTabIndex()
         {
-            if (tabControl2.SelectedIndex == 2)
+            switch (tabControl2.SelectedIndex)
             {
-                if (!newExcel || excel == null) return;
-                newExcel = false;
-                Menu menu = PDFiller.Menu.getInstance();
-                this.orders = menu.ReadExcel(excel);
-                menu.ReadExcelTable(orders, excelGridView.Rows);
+
+                
+                case 1:
+                    if (mergedPath == null || (chromiumWebBrowser1.Address!= null && mergedPath != chromiumWebBrowser1.Address)) return;
+                    chromiumWebBrowser1.LoadUrlAsync(mergedPath);
+                    break;
+
+                
+                case 2:
+                    if (!newExcel || excel == null) return;
+                    newExcel = false;
+                    Menu menu = PDFiller.Menu.getInstance();
+                    this.orders = menu.ReadExcel(excel);
+                    menu.ReadExcelTable(orders, excelGridView.Rows);
+                    break;
+                default:
+                    return;
             }
         }
 
 
         private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            updateTabIndex(); 
+            updateTabIndex();
         }
 
         private void excelTab_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog of = new OpenFileDialog();
+            if(DialogResult.OK == of.ShowDialog())
+            {
+                chromiumWebBrowser1.LoadUrl(@of.FileName);
+
+
+            }
+        }
+
+        private void groupBox8_Enter(object sender, EventArgs e)
         {
 
         }
