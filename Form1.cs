@@ -176,7 +176,7 @@ namespace PDFiller
             tabControlMenu.SelectedTab = filePage;
             excelButton.PerformClick();
         }
-        internal bool newExcel = false;
+     //   internal bool newExcel = false;
         private void excelButton_Click(object sender, EventArgs e)
         {
             Menu menu = PDFiller.Menu.getInstance();
@@ -195,16 +195,19 @@ namespace PDFiller
             {
                 case DialogResult.OK:
                     excelPathBox.Text = ofd.FileName;
-                    excel = new FileInfo(ofd.FileName);
-                    newExcel = true;
+
+
+                    this.excel = new FileInfo(ofd.FileName);
+                //    newExcel = true;
                     textBox1.Text += "Found excel summary at:\r\n" + excel.FullName + "\r\n";
-                    if (tabControl2.SelectedIndex == 2)
-                        updateTabIndex();
+                    this.orders = menu.ReadExcel(excel);
+                    excelGridView.Rows.Clear();
+                    summaryGridView.Rows.Clear();
+                    updateTabIndex();
                     break;
                 default:
                     break;
             }
-
 
         }
 
@@ -318,8 +321,18 @@ namespace PDFiller
                     {
                         excel = menu.FindExcel(workDir);
                         excelPathBox.Text = excel.FullName;
+
+                        excelGridView.Rows.Clear();
+                        summaryGridView.Rows.Clear();
+
+
+
                         zip = menu.FindZipsUnzipped(workDir);
                         zipPathBox.Text = zip.FullName;
+                        
+
+
+
                     }
                     catch (Exception ex)
                     {
@@ -354,7 +367,6 @@ namespace PDFiller
                     unzippedList = menu.UnzipArchive(zip, ref saveDir);
                     textBox1.Text += "Extracted archive: " + zip.Name + "\r\n";
                     textBox1.Text += "Extracted " + unzippedList.Count + " files.\r\n";
-                    ;
                 }
 
                 foreach (FileInfo pdf in unzippedList)
@@ -379,7 +391,8 @@ namespace PDFiller
                     textBox1.Text += "All were filled succesfully.\r\n";
                 }
                 textBox1.Text += "Merged order PDF was saved at location:\r\n" + path + "\r\n";
-                if (tabControl2.SelectedIndex == 1) updateTabIndex();
+            //    if (tabControl2.SelectedIndex == 1) updateTabIndex();
+
                 if (openPdfCheck.Checked)
                 {
                     textBox1.Text += "The pdf should open about now:\r\n";
@@ -408,13 +421,20 @@ namespace PDFiller
                 string extractedDir = null;
                 unzippedList = menu.UnzipArchive(zip, ref extractedDir);
                 textBox1.Text += "Found " + unzippedList.Count + " orders.\r\n";
-                if (!newExcel || orders == null)
-                {
-                    excel = menu.FindExcel(workDir);
-                    textBox1.Text += "Found excel file at:\r\n" + excel.FullName + "\r\n";
-                    excelPathBox.Text = excel.FullName;
-                    orders = menu.ReadExcel(excel);
-                }
+
+                excel = menu.FindExcel(workDir);
+                excelGridView.Rows.Clear();
+                summaryGridView.Rows.Clear();
+
+
+                textBox1.Text += "Found excel file at:\r\n" + excel.FullName + "\r\n";
+                excelPathBox.Text = excel.FullName;
+                orders = menu.ReadExcel(excel);
+                updateTabIndex(false);
+
+
+
+
 
                 int failed;
                 string path = mergedPath = menu.WriteOnOrders(unzippedList, orders, extractedDir, out failed, "Merged&Filled");
@@ -450,7 +470,8 @@ namespace PDFiller
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             writeOptions();
-            if (tabControl2.SelectedIndex == 1) updateTabIndex();
+         //   if (tabControl2.SelectedIndex == 1) updateTabIndex(); 
+         //why tf did i put that there?
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -463,24 +484,66 @@ namespace PDFiller
         }
 
 
-        private void updateTabIndex()
+        private void updateTabIndex(bool readOrders=false)
         {
             switch (tabControl2.SelectedIndex)
             {
-
-                
                 case 1:
                     if (mergedPath == null || (chromiumWebBrowser1.Address!= null && mergedPath != chromiumWebBrowser1.Address)) return;
                     chromiumWebBrowser1.LoadUrlAsync(mergedPath);
                     break;
-
-                
                 case 2:
-                    if (!newExcel || excel == null) return;
-                    newExcel = false;
-                    Menu menu = PDFiller.Menu.getInstance();
-                    this.orders = menu.ReadExcel(excel);
-                    menu.ReadExcelTable(orders, excelGridView.Rows);
+                    if(this.excel == null || excelGridView.Rows.Count > 0) return;
+                    //      newExcel = false;
+                    if (readOrders)
+                    {
+                        Menu menu = PDFiller.Menu.getInstance();
+                        this.orders = menu.ReadExcel(excel);
+                    }
+                    var rows = excelGridView.Rows;
+                    foreach (Order o in orders)
+                    {
+                        rows.Add(o.name, o.toppere[0].tName, o.toppere[0].tQuantity);
+                        foreach (Order.topper tp in o.toppere.GetRange(1, o.toppere.Count - 1))
+                        {
+                            rows.Add(null, tp.tName, tp.tQuantity);
+                        }
+                    }
+                    break;
+                case 3:
+
+                    if (this.excel == null || summaryGridView.Rows.Count > 0 ) return;
+                    //     newExcel = false;
+                    if (readOrders)
+                    {
+                        Menu menu = PDFiller.Menu.getInstance();
+                        this.orders = menu.ReadExcel(excel);
+                    }
+                    rows = summaryGridView.Rows;
+
+                    Dictionary<string, int> dict = new Dictionary<string, int>();
+
+                    foreach (Order o in orders)
+                    {
+                        foreach (Order.topper tp in o.toppere.GetRange(1, o.toppere.Count - 1))
+                        {
+                            if (dict.ContainsKey(tp.tName))
+                            {
+                                dict[tp.tName] += tp.tQuantity;
+
+                            }
+                            else
+                            {
+                                dict[tp.tName] = tp.tQuantity;
+                            }
+                        }
+                    }
+                    foreach(var pair in dict)
+                    {
+                        summaryGridView.Rows.Add(pair.Key, pair.Value);
+                    }
+                    summaryGridView.Sort(summaryGridView.Columns[3], ListSortDirection.Descending);
+
                     break;
                 default:
                     return;
@@ -490,7 +553,7 @@ namespace PDFiller
 
         private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            updateTabIndex();
+            updateTabIndex(true);
         }
 
         private void excelTab_Click(object sender, EventArgs e)
@@ -498,16 +561,7 @@ namespace PDFiller
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog of = new OpenFileDialog();
-            if(DialogResult.OK == of.ShowDialog())
-            {
-                chromiumWebBrowser1.LoadUrl(@of.FileName);
-
-
-            }
-        }
+   
 
         private void groupBox8_Enter(object sender, EventArgs e)
         {
