@@ -242,8 +242,6 @@ namespace PDFiller
                     rows.Add( null, tp.tName, tp.tQuantity);
                 }
             }
-
-
         }
 
 

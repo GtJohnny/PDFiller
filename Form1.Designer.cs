@@ -32,7 +32,6 @@
             System.Windows.Forms.Label label3;
             System.Windows.Forms.GroupBox groupBox6;
             System.Windows.Forms.Label label6;
-            System.Windows.Forms.Label label4;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.openPdfCheck = new System.Windows.Forms.CheckBox();
             this.PrintCheck = new System.Windows.Forms.CheckBox();
@@ -64,6 +63,9 @@
             this.zipPathBox = new System.Windows.Forms.TextBox();
             this.zipLabel = new System.Windows.Forms.Label();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.summaryGridView = new System.Windows.Forms.DataGridView();
+            this.qntColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.topperColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.excelTab = new System.Windows.Forms.TabPage();
             this.excelGridView = new System.Windows.Forms.DataGridView();
             this.numeCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -78,7 +80,6 @@
             label3 = new System.Windows.Forms.Label();
             groupBox6 = new System.Windows.Forms.GroupBox();
             label6 = new System.Windows.Forms.Label();
-            label4 = new System.Windows.Forms.Label();
             groupBox3.SuspendLayout();
             groupBox6.SuspendLayout();
             this.tabControlMenu.SuspendLayout();
@@ -91,6 +92,7 @@
             this.groupBox2.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.tabPage5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.summaryGridView)).BeginInit();
             this.excelTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.excelGridView)).BeginInit();
             this.tabPage3.SuspendLayout();
@@ -192,16 +194,6 @@
             label6.Size = new System.Drawing.Size(97, 23);
             label6.TabIndex = 5;
             label6.Text = "Root path:";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Font = new System.Drawing.Font("Monotype Corsiva", 20.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label4.Location = new System.Drawing.Point(188, 230);
-            label4.Name = "label4";
-            label4.Size = new System.Drawing.Size(280, 33);
-            label4.TabIndex = 6;
-            label4.Text = "TO BE IMPLEMENTED";
             // 
             // tabControlMenu
             // 
@@ -511,21 +503,56 @@
             // 
             // tabPage5
             // 
-            this.tabPage5.Controls.Add(label4);
+            this.tabPage5.Controls.Add(this.summaryGridView);
+            this.tabPage5.Font = new System.Drawing.Font("Times New Roman", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabPage5.Location = new System.Drawing.Point(4, 26);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(668, 579);
+            this.tabPage5.Size = new System.Drawing.Size(622, 674);
             this.tabPage5.TabIndex = 3;
             this.tabPage5.Text = "Summary";
+            // 
+            // summaryGridView
+            // 
+            this.summaryGridView.AllowUserToAddRows = false;
+            this.summaryGridView.AllowUserToDeleteRows = false;
+            this.summaryGridView.AllowUserToResizeColumns = false;
+            this.summaryGridView.AllowUserToResizeRows = false;
+            this.summaryGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.summaryGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.summaryGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.qntColumn,
+            this.topperColumn});
+            this.summaryGridView.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.summaryGridView.Location = new System.Drawing.Point(0, 0);
+            this.summaryGridView.Name = "summaryGridView";
+            this.summaryGridView.ReadOnly = true;
+            this.summaryGridView.ShowCellErrors = false;
+            this.summaryGridView.Size = new System.Drawing.Size(476, 561);
+            this.summaryGridView.TabIndex = 0;
+            // 
+            // qntColumn
+            // 
+            this.qntColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.qntColumn.HeaderText = "Quantity";
+            this.qntColumn.Name = "qntColumn";
+            this.qntColumn.ReadOnly = true;
+            this.qntColumn.Width = 80;
+            // 
+            // topperColumn
+            // 
+            this.topperColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.topperColumn.HeaderText = "Topper";
+            this.topperColumn.Name = "topperColumn";
+            this.topperColumn.ReadOnly = true;
             // 
             // excelTab
             // 
             this.excelTab.Controls.Add(this.excelGridView);
-            this.excelTab.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.excelTab.Font = new System.Drawing.Font("Times New Roman", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.excelTab.Location = new System.Drawing.Point(4, 26);
             this.excelTab.Name = "excelTab";
             this.excelTab.Padding = new System.Windows.Forms.Padding(3);
-            this.excelTab.Size = new System.Drawing.Size(668, 579);
+            this.excelTab.Size = new System.Drawing.Size(622, 674);
             this.excelTab.TabIndex = 2;
             this.excelTab.Text = "ExcelPreview";
             this.excelTab.UseVisualStyleBackColor = true;
@@ -542,13 +569,13 @@
             this.numeCol,
             this.nameCol,
             this.qntCol});
-            this.excelGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.excelGridView.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.excelGridView.Location = new System.Drawing.Point(3, 3);
             this.excelGridView.Name = "excelGridView";
             this.excelGridView.ReadOnly = true;
             this.excelGridView.RowTemplate.ReadOnly = true;
             this.excelGridView.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.excelGridView.Size = new System.Drawing.Size(662, 573);
+            this.excelGridView.Size = new System.Drawing.Size(473, 547);
             this.excelGridView.TabIndex = 7;
             this.excelGridView.Paint += new System.Windows.Forms.PaintEventHandler(this.dataGridView1_Paint);
             // 
@@ -560,7 +587,7 @@
             this.numeCol.ReadOnly = true;
             this.numeCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.numeCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.numeCol.Width = 48;
+            this.numeCol.Width = 44;
             // 
             // nameCol
             // 
@@ -580,7 +607,7 @@
             this.qntCol.ReadOnly = true;
             this.qntCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.qntCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.qntCol.Width = 62;
+            this.qntCol.Width = 61;
             // 
             // tabPage3
             // 
@@ -608,7 +635,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 26);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(668, 579);
+            this.tabPage1.Size = new System.Drawing.Size(622, 674);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "WorkflowStatus";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -621,7 +648,7 @@
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(662, 573);
+            this.textBox1.Size = new System.Drawing.Size(616, 668);
             this.textBox1.TabIndex = 0;
             // 
             // tabControl2
@@ -671,7 +698,7 @@
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
             this.tabPage5.ResumeLayout(false);
-            this.tabPage5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.summaryGridView)).EndInit();
             this.excelTab.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.excelGridView)).EndInit();
             this.tabPage3.ResumeLayout(false);
@@ -723,6 +750,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn qntCol;
         internal System.Windows.Forms.TextBox textBox1;
         private CefSharp.WinForms.ChromiumWebBrowser chromiumWebBrowser1;
+        private System.Windows.Forms.DataGridView summaryGridView;
+        private System.Windows.Forms.DataGridViewTextBoxColumn qntColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn topperColumn;
     }
 }
 
