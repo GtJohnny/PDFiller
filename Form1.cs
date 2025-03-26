@@ -198,10 +198,12 @@ namespace PDFiller
 
 
                     this.excel = new FileInfo(ofd.FileName);
+                //    newExcel = true;
                     textBox1.Text += "Found excel summary at:\r\n" + excel.FullName + "\r\n";
+                    this.orders = menu.ReadExcel(excel);
                     excelGridView.Rows.Clear();
                     summaryGridView.Rows.Clear();
-                    updateTabIndex(true);
+                    updateTabIndex();
                     break;
                 default:
                     break;
@@ -322,7 +324,7 @@ namespace PDFiller
 
                         excelGridView.Rows.Clear();
                         summaryGridView.Rows.Clear();
-                        updateTabIndex(true);
+
 
 
                         zip = menu.FindZipsUnzipped(workDir);
@@ -389,7 +391,7 @@ namespace PDFiller
                     textBox1.Text += "All were filled succesfully.\r\n";
                 }
                 textBox1.Text += "Merged order PDF was saved at location:\r\n" + path + "\r\n";
-                if (tabControl2.SelectedIndex == 1 ) updateTabIndex();
+            //    if (tabControl2.SelectedIndex == 1) updateTabIndex();
 
                 if (openPdfCheck.Checked)
                 {
@@ -492,6 +494,7 @@ namespace PDFiller
                     break;
                 case 2:
                     if(this.excel == null || excelGridView.Rows.Count > 0) return;
+                    //      newExcel = false;
                     if (readOrders)
                     {
                         Menu menu = PDFiller.Menu.getInstance();
@@ -510,6 +513,7 @@ namespace PDFiller
                 case 3:
 
                     if (this.excel == null || summaryGridView.Rows.Count > 0 ) return;
+                    //     newExcel = false;
                     if (readOrders)
                     {
                         Menu menu = PDFiller.Menu.getInstance();
@@ -521,7 +525,7 @@ namespace PDFiller
 
                     foreach (Order o in orders)
                     {
-                        foreach (Order.topper tp in o.toppere)
+                        foreach (Order.topper tp in o.toppere.GetRange(1, o.toppere.Count - 1))
                         {
                             if (dict.ContainsKey(tp.tName))
                             {
@@ -538,7 +542,7 @@ namespace PDFiller
                     {
                         summaryGridView.Rows.Add(pair.Key, pair.Value);
                     }
-                    summaryGridView.Sort(summaryGridView.Columns[1], ListSortDirection.Descending);
+                    summaryGridView.Sort(summaryGridView.Columns[3], ListSortDirection.Descending);
 
                     break;
                 default:
@@ -560,11 +564,6 @@ namespace PDFiller
    
 
         private void groupBox8_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void groupBox4_Enter(object sender, EventArgs e)
         {
 
         }

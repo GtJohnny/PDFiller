@@ -146,7 +146,7 @@ namespace PDFiller
                 throw new FileNotFoundException("No excel file was found within the work directory!\r\n");
             }
             //      form.excelPathBox.Text = excel.FullName;
-//form.newExcel = true;
+            form.newExcel = true;
             return excel;
         }
 
