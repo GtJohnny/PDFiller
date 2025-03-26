@@ -63,19 +63,19 @@
             this.zipPathBox = new System.Windows.Forms.TextBox();
             this.zipLabel = new System.Windows.Forms.Label();
             this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.summaryGridView = new System.Windows.Forms.DataGridView();
-            this.qntColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.topperColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.excelTab = new System.Windows.Forms.TabPage();
-            this.excelGridView = new System.Windows.Forms.DataGridView();
-            this.numeCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.nameCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.qntCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.chromiumWebBrowser1 = new CefSharp.WinForms.ChromiumWebBrowser();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.tabControl2 = new System.Windows.Forms.TabControl();
+            this.summaryGridView = new System.Windows.Forms.DataGridView();
+            this.topperColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.qntColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.qntCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.nameCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.numeCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.excelGridView = new System.Windows.Forms.DataGridView();
             groupBox3 = new System.Windows.Forms.GroupBox();
             label3 = new System.Windows.Forms.Label();
             groupBox6 = new System.Windows.Forms.GroupBox();
@@ -92,12 +92,12 @@
             this.groupBox2.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.tabPage5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.summaryGridView)).BeginInit();
             this.excelTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.excelGridView)).BeginInit();
             this.tabPage3.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabControl2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.summaryGridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.excelGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox3
@@ -293,6 +293,7 @@
             this.groupBox4.TabIndex = 1;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Files";
+            this.groupBox4.Enter += new System.EventHandler(this.groupBox4_Enter);
             // 
             // excelButton
             // 
@@ -511,40 +512,6 @@
             this.tabPage5.TabIndex = 3;
             this.tabPage5.Text = "Summary";
             // 
-            // summaryGridView
-            // 
-            this.summaryGridView.AllowUserToAddRows = false;
-            this.summaryGridView.AllowUserToDeleteRows = false;
-            this.summaryGridView.AllowUserToResizeColumns = false;
-            this.summaryGridView.AllowUserToResizeRows = false;
-            this.summaryGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.summaryGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.summaryGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.qntColumn,
-            this.topperColumn});
-            this.summaryGridView.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.summaryGridView.Location = new System.Drawing.Point(0, 0);
-            this.summaryGridView.Name = "summaryGridView";
-            this.summaryGridView.ReadOnly = true;
-            this.summaryGridView.ShowCellErrors = false;
-            this.summaryGridView.Size = new System.Drawing.Size(476, 561);
-            this.summaryGridView.TabIndex = 0;
-            // 
-            // qntColumn
-            // 
-            this.qntColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.qntColumn.HeaderText = "Quantity";
-            this.qntColumn.Name = "qntColumn";
-            this.qntColumn.ReadOnly = true;
-            this.qntColumn.Width = 80;
-            // 
-            // topperColumn
-            // 
-            this.topperColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.topperColumn.HeaderText = "Topper";
-            this.topperColumn.Name = "topperColumn";
-            this.topperColumn.ReadOnly = true;
-            // 
             // excelTab
             // 
             this.excelTab.Controls.Add(this.excelGridView);
@@ -557,57 +524,6 @@
             this.excelTab.Text = "ExcelPreview";
             this.excelTab.UseVisualStyleBackColor = true;
             this.excelTab.Click += new System.EventHandler(this.excelTab_Click);
-            // 
-            // excelGridView
-            // 
-            this.excelGridView.AllowUserToAddRows = false;
-            this.excelGridView.AllowUserToDeleteRows = false;
-            this.excelGridView.AllowUserToResizeColumns = false;
-            this.excelGridView.AllowUserToResizeRows = false;
-            this.excelGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.excelGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.numeCol,
-            this.nameCol,
-            this.qntCol});
-            this.excelGridView.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.excelGridView.Location = new System.Drawing.Point(3, 3);
-            this.excelGridView.Name = "excelGridView";
-            this.excelGridView.ReadOnly = true;
-            this.excelGridView.RowTemplate.ReadOnly = true;
-            this.excelGridView.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.excelGridView.Size = new System.Drawing.Size(473, 547);
-            this.excelGridView.TabIndex = 7;
-            this.excelGridView.Paint += new System.Windows.Forms.PaintEventHandler(this.dataGridView1_Paint);
-            // 
-            // numeCol
-            // 
-            this.numeCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.numeCol.HeaderText = "Name";
-            this.numeCol.Name = "numeCol";
-            this.numeCol.ReadOnly = true;
-            this.numeCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.numeCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.numeCol.Width = 44;
-            // 
-            // nameCol
-            // 
-            this.nameCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.nameCol.HeaderText = "Topper";
-            this.nameCol.Name = "nameCol";
-            this.nameCol.ReadOnly = true;
-            this.nameCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.nameCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // qntCol
-            // 
-            this.qntCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.qntCol.HeaderText = "Quantity";
-            this.qntCol.MinimumWidth = 20;
-            this.qntCol.Name = "qntCol";
-            this.qntCol.ReadOnly = true;
-            this.qntCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.qntCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.qntCol.Width = 61;
             // 
             // tabPage3
             // 
@@ -665,6 +581,93 @@
             this.tabControl2.TabIndex = 4;
             this.tabControl2.SelectedIndexChanged += new System.EventHandler(this.tabControl2_SelectedIndexChanged);
             // 
+            // summaryGridView
+            // 
+            this.summaryGridView.AllowUserToAddRows = false;
+            this.summaryGridView.AllowUserToDeleteRows = false;
+            this.summaryGridView.AllowUserToResizeColumns = false;
+            this.summaryGridView.AllowUserToResizeRows = false;
+            this.summaryGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.summaryGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.summaryGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.topperColumn,
+            this.qntColumn});
+            this.summaryGridView.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.summaryGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.summaryGridView.Location = new System.Drawing.Point(0, 0);
+            this.summaryGridView.Name = "summaryGridView";
+            this.summaryGridView.ReadOnly = true;
+            this.summaryGridView.ShowCellErrors = false;
+            this.summaryGridView.Size = new System.Drawing.Size(622, 674);
+            this.summaryGridView.TabIndex = 9;
+            // 
+            // topperColumn
+            // 
+            this.topperColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.topperColumn.HeaderText = "Topper";
+            this.topperColumn.Name = "topperColumn";
+            this.topperColumn.ReadOnly = true;
+            // 
+            // qntColumn
+            // 
+            this.qntColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.qntColumn.HeaderText = "Quantity";
+            this.qntColumn.Name = "qntColumn";
+            this.qntColumn.ReadOnly = true;
+            this.qntColumn.Width = 80;
+            // 
+            // qntCol
+            // 
+            this.qntCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.qntCol.HeaderText = "Quantity";
+            this.qntCol.MinimumWidth = 20;
+            this.qntCol.Name = "qntCol";
+            this.qntCol.ReadOnly = true;
+            this.qntCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.qntCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.qntCol.Width = 61;
+            // 
+            // nameCol
+            // 
+            this.nameCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.nameCol.HeaderText = "Topper";
+            this.nameCol.Name = "nameCol";
+            this.nameCol.ReadOnly = true;
+            this.nameCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.nameCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // numeCol
+            // 
+            this.numeCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.numeCol.HeaderText = "Name";
+            this.numeCol.Name = "numeCol";
+            this.numeCol.ReadOnly = true;
+            this.numeCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.numeCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.numeCol.Width = 44;
+            // 
+            // excelGridView
+            // 
+            this.excelGridView.AllowUserToAddRows = false;
+            this.excelGridView.AllowUserToDeleteRows = false;
+            this.excelGridView.AllowUserToResizeColumns = false;
+            this.excelGridView.AllowUserToResizeRows = false;
+            this.excelGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.excelGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.excelGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.numeCol,
+            this.nameCol,
+            this.qntCol});
+            this.excelGridView.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.excelGridView.Location = new System.Drawing.Point(0, 0);
+            this.excelGridView.Name = "excelGridView";
+            this.excelGridView.ReadOnly = true;
+            this.excelGridView.RowTemplate.ReadOnly = true;
+            this.excelGridView.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.excelGridView.ShowCellErrors = false;
+            this.excelGridView.Size = new System.Drawing.Size(622, 674);
+            this.excelGridView.TabIndex = 8;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -698,13 +701,13 @@
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
             this.tabPage5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.summaryGridView)).EndInit();
             this.excelTab.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.excelGridView)).EndInit();
             this.tabPage3.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tabControl2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.summaryGridView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.excelGridView)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -744,15 +747,15 @@
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabControl tabControl2;
-        internal System.Windows.Forms.DataGridView excelGridView;
-        private System.Windows.Forms.DataGridViewTextBoxColumn numeCol;
-        private System.Windows.Forms.DataGridViewTextBoxColumn nameCol;
-        private System.Windows.Forms.DataGridViewTextBoxColumn qntCol;
         internal System.Windows.Forms.TextBox textBox1;
         private CefSharp.WinForms.ChromiumWebBrowser chromiumWebBrowser1;
         private System.Windows.Forms.DataGridView summaryGridView;
-        private System.Windows.Forms.DataGridViewTextBoxColumn qntColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn topperColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn qntColumn;
+        private System.Windows.Forms.DataGridView excelGridView;
+        private System.Windows.Forms.DataGridViewTextBoxColumn numeCol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn nameCol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn qntCol;
     }
 }
 
