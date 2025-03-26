@@ -362,12 +362,41 @@ namespace PDFiller
             doc.Close();
             return saveDir + "\\" + name + ".pdf";
         }
+
+
+
         /// <summary>
-        /// Writes on each individual page.
+        /// Given the name of a topper, removes the unnecessary prefix
+        /// </summary>
+        /// <param name="name">Topper name</param>
+        /// <returns>A topper that contains only the name of the topper mascot, or the same string unchanged if it couldn't be found.</returns>
+
+        private string modifyName(string name)
+        {
+            string[] list = { "briose de", "briose", "tort", };
+            foreach(string s in list)
+            {
+                int index = name.LastIndexOf(s);
+                if (index > 0)
+                {
+                    return name.Substring(index + s.Length);
+                }
+
+            }
+            return name;
+
+        }
+
+
+
+
+
+        /// <summary>
+        /// Writes topper count and name on an individual page.
         /// </summary>
         /// <param name="page">Page to be written on</param>
         /// <param name="toppere">What to write on the page (qnt + name)</param>
-        /// <returns></returns>
+        /// <returns>True if successfull, false if not</returns>
         private bool WriteOnPage(PdfPage page, List<Order.topper> toppere)
         {
             if (page == null || toppere == null) {
@@ -377,22 +406,23 @@ namespace PDFiller
             {
                 XGraphics gfx = XGraphics.FromPdfPage(page);
 
-                XFont font = new XFont("Times New Roman", 15);
+                XFont font = new XFont("Times New Roman", 12);
                 XSolidBrush brush = new XSolidBrush(XColor.FromKnownColor(XKnownColor.Black));
 
                 XRect rect = new XRect(0, page.Height / 2 - 15, page.Width, page.Height / 2 + 15);
                 gfx.DrawRectangle(XBrushes.White, rect);
 
                 int i = 0;
+
+
                 foreach (var topper in toppere)
                 {
-                    gfx.DrawString(topper.tQuantity + " buc: " + topper.tName, font, brush, 50, page.Height / 2 + 150 + 15 * (i++), XStringFormats.CenterLeft);
+                    gfx.DrawString(topper.tQuantity + " buc: " + modifyName(topper.tName), font, brush, 50, page.Height / 2 + 150 + 15 * (i++), XStringFormats.CenterLeft);
                 }
             }
             catch (Exception ex)
             {
-                form.textBox1.Text+=ex.Message+"\r\n";
-                return true;
+                throw ex;
             }
             return false;
         }
