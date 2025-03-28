@@ -406,7 +406,7 @@ namespace PDFiller
             {
                 XGraphics gfx = XGraphics.FromPdfPage(page);
 
-                XFont font = new XFont("Times New Roman", 12);
+                XFont font = new XFont("Times New Roman", 14);
                 XSolidBrush brush = new XSolidBrush(XColor.FromKnownColor(XKnownColor.Black));
 
                 XRect rect = new XRect(0, page.Height / 2 - 15, page.Width, page.Height / 2 + 15);
@@ -417,7 +417,7 @@ namespace PDFiller
 
                 foreach (var topper in toppere)
                 {
-                    gfx.DrawString(topper.tQuantity + " buc: " + modifyName(topper.tName), font, brush, 50, page.Height / 2 + 150 + 15 * (i++), XStringFormats.CenterLeft);
+                    gfx.DrawString(topper.tQuantity + " buc: " + modifyName(topper.tName), font, brush, 80, page.Height / 2 + 100 + 15 * (i++), XStringFormats.CenterLeft);
                 }
             }
             catch (Exception ex)

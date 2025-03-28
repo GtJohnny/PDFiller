@@ -40,8 +40,8 @@
             this.AutoFillPage = new System.Windows.Forms.TabPage();
             this.filePage = new System.Windows.Forms.TabPage();
             this.excelButton = new System.Windows.Forms.Button();
-            this.mergeFillButton = new System.Windows.Forms.Button();
             this.zipButton = new System.Windows.Forms.Button();
+            this.mergeFillButton = new System.Windows.Forms.Button();
             this.ConfigPage = new System.Windows.Forms.TabPage();
             this.workButton = new System.Windows.Forms.Button();
             this.rootButton = new System.Windows.Forms.Button();
@@ -64,8 +64,6 @@
             this.numeCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.nameCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.qntCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.chromiumWebBrowser1 = new CefSharp.WinForms.ChromiumWebBrowser();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.tabControl2 = new System.Windows.Forms.TabControl();
@@ -84,7 +82,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.summaryGridView)).BeginInit();
             this.excelTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.excelGridView)).BeginInit();
-            this.tabPage3.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -154,6 +151,15 @@
             label3.TabIndex = 10;
             label3.Text = "AAAAAAAAAAAAAAAAAA";
             // 
+            // label6
+            // 
+            label6.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label6.Location = new System.Drawing.Point(7, 118);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(97, 23);
+            label6.TabIndex = 5;
+            label6.Text = "Root path:";
+            // 
             // autoFillBtn
             // 
             this.autoFillBtn.BackColor = System.Drawing.SystemColors.ControlLight;
@@ -166,15 +172,6 @@
             this.autoFillBtn.Text = "AutoFill";
             this.autoFillBtn.UseVisualStyleBackColor = false;
             this.autoFillBtn.Click += new System.EventHandler(this.autoFillBtn_Click);
-            // 
-            // label6
-            // 
-            label6.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label6.Location = new System.Drawing.Point(7, 118);
-            label6.Name = "label6";
-            label6.Size = new System.Drawing.Size(97, 23);
-            label6.TabIndex = 5;
-            label6.Text = "Root path:";
             // 
             // tabControlMenu
             // 
@@ -225,19 +222,6 @@
             this.excelButton.UseVisualStyleBackColor = false;
             this.excelButton.Click += new System.EventHandler(this.excelButton_Click);
             // 
-            // mergeFillButton
-            // 
-            this.mergeFillButton.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.mergeFillButton.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
-            this.mergeFillButton.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mergeFillButton.Location = new System.Drawing.Point(26, 224);
-            this.mergeFillButton.Name = "mergeFillButton";
-            this.mergeFillButton.Size = new System.Drawing.Size(156, 45);
-            this.mergeFillButton.TabIndex = 6;
-            this.mergeFillButton.Text = "Merge&&Fill";
-            this.mergeFillButton.UseVisualStyleBackColor = false;
-            this.mergeFillButton.Click += new System.EventHandler(this.mergeFillButton_Click);
-            // 
             // zipButton
             // 
             this.zipButton.BackColor = System.Drawing.SystemColors.ControlLight;
@@ -250,6 +234,19 @@
             this.zipButton.Text = "Select Zip Archive";
             this.zipButton.UseVisualStyleBackColor = false;
             this.zipButton.Click += new System.EventHandler(this.zipButton_Click);
+            // 
+            // mergeFillButton
+            // 
+            this.mergeFillButton.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.mergeFillButton.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
+            this.mergeFillButton.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mergeFillButton.Location = new System.Drawing.Point(26, 224);
+            this.mergeFillButton.Name = "mergeFillButton";
+            this.mergeFillButton.Size = new System.Drawing.Size(156, 45);
+            this.mergeFillButton.TabIndex = 6;
+            this.mergeFillButton.Text = "Merge&&Fill";
+            this.mergeFillButton.UseVisualStyleBackColor = false;
+            this.mergeFillButton.Click += new System.EventHandler(this.mergeFillButton_Click);
             // 
             // ConfigPage
             // 
@@ -412,7 +409,7 @@
             this.tabPage5.Font = new System.Drawing.Font("Times New Roman", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabPage5.Location = new System.Drawing.Point(4, 26);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(622, 674);
+            this.tabPage5.Size = new System.Drawing.Size(622, 671);
             this.tabPage5.TabIndex = 3;
             this.tabPage5.Text = "Summary";
             // 
@@ -433,7 +430,7 @@
             this.summaryGridView.Name = "summaryGridView";
             this.summaryGridView.ReadOnly = true;
             this.summaryGridView.ShowCellErrors = false;
-            this.summaryGridView.Size = new System.Drawing.Size(622, 674);
+            this.summaryGridView.Size = new System.Drawing.Size(622, 671);
             this.summaryGridView.TabIndex = 9;
             // 
             // topperColumn
@@ -458,7 +455,7 @@
             this.excelTab.Location = new System.Drawing.Point(4, 26);
             this.excelTab.Name = "excelTab";
             this.excelTab.Padding = new System.Windows.Forms.Padding(3);
-            this.excelTab.Size = new System.Drawing.Size(622, 674);
+            this.excelTab.Size = new System.Drawing.Size(622, 671);
             this.excelTab.TabIndex = 2;
             this.excelTab.Text = "ExcelPreview";
             this.excelTab.UseVisualStyleBackColor = true;
@@ -516,26 +513,6 @@
             this.qntCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.qntCol.Width = 61;
             // 
-            // tabPage3
-            // 
-            this.tabPage3.Controls.Add(this.chromiumWebBrowser1);
-            this.tabPage3.Location = new System.Drawing.Point(4, 26);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(622, 674);
-            this.tabPage3.TabIndex = 1;
-            this.tabPage3.Text = "MergedPreview";
-            this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // chromiumWebBrowser1
-            // 
-            this.chromiumWebBrowser1.ActivateBrowserOnCreation = false;
-            this.chromiumWebBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chromiumWebBrowser1.Location = new System.Drawing.Point(3, 3);
-            this.chromiumWebBrowser1.Name = "chromiumWebBrowser1";
-            this.chromiumWebBrowser1.Size = new System.Drawing.Size(616, 668);
-            this.chromiumWebBrowser1.TabIndex = 0;
-            // 
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.textBox1);
@@ -561,7 +538,6 @@
             // tabControl2
             // 
             this.tabControl2.Controls.Add(this.tabPage1);
-            this.tabControl2.Controls.Add(this.tabPage3);
             this.tabControl2.Controls.Add(this.excelTab);
             this.tabControl2.Controls.Add(this.tabPage5);
             this.tabControl2.Font = new System.Drawing.Font("Monotype Corsiva", 11.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -615,7 +591,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.summaryGridView)).EndInit();
             this.excelTab.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.excelGridView)).EndInit();
-            this.tabPage3.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tabControl2.ResumeLayout(false);
@@ -650,11 +625,9 @@
         internal System.Windows.Forms.TextBox rootTextBox;
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.TabPage excelTab;
-        private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabControl tabControl2;
         internal System.Windows.Forms.TextBox textBox1;
-        private CefSharp.WinForms.ChromiumWebBrowser chromiumWebBrowser1;
         private System.Windows.Forms.DataGridView summaryGridView;
         private System.Windows.Forms.DataGridViewTextBoxColumn topperColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn qntColumn;

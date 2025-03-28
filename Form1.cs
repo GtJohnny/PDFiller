@@ -18,6 +18,8 @@ using Excel = Microsoft.Office.Interop.Excel;
 using Microsoft.Office.Interop.Excel;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using CefSharp;
+using System.Drawing.Printing;
 
 
 
@@ -487,10 +489,6 @@ namespace PDFiller
             switch (tabControl2.SelectedIndex)
             {
                 case 1:
-                    if (mergedPath == null || (chromiumWebBrowser1.Address!= null && mergedPath != chromiumWebBrowser1.Address)) return;
-                    chromiumWebBrowser1.LoadUrlAsync(mergedPath);
-                    break;
-                case 2:
                     if(this.excel == null || excelGridView.Rows.Count > 0) return;
                     if (readOrders)
                     {
@@ -507,7 +505,7 @@ namespace PDFiller
                         }
                     }
                     break;
-                case 3:
+                case 2:
 
                     if (this.excel == null || summaryGridView.Rows.Count > 0 ) return;
                     if (readOrders)
@@ -546,6 +544,10 @@ namespace PDFiller
             }
         }
 
+        private void Pd_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
 
         private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
         {
