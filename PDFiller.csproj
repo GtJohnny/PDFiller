@@ -1,8 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="packages\CefSharp.Common.134.3.60\build\CefSharp.Common.props" Condition="Exists('packages\CefSharp.Common.134.3.60\build\CefSharp.Common.props')" />
-  <Import Project="packages\chromiumembeddedframework.runtime.win-x86.134.3.6\build\chromiumembeddedframework.runtime.win-x86.props" Condition="Exists('packages\chromiumembeddedframework.runtime.win-x86.134.3.6\build\chromiumembeddedframework.runtime.win-x86.props')" />
-  <Import Project="packages\chromiumembeddedframework.runtime.win-x64.134.3.6\build\chromiumembeddedframework.runtime.win-x64.props" Condition="Exists('packages\chromiumembeddedframework.runtime.win-x64.134.3.6\build\chromiumembeddedframework.runtime.win-x64.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -41,32 +38,11 @@
     <ApplicationIcon>AppPDF.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CefSharp, Version=134.3.60.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
-      <HintPath>packages\CefSharp.Common.134.3.60\lib\net462\CefSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="CefSharp.Core, Version=134.3.60.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
-      <HintPath>packages\CefSharp.Common.134.3.60\lib\net462\CefSharp.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="CefSharp.WinForms, Version=134.3.60.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
-      <HintPath>packages\CefSharp.WinForms.134.3.60\lib\net462\CefSharp.WinForms.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=1.4.2.13, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>packages\SharpZipLib.1.4.2\lib\netstandard2.0\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="Patagames.Pdf, Version=11.86.48.48, Culture=neutral, PublicKeyToken=60fd6cf9b15941cf, processorArchitecture=MSIL">
-      <HintPath>packages\Pdfium.Net.SDK.4.98.2704\lib\net48\Patagames.Pdf.dll</HintPath>
-    </Reference>
-    <Reference Include="Patagames.Pdf.WinForms, Version=4.29.18.48, Culture=neutral, PublicKeyToken=60fd6cf9b15941cf, processorArchitecture=MSIL">
-      <HintPath>packages\Pdfium.Net.SDK.4.98.2704\lib\net48\Patagames.Pdf.WinForms.dll</HintPath>
-    </Reference>
-    <Reference Include="Patagames.Pdf.Wpf, Version=4.29.20.48, Culture=neutral, PublicKeyToken=60fd6cf9b15941cf, processorArchitecture=MSIL">
-      <HintPath>packages\Pdfium.Net.SDK.4.98.2704\lib\net48\Patagames.Pdf.Wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="PdfiumViewer, Version=2.13.0.0, Culture=neutral, PublicKeyToken=91e4789cfb0609e0, processorArchitecture=MSIL">
-      <HintPath>packages\PdfiumViewer.2.13.0.0\lib\net20\PdfiumViewer.dll</HintPath>
     </Reference>
     <Reference Include="PdfSharpCore, Version=1.3.65.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\PdfSharpCore.1.3.65\lib\netstandard2.0\PdfSharpCore.dll</HintPath>
@@ -136,7 +112,6 @@
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Pdf.Net.SDK.licx" />
     <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -148,9 +123,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <None Include="bin\Debug\PDFiller.exe.config" />
-    <None Include="libpdfium.dylib">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -180,27 +152,10 @@
     <Content Include="AppPDF.ico" />
     <Content Include="bin\Debug\PDFiller.exe" />
     <Content Include="bin\Debug\PDFiller.pdb" />
-    <Content Include="icudt.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="x64\pdfium.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="x86\pdfium.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="x64\" />
+    <Folder Include="x86\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="packages\Pdfium.Net.SDK.4.98.2704\build\Pdfium.Net.SDK.targets" Condition="Exists('packages\Pdfium.Net.SDK.4.98.2704\build\Pdfium.Net.SDK.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('packages\Pdfium.Net.SDK.4.98.2704\build\Pdfium.Net.SDK.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Pdfium.Net.SDK.4.98.2704\build\Pdfium.Net.SDK.targets'))" />
-    <Error Condition="!Exists('packages\chromiumembeddedframework.runtime.win-x64.134.3.6\build\chromiumembeddedframework.runtime.win-x64.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\chromiumembeddedframework.runtime.win-x64.134.3.6\build\chromiumembeddedframework.runtime.win-x64.props'))" />
-    <Error Condition="!Exists('packages\chromiumembeddedframework.runtime.win-x86.134.3.6\build\chromiumembeddedframework.runtime.win-x86.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\chromiumembeddedframework.runtime.win-x86.134.3.6\build\chromiumembeddedframework.runtime.win-x86.props'))" />
-    <Error Condition="!Exists('packages\CefSharp.Common.134.3.60\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.Common.134.3.60\build\CefSharp.Common.props'))" />
-    <Error Condition="!Exists('packages\CefSharp.Common.134.3.60\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.Common.134.3.60\build\CefSharp.Common.targets'))" />
-  </Target>
-  <Import Project="packages\CefSharp.Common.134.3.60\build\CefSharp.Common.targets" Condition="Exists('packages\CefSharp.Common.134.3.60\build\CefSharp.Common.targets')" />
 </Project>

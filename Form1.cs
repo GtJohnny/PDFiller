@@ -487,8 +487,8 @@ namespace PDFiller
             switch (tabControl2.SelectedIndex)
             {
                 case 1:
-                    if (mergedPath == null || (chromiumWebBrowser1.Address!= null && mergedPath != chromiumWebBrowser1.Address)) return;
-                    chromiumWebBrowser1.LoadUrlAsync(mergedPath);
+             //       if (mergedPath == null || (chromiumWebBrowser1.Address!= null && mergedPath != chromiumWebBrowser1.Address)) return;
+               //     chromiumWebBrowser1.LoadUrlAsync(mergedPath);
                     break;
                 case 2:
                     if(this.excel == null || excelGridView.Rows.Count > 0) return;
