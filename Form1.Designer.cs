@@ -31,6 +31,10 @@
             System.Windows.Forms.GroupBox groupBox3;
             System.Windows.Forms.Label label3;
             System.Windows.Forms.Label label6;
+            System.Windows.Forms.Label label1;
+            System.Windows.Forms.Label label2;
+            System.Windows.Forms.Label label4;
+            System.Windows.Forms.Label label5;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.openPdfCheck = new System.Windows.Forms.CheckBox();
             this.PrintCheck = new System.Windows.Forms.CheckBox();
@@ -39,12 +43,14 @@
             this.tabControlMenu = new System.Windows.Forms.TabControl();
             this.AutoFillPage = new System.Windows.Forms.TabPage();
             this.filePage = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
             this.excelButton = new System.Windows.Forms.Button();
             this.zipButton = new System.Windows.Forms.Button();
             this.mergeFillButton = new System.Windows.Forms.Button();
             this.ConfigPage = new System.Windows.Forms.TabPage();
             this.workButton = new System.Windows.Forms.Button();
             this.rootButton = new System.Windows.Forms.Button();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.emagBtn = new System.Windows.Forms.Button();
             this.SamedayBtn = new System.Windows.Forms.Button();
@@ -71,11 +77,16 @@
             groupBox3 = new System.Windows.Forms.GroupBox();
             label3 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
+            label1 = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
+            label4 = new System.Windows.Forms.Label();
+            label5 = new System.Windows.Forms.Label();
             groupBox3.SuspendLayout();
             this.tabControlMenu.SuspendLayout();
             this.AutoFillPage.SuspendLayout();
             this.filePage.SuspendLayout();
             this.ConfigPage.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.tabPage5.SuspendLayout();
@@ -95,7 +106,7 @@
             groupBox3.Controls.Add(this.autoFillCheck);
             groupBox3.Dock = System.Windows.Forms.DockStyle.Bottom;
             groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            groupBox3.Location = new System.Drawing.Point(0, 553);
+            groupBox3.Location = new System.Drawing.Point(0, 381);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new System.Drawing.Size(211, 151);
             groupBox3.TabIndex = 0;
@@ -108,7 +119,7 @@
             this.openPdfCheck.Checked = true;
             this.openPdfCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.openPdfCheck.Font = new System.Drawing.Font("Times New Roman", 14.25F);
-            this.openPdfCheck.Location = new System.Drawing.Point(23, 111);
+            this.openPdfCheck.Location = new System.Drawing.Point(13, 106);
             this.openPdfCheck.Name = "openPdfCheck";
             this.openPdfCheck.Size = new System.Drawing.Size(185, 25);
             this.openPdfCheck.TabIndex = 8;
@@ -120,8 +131,9 @@
             this.PrintCheck.AutoSize = true;
             this.PrintCheck.Checked = true;
             this.PrintCheck.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.PrintCheck.Enabled = false;
             this.PrintCheck.Font = new System.Drawing.Font("Times New Roman", 14.25F);
-            this.PrintCheck.Location = new System.Drawing.Point(23, 68);
+            this.PrintCheck.Location = new System.Drawing.Point(13, 63);
             this.PrintCheck.Name = "PrintCheck";
             this.PrintCheck.Size = new System.Drawing.Size(150, 25);
             this.PrintCheck.TabIndex = 7;
@@ -134,7 +146,7 @@
             this.autoFillCheck.Checked = true;
             this.autoFillCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.autoFillCheck.Font = new System.Drawing.Font("Times New Roman", 14.25F);
-            this.autoFillCheck.Location = new System.Drawing.Point(23, 24);
+            this.autoFillCheck.Location = new System.Drawing.Point(13, 19);
             this.autoFillCheck.Name = "autoFillCheck";
             this.autoFillCheck.Size = new System.Drawing.Size(161, 25);
             this.autoFillCheck.TabIndex = 6;
@@ -178,43 +190,63 @@
             this.tabControlMenu.Controls.Add(this.AutoFillPage);
             this.tabControlMenu.Controls.Add(this.filePage);
             this.tabControlMenu.Controls.Add(this.ConfigPage);
+            this.tabControlMenu.Controls.Add(this.tabPage2);
+            this.tabControlMenu.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControlMenu.Font = new System.Drawing.Font("Monotype Corsiva", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabControlMenu.Location = new System.Drawing.Point(0, 3);
+            this.tabControlMenu.Location = new System.Drawing.Point(0, 0);
             this.tabControlMenu.Name = "tabControlMenu";
             this.tabControlMenu.SelectedIndex = 0;
-            this.tabControlMenu.Size = new System.Drawing.Size(217, 345);
+            this.tabControlMenu.Size = new System.Drawing.Size(211, 382);
             this.tabControlMenu.TabIndex = 3;
             // 
             // AutoFillPage
             // 
+            this.AutoFillPage.Controls.Add(label5);
             this.AutoFillPage.Controls.Add(this.autoFillBtn);
             this.AutoFillPage.Location = new System.Drawing.Point(4, 27);
             this.AutoFillPage.Name = "AutoFillPage";
             this.AutoFillPage.Padding = new System.Windows.Forms.Padding(3);
-            this.AutoFillPage.Size = new System.Drawing.Size(209, 314);
+            this.AutoFillPage.Size = new System.Drawing.Size(203, 351);
             this.AutoFillPage.TabIndex = 2;
             this.AutoFillPage.Text = "Autofill";
             this.AutoFillPage.UseVisualStyleBackColor = true;
             // 
             // filePage
             // 
+            this.filePage.Controls.Add(label4);
+            this.filePage.Controls.Add(label2);
+            this.filePage.Controls.Add(label1);
+            this.filePage.Controls.Add(this.button1);
             this.filePage.Controls.Add(this.excelButton);
             this.filePage.Controls.Add(this.zipButton);
             this.filePage.Controls.Add(this.mergeFillButton);
             this.filePage.Location = new System.Drawing.Point(4, 27);
             this.filePage.Name = "filePage";
             this.filePage.Padding = new System.Windows.Forms.Padding(3);
-            this.filePage.Size = new System.Drawing.Size(209, 314);
+            this.filePage.Size = new System.Drawing.Size(203, 351);
             this.filePage.TabIndex = 0;
             this.filePage.Text = "Files";
             this.filePage.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.button1.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
+            this.button1.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(25, 100);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(156, 45);
+            this.button1.TabIndex = 7;
+            this.button1.Text = "Select Unzipped";
+            this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.unzippedButton_Click);
             // 
             // excelButton
             // 
             this.excelButton.BackColor = System.Drawing.SystemColors.ControlLight;
             this.excelButton.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
             this.excelButton.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.excelButton.Location = new System.Drawing.Point(26, 45);
+            this.excelButton.Location = new System.Drawing.Point(25, 192);
             this.excelButton.Name = "excelButton";
             this.excelButton.Size = new System.Drawing.Size(156, 45);
             this.excelButton.TabIndex = 5;
@@ -227,7 +259,7 @@
             this.zipButton.BackColor = System.Drawing.SystemColors.ControlLight;
             this.zipButton.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
             this.zipButton.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.zipButton.Location = new System.Drawing.Point(26, 134);
+            this.zipButton.Location = new System.Drawing.Point(25, 42);
             this.zipButton.Name = "zipButton";
             this.zipButton.Size = new System.Drawing.Size(156, 45);
             this.zipButton.TabIndex = 4;
@@ -240,7 +272,7 @@
             this.mergeFillButton.BackColor = System.Drawing.SystemColors.ControlLight;
             this.mergeFillButton.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
             this.mergeFillButton.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mergeFillButton.Location = new System.Drawing.Point(26, 224);
+            this.mergeFillButton.Location = new System.Drawing.Point(25, 274);
             this.mergeFillButton.Name = "mergeFillButton";
             this.mergeFillButton.Size = new System.Drawing.Size(156, 45);
             this.mergeFillButton.TabIndex = 6;
@@ -255,7 +287,7 @@
             this.ConfigPage.Location = new System.Drawing.Point(4, 27);
             this.ConfigPage.Name = "ConfigPage";
             this.ConfigPage.Padding = new System.Windows.Forms.Padding(3);
-            this.ConfigPage.Size = new System.Drawing.Size(209, 314);
+            this.ConfigPage.Size = new System.Drawing.Size(203, 351);
             this.ConfigPage.TabIndex = 1;
             this.ConfigPage.Text = "Config";
             this.ConfigPage.UseVisualStyleBackColor = true;
@@ -286,14 +318,26 @@
             this.rootButton.UseVisualStyleBackColor = false;
             this.rootButton.Click += new System.EventHandler(this.rootButton_Click);
             // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.groupBox1);
+            this.tabPage2.Location = new System.Drawing.Point(4, 27);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(203, 351);
+            this.tabPage2.TabIndex = 3;
+            this.tabPage2.Text = "Web";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.emagBtn);
             this.groupBox1.Controls.Add(this.SamedayBtn);
             this.groupBox1.Controls.Add(this.CelBtn);
-            this.groupBox1.Location = new System.Drawing.Point(0, 335);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(211, 229);
+            this.groupBox1.Size = new System.Drawing.Size(197, 345);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Sites";
@@ -303,7 +347,7 @@
             this.emagBtn.BackColor = System.Drawing.SystemColors.ControlLight;
             this.emagBtn.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
             this.emagBtn.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.emagBtn.Location = new System.Drawing.Point(39, 23);
+            this.emagBtn.Location = new System.Drawing.Point(32, 65);
             this.emagBtn.Name = "emagBtn";
             this.emagBtn.Size = new System.Drawing.Size(135, 43);
             this.emagBtn.TabIndex = 9;
@@ -316,7 +360,7 @@
             this.SamedayBtn.BackColor = System.Drawing.SystemColors.ControlLight;
             this.SamedayBtn.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
             this.SamedayBtn.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.SamedayBtn.Location = new System.Drawing.Point(39, 162);
+            this.SamedayBtn.Location = new System.Drawing.Point(32, 236);
             this.SamedayBtn.Name = "SamedayBtn";
             this.SamedayBtn.Size = new System.Drawing.Size(135, 43);
             this.SamedayBtn.TabIndex = 8;
@@ -329,7 +373,7 @@
             this.CelBtn.BackColor = System.Drawing.SystemColors.ControlLight;
             this.CelBtn.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
             this.CelBtn.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.CelBtn.Location = new System.Drawing.Point(37, 93);
+            this.CelBtn.Location = new System.Drawing.Point(32, 151);
             this.CelBtn.Name = "CelBtn";
             this.CelBtn.Size = new System.Drawing.Size(135, 43);
             this.CelBtn.TabIndex = 7;
@@ -348,9 +392,9 @@
             this.groupBox8.Controls.Add(this.zipLabel);
             this.groupBox8.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox8.Font = new System.Drawing.Font("Monotype Corsiva", 12F, System.Drawing.FontStyle.Italic);
-            this.groupBox8.Location = new System.Drawing.Point(0, 706);
+            this.groupBox8.Location = new System.Drawing.Point(0, 532);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(849, 151);
+            this.groupBox8.Size = new System.Drawing.Size(842, 151);
             this.groupBox8.TabIndex = 5;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Paths";
@@ -362,7 +406,7 @@
             this.rootTextBox.Location = new System.Drawing.Point(110, 117);
             this.rootTextBox.Name = "rootTextBox";
             this.rootTextBox.ReadOnly = true;
-            this.rootTextBox.Size = new System.Drawing.Size(733, 25);
+            this.rootTextBox.Size = new System.Drawing.Size(725, 25);
             this.rootTextBox.TabIndex = 6;
             // 
             // excelPathBox
@@ -371,7 +415,7 @@
             this.excelPathBox.Location = new System.Drawing.Point(110, 70);
             this.excelPathBox.Name = "excelPathBox";
             this.excelPathBox.ReadOnly = true;
-            this.excelPathBox.Size = new System.Drawing.Size(733, 25);
+            this.excelPathBox.Size = new System.Drawing.Size(725, 25);
             this.excelPathBox.TabIndex = 3;
             this.excelPathBox.DoubleClick += new System.EventHandler(this.excelPathBox_DoubleClick);
             // 
@@ -390,7 +434,7 @@
             this.zipPathBox.Location = new System.Drawing.Point(110, 21);
             this.zipPathBox.Name = "zipPathBox";
             this.zipPathBox.ReadOnly = true;
-            this.zipPathBox.Size = new System.Drawing.Size(733, 25);
+            this.zipPathBox.Size = new System.Drawing.Size(725, 25);
             this.zipPathBox.TabIndex = 1;
             this.zipPathBox.DoubleClick += new System.EventHandler(this.zipPathBox_DoubleClick);
             // 
@@ -409,7 +453,7 @@
             this.tabPage5.Font = new System.Drawing.Font("Times New Roman", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabPage5.Location = new System.Drawing.Point(4, 26);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(622, 671);
+            this.tabPage5.Size = new System.Drawing.Size(624, 499);
             this.tabPage5.TabIndex = 3;
             this.tabPage5.Text = "Summary";
             // 
@@ -424,13 +468,12 @@
             this.summaryGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.topperColumn,
             this.qntColumn});
-            this.summaryGridView.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.summaryGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.summaryGridView.Location = new System.Drawing.Point(0, 0);
             this.summaryGridView.Name = "summaryGridView";
             this.summaryGridView.ReadOnly = true;
             this.summaryGridView.ShowCellErrors = false;
-            this.summaryGridView.Size = new System.Drawing.Size(622, 671);
+            this.summaryGridView.Size = new System.Drawing.Size(624, 499);
             this.summaryGridView.TabIndex = 9;
             // 
             // topperColumn
@@ -455,7 +498,7 @@
             this.excelTab.Location = new System.Drawing.Point(4, 26);
             this.excelTab.Name = "excelTab";
             this.excelTab.Padding = new System.Windows.Forms.Padding(3);
-            this.excelTab.Size = new System.Drawing.Size(622, 671);
+            this.excelTab.Size = new System.Drawing.Size(624, 499);
             this.excelTab.TabIndex = 2;
             this.excelTab.Text = "ExcelPreview";
             this.excelTab.UseVisualStyleBackColor = true;
@@ -473,14 +516,14 @@
             this.numeCol,
             this.nameCol,
             this.qntCol});
-            this.excelGridView.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.excelGridView.Location = new System.Drawing.Point(0, 0);
+            this.excelGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.excelGridView.Location = new System.Drawing.Point(3, 3);
             this.excelGridView.Name = "excelGridView";
             this.excelGridView.ReadOnly = true;
             this.excelGridView.RowTemplate.ReadOnly = true;
             this.excelGridView.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.excelGridView.ShowCellErrors = false;
-            this.excelGridView.Size = new System.Drawing.Size(622, 674);
+            this.excelGridView.Size = new System.Drawing.Size(618, 493);
             this.excelGridView.TabIndex = 8;
             // 
             // numeCol
@@ -519,7 +562,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 26);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(622, 671);
+            this.tabPage1.Size = new System.Drawing.Size(624, 499);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "WorkflowStatus";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -532,7 +575,8 @@
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(616, 665);
+            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBox1.Size = new System.Drawing.Size(618, 493);
             this.textBox1.TabIndex = 0;
             // 
             // tabControl2
@@ -544,7 +588,7 @@
             this.tabControl2.Location = new System.Drawing.Point(0, 3);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(630, 701);
+            this.tabControl2.Size = new System.Drawing.Size(632, 529);
             this.tabControl2.TabIndex = 4;
             this.tabControl2.SelectedIndexChanged += new System.EventHandler(this.tabControl2_SelectedIndexChanged);
             // 
@@ -552,19 +596,59 @@
             // 
             this.panel1.BackColor = System.Drawing.Color.White;
             this.panel1.Controls.Add(groupBox3);
-            this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Controls.Add(this.tabControlMenu);
-            this.panel1.Location = new System.Drawing.Point(632, 0);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel1.Location = new System.Drawing.Point(631, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(211, 704);
+            this.panel1.Size = new System.Drawing.Size(211, 532);
             this.panel1.TabIndex = 3;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label1.Location = new System.Drawing.Point(22, 24);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(42, 15);
+            label1.TabIndex = 8;
+            label1.Text = "AWBs:";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label2.Location = new System.Drawing.Point(22, 174);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(96, 15);
+            label2.TabIndex = 9;
+            label2.Text = "Order Summary:";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label4.Location = new System.Drawing.Point(22, 256);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(86, 15);
+            label4.TabIndex = 10;
+            label4.Text = "Magic Button:";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label5.Location = new System.Drawing.Point(26, 120);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(86, 15);
+            label5.TabIndex = 11;
+            label5.Text = "Magic Button:";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.ClientSize = new System.Drawing.Size(849, 857);
+            this.ClientSize = new System.Drawing.Size(842, 683);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox8);
             this.Controls.Add(this.tabControl2);
@@ -582,8 +666,11 @@
             groupBox3.PerformLayout();
             this.tabControlMenu.ResumeLayout(false);
             this.AutoFillPage.ResumeLayout(false);
+            this.AutoFillPage.PerformLayout();
             this.filePage.ResumeLayout(false);
+            this.filePage.PerformLayout();
             this.ConfigPage.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
@@ -636,6 +723,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn nameCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn qntCol;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.Button button1;
     }
 }
 
