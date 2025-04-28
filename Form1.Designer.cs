@@ -35,6 +35,11 @@
             System.Windows.Forms.Label label2;
             System.Windows.Forms.Label label4;
             System.Windows.Forms.Label label5;
+            System.Windows.Forms.Label label8;
+            System.Windows.Forms.Label label9;
+            System.Windows.Forms.Label label10;
+            System.Windows.Forms.Label label11;
+            System.Windows.Forms.Label label12;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.openPdfCheck = new System.Windows.Forms.CheckBox();
             this.PrintCheck = new System.Windows.Forms.CheckBox();
@@ -81,6 +86,11 @@
             label2 = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
+            label8 = new System.Windows.Forms.Label();
+            label9 = new System.Windows.Forms.Label();
+            label10 = new System.Windows.Forms.Label();
+            label11 = new System.Windows.Forms.Label();
+            label12 = new System.Windows.Forms.Label();
             groupBox3.SuspendLayout();
             this.tabControlMenu.SuspendLayout();
             this.AutoFillPage.SuspendLayout();
@@ -172,12 +182,52 @@
             label6.TabIndex = 5;
             label6.Text = "Root path:";
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label1.Location = new System.Drawing.Point(22, 24);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(42, 15);
+            label1.TabIndex = 8;
+            label1.Text = "AWBs:";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label2.Location = new System.Drawing.Point(22, 174);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(96, 15);
+            label2.TabIndex = 9;
+            label2.Text = "Order Summary:";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label4.Location = new System.Drawing.Point(22, 256);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(86, 15);
+            label4.TabIndex = 10;
+            label4.Text = "Magic Button:";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label5.Location = new System.Drawing.Point(24, 147);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(86, 15);
+            label5.TabIndex = 11;
+            label5.Text = "Magic Button:";
+            // 
             // autoFillBtn
             // 
             this.autoFillBtn.BackColor = System.Drawing.SystemColors.ControlLight;
             this.autoFillBtn.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
             this.autoFillBtn.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.autoFillBtn.Location = new System.Drawing.Point(29, 138);
+            this.autoFillBtn.Location = new System.Drawing.Point(27, 165);
             this.autoFillBtn.Name = "autoFillBtn";
             this.autoFillBtn.Size = new System.Drawing.Size(151, 39);
             this.autoFillBtn.TabIndex = 8;
@@ -282,6 +332,8 @@
             // 
             // ConfigPage
             // 
+            this.ConfigPage.Controls.Add(label12);
+            this.ConfigPage.Controls.Add(label11);
             this.ConfigPage.Controls.Add(this.workButton);
             this.ConfigPage.Controls.Add(this.rootButton);
             this.ConfigPage.Location = new System.Drawing.Point(4, 27);
@@ -331,6 +383,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(label10);
+            this.groupBox1.Controls.Add(label9);
+            this.groupBox1.Controls.Add(label8);
             this.groupBox1.Controls.Add(this.emagBtn);
             this.groupBox1.Controls.Add(this.SamedayBtn);
             this.groupBox1.Controls.Add(this.CelBtn);
@@ -347,7 +402,7 @@
             this.emagBtn.BackColor = System.Drawing.SystemColors.ControlLight;
             this.emagBtn.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
             this.emagBtn.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.emagBtn.Location = new System.Drawing.Point(32, 65);
+            this.emagBtn.Location = new System.Drawing.Point(32, 68);
             this.emagBtn.Name = "emagBtn";
             this.emagBtn.Size = new System.Drawing.Size(135, 43);
             this.emagBtn.TabIndex = 9;
@@ -360,7 +415,7 @@
             this.SamedayBtn.BackColor = System.Drawing.SystemColors.ControlLight;
             this.SamedayBtn.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
             this.SamedayBtn.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.SamedayBtn.Location = new System.Drawing.Point(32, 236);
+            this.SamedayBtn.Location = new System.Drawing.Point(32, 160);
             this.SamedayBtn.Name = "SamedayBtn";
             this.SamedayBtn.Size = new System.Drawing.Size(135, 43);
             this.SamedayBtn.TabIndex = 8;
@@ -373,7 +428,7 @@
             this.CelBtn.BackColor = System.Drawing.SystemColors.ControlLight;
             this.CelBtn.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
             this.CelBtn.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.CelBtn.Location = new System.Drawing.Point(32, 151);
+            this.CelBtn.Location = new System.Drawing.Point(32, 252);
             this.CelBtn.Name = "CelBtn";
             this.CelBtn.Size = new System.Drawing.Size(135, 43);
             this.CelBtn.TabIndex = 7;
@@ -603,45 +658,55 @@
             this.panel1.Size = new System.Drawing.Size(211, 532);
             this.panel1.TabIndex = 3;
             // 
-            // label1
+            // label8
             // 
-            label1.AutoSize = true;
-            label1.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label1.Location = new System.Drawing.Point(22, 24);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(42, 15);
-            label1.TabIndex = 8;
-            label1.Text = "AWBs:";
+            label8.AutoSize = true;
+            label8.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label8.Location = new System.Drawing.Point(29, 50);
+            label8.Name = "label8";
+            label8.Size = new System.Drawing.Size(64, 15);
+            label8.TabIndex = 12;
+            label8.Text = "The Good:";
             // 
-            // label2
+            // label9
             // 
-            label2.AutoSize = true;
-            label2.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label2.Location = new System.Drawing.Point(22, 174);
-            label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(96, 15);
-            label2.TabIndex = 9;
-            label2.Text = "Order Summary:";
+            label9.AutoSize = true;
+            label9.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label9.Location = new System.Drawing.Point(29, 142);
+            label9.Name = "label9";
+            label9.Size = new System.Drawing.Size(56, 15);
+            label9.TabIndex = 13;
+            label9.Text = "The Bad:";
             // 
-            // label4
+            // label10
             // 
-            label4.AutoSize = true;
-            label4.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label4.Location = new System.Drawing.Point(22, 256);
-            label4.Name = "label4";
-            label4.Size = new System.Drawing.Size(86, 15);
-            label4.TabIndex = 10;
-            label4.Text = "Magic Button:";
+            label10.AutoSize = true;
+            label10.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label10.Location = new System.Drawing.Point(29, 234);
+            label10.Name = "label10";
+            label10.Size = new System.Drawing.Size(60, 15);
+            label10.TabIndex = 14;
+            label10.Text = "The Ugly:";
             // 
-            // label5
+            // label11
             // 
-            label5.AutoSize = true;
-            label5.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label5.Location = new System.Drawing.Point(26, 120);
-            label5.Name = "label5";
-            label5.Size = new System.Drawing.Size(86, 15);
-            label5.TabIndex = 11;
-            label5.Text = "Magic Button:";
+            label11.AutoSize = true;
+            label11.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label11.Location = new System.Drawing.Point(34, 159);
+            label11.Name = "label11";
+            label11.Size = new System.Drawing.Size(102, 15);
+            label11.TabIndex = 12;
+            label11.Text = "Today\'s work dir:";
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label12.Location = new System.Drawing.Point(34, 67);
+            label12.Name = "label12";
+            label12.Size = new System.Drawing.Size(103, 15);
+            label12.TabIndex = 13;
+            label12.Text = "All time work dir:";
             // 
             // Form1
             // 
@@ -670,8 +735,10 @@
             this.filePage.ResumeLayout(false);
             this.filePage.PerformLayout();
             this.ConfigPage.ResumeLayout(false);
+            this.ConfigPage.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
             this.tabPage5.ResumeLayout(false);

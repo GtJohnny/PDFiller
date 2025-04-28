@@ -330,15 +330,23 @@ namespace PDFiller
 
             foreach (FileInfo file in unzippedList)
             {
+                string[] tokens = file.Name.Split('_');
+                string idOrder = tokens[0];
+                string curier = tokens[1];
+                string idAwb = tokens[2];
+
+
                 Order o = null;
                 try
                 {
-                    o = orders.Find(p => p.id == file.Name.Substring(0, 9));
+                    o = orders.Find(p => p.id == idOrder && p.awb == idAwb);
                     if (o == null)
                     {
-                        failed++;
-                        continue;
+                        throw new FileNotFoundException();
                     }
+
+
+
                     PdfDocument pdf = PdfReader.Open(file.FullName, PdfDocumentOpenMode.Import);
                     PdfPage page = pdf.Pages[0];
                     doc.AddPage(page);

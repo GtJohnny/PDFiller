@@ -412,13 +412,13 @@ namespace PDFiller
                 manualSelect = false;
                 Menu menu = PDFiller.Menu.getInstance(this);
                 workDir = menu.FindWorkDir(rootDir);
-                textBox1.Text += "Found work directory at:\r\n" + workDir.FullName + "\r\n";
+                textBox1.Text += $"Found work directory at:\r\n{workDir.FullName}\r\n";
                 zip = menu.FindZipsUnzipped(workDir);
-                textBox1.Text += "Found zip archive at:\r\n" + zip.FullName + "\r\n";
+                textBox1.Text += $"Found zip archive at:\r\n{zip.FullName}\r\n";
                 zipPathBox.Text = zip.FullName;
                 string extractedDir = null;
                 unzippedList = menu.UnzipArchive(zip, ref extractedDir);
-                textBox1.Text += "Found " + unzippedList.Count + " orders.\r\n";
+                textBox1.Text += $"Found {unzippedList.Count} orders.\r\n";
 
                 excel = menu.FindExcel(workDir);
                 excelGridView.Rows.Clear();
@@ -432,8 +432,6 @@ namespace PDFiller
 
 
 
-
-
                 int failed;
                 string path = mergedPath = menu.WriteOnOrders(unzippedList, orders, extractedDir, out failed, "Merged&Filled");
                 if (failed > 0)
@@ -444,7 +442,7 @@ namespace PDFiller
                 {
                     textBox1.Text += "All pdfs completed and merged with success.\r\n";
                 }
-                textBox1.Text += "Merged pdf was saved at " + path + "\r\n";
+                textBox1.Text += $"Merged pdf was saved at \r\n{path}\r\n";
                 if (openPdfCheck.Checked)
                 {
                     textBox1.Text += "It should open about now.\r\n";
@@ -486,11 +484,11 @@ namespace PDFiller
         {
             switch (tabControl2.SelectedIndex)
             {
-                case 1:
+                case 0:
              //       if (mergedPath == null || (chromiumWebBrowser1.Address!= null && mergedPath != chromiumWebBrowser1.Address)) return;
                //     chromiumWebBrowser1.LoadUrlAsync(mergedPath);
                     break;
-                case 2:
+                case 1:
                     if(this.excel == null || excelGridView.Rows.Count > 0) return;
                     if (readOrders)
                     {
@@ -507,7 +505,7 @@ namespace PDFiller
                         }
                     }
                     break;
-                case 3:
+                case 2:
 
                     if (this.excel == null || summaryGridView.Rows.Count > 0 ) return;
                     if (readOrders)
