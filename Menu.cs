@@ -14,6 +14,7 @@ using PdfSharpCore.Pdf.IO;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Data;
+using System.Reflection;
 
 
 
@@ -146,7 +147,7 @@ namespace PDFiller
                 throw new FileNotFoundException("No excel file was found within the work directory!\r\n");
             }
             //      form.excelPathBox.Text = excel.FullName;
-//form.newExcel = true;
+               //form.newExcel = true;
             return excel;
         }
 
@@ -183,8 +184,11 @@ namespace PDFiller
                         string awb = sheet.Cells[row, AWBCOL].Value2;
                         string name = sheet.Cells[row, NAMECOL].Value2;
                         string tname = sheet.Cells[row, TNAMECOL].Value2;
+                        // , KZE Prints, Photo Paper Glossy
 
-                        tname = tname.Remove(tname.Length - 32);
+
+                        tname = tname.Replace(", KZE Prints, Photo Paper Glossy", "");
+                  //      tname = tname.Remove(tname.Length - 32);
                         int qnt = (int)sheet.Cells[row, TQNTCOL].Value2;
 
 
@@ -314,39 +318,71 @@ namespace PDFiller
             throw new FileNotFoundException("All zip files already extracted.\r\n");
         }
 
+
         /// <summary>
-        /// Filles all the unzipped pdfs with the coresponding orders and saves the merged pdf.
-        /// If Open pdf in browser is checked, it also opens it.
-        /// Returns a refference to the pdf file.
+        ///  
         /// </summary>
-        /// <param name="unzippedList">The list of all unzipped pdf files.</param>
-        /// <param name="orders">The list of all orders coresponding to those pdf files, taken from an excel sheet.</param>
-        /// <param name="saveDir">The directory where we save the merged pdf to.</param>
-        /// <returns>Path to the merged pdf</returns>
+        /// <param name="unzippedList">All AWB files selected, automatically or manually, in PDF format and represented by the FileInfo proxy.</param>
+        /// <param name="orders">All orders read from the Order Summary .xlsx file.</param>
+        /// <param name="saveDir">The directory path where we want to save the resulting pdf.</param>
+        /// <param name="failed">Returns the number of AWBs that failed processing.</param>
+        /// <param name="name">The file name for the resulting PDF.</param>
+        /// <returns>The full file path of the merged PDF.</returns>
+        /// <exception cref="ArgumentException">Selected files had incorrect names.</exception>
+        /// <exception cref="FileNotFoundException">Selected files could not be found.</exception>
+
         public string WriteOnOrders(List<FileInfo> unzippedList, List<Order> orders, string saveDir,out int failed,string name)
         {
             failed = 0;
             PdfDocument doc = new PdfDocument();
-
             foreach (FileInfo file in unzippedList)
             {
-                string[] tokens = file.Name.Split('_');
-                string idOrder = tokens[0];
-                string curier = tokens[1];
-                string idAwb = tokens[2];
-
+                if (file == null || !file.Exists)
+                {
+                    failed++;
+                    continue;
+                }
+                string idOrder, curier, idAWB;
+                try
+                {
+                    string[] tokens = Path.GetFileNameWithoutExtension(file.Name).Split('_');
+                    idOrder = tokens[0];
+                    switch (tokens[1])
+                    {
+                        case "eMAG":
+                            curier = tokens[1] + '_' + tokens[2];
+                            idAWB = tokens[3];
+                            break;
+                        case "Sameday":
+                            curier = tokens[1];
+                            idAWB = tokens[2];
+                            break;
+                        default:
+                            //alt curier?
+                            idAWB = tokens.Last();
+                            break;
+                    }
+                }
+                catch(IndexOutOfRangeException ex)
+                {
+                    failed++;
+                    continue;
+                }
 
                 Order o = null;
                 try
                 {
-                    o = orders.Find(p => p.id == idOrder && p.awb == idAwb);
+                    /*
+                     * Sometimes the excel may not actually have the AWB id listed when you download it.
+                     * Despite the fact said AWB had been succesfully generated.
+                     * 
+                     */
+                    o = orders.Find(p => p.id == idOrder/* && p.awb!="" && p.awb.Substring(0,p.awb.Length-3) == idAWB*/);
                     if (o == null)
                     {
-                        throw new FileNotFoundException();
+                        failed++;
+                        continue;
                     }
-
-
-
                     PdfDocument pdf = PdfReader.Open(file.FullName, PdfDocumentOpenMode.Import);
                     PdfPage page = pdf.Pages[0];
                     doc.AddPage(page);
@@ -366,9 +402,10 @@ namespace PDFiller
             {
                 throw new ArgumentException("None of the orders in the excel matched the pdf files.\r\n");
             }
-            doc.Save(saveDir + "\\" + name + ".pdf");
+            string returnPath = $"{saveDir}\\{name}.pdf";
+            doc.Save(returnPath);
             doc.Close();
-            return saveDir + "\\" + name + ".pdf";
+            return returnPath;
         }
 
 
@@ -379,7 +416,7 @@ namespace PDFiller
         /// <param name="name">Topper name</param>
         /// <returns>A topper that contains only the name of the topper mascot, or the same string unchanged if it couldn't be found.</returns>
 
-        private string modifyName(string name)
+        private string ModifyName(string name)
         {
             string[] list = { "briose de", "briose", "tort", };
             foreach(string s in list)
@@ -425,7 +462,7 @@ namespace PDFiller
 
                 foreach (var topper in toppere)
                 {
-                    gfx.DrawString(topper.tQuantity + " buc: " + modifyName(topper.tName), font, brush, 50, page.Height / 2 + 150 + 15 * (i++), XStringFormats.CenterLeft);
+                    gfx.DrawString(topper.tQuantity + " buc: " + ModifyName(topper.tName), font, brush, 50, page.Height / 2 + 120 + 15 * (i++), XStringFormats.CenterLeft);
                 }
             }
             catch (Exception ex)

@@ -17,7 +17,9 @@ using System.IO.Compression;
 using Excel = Microsoft.Office.Interop.Excel;
 using Microsoft.Office.Interop.Excel;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Microsoft.WindowsAPICodePack.Dialogs.Controls;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using System.Data.Odbc;
 
 
 
@@ -157,6 +159,7 @@ namespace PDFiller
                     manualSelect = false;
                     zipPathBox.Text = ofd.FileName;
                     zip = new FileInfo(ofd.FileName);
+                    unzippedList = null ;
                     textBox1.Text += "Found zip archive at:\r\n" + zip.FullName + "\r\n";
                     zipLabel.Font = new System.Drawing.Font(zipLabel.Font, FontStyle.Regular);
                     break;
@@ -213,9 +216,7 @@ namespace PDFiller
         private bool manualSelect = false;
         private void unzippedButton_Click(object sender, EventArgs e)
         {
-            Menu menu = PDFiller.Menu.getInstance();
-            zip = null;
-            unzippedList = new List<FileInfo>();
+         
 
             OpenFileDialog ofd = new OpenFileDialog()
             {
@@ -226,6 +227,9 @@ namespace PDFiller
                 //  InitialDirectory = envi.FullName,
                 RestoreDirectory = true
             };
+            Menu menu = PDFiller.Menu.getInstance();
+            zip = null;
+            unzippedList = new List<FileInfo>();
 
             switch (ofd.ShowDialog())
             {
@@ -274,6 +278,13 @@ namespace PDFiller
 
         private void rootButton_Click(object sender, EventArgs e)
         {
+
+
+            CommonOpenFileDialog openFileDialog = new CommonOpenFileDialog();
+            openFileDialog.IsFolderPicker = true;
+            openFileDialog.Multiselect = false;
+
+
             FolderBrowserDialog ofd = new FolderBrowserDialog();
             ofd.RootFolder = Environment.SpecialFolder.MyComputer;
             ofd.Description = "This where you'd make folders daily:\r\n" +
@@ -352,32 +363,24 @@ namespace PDFiller
                 {
                     throw new FileNotFoundException("Excel could not be found.");
                 }
-                Menu menu = null; ;
                 string saveDir = null;
-                if (!manualSelect)
+                Menu menu = PDFiller.Menu.getInstance();
+                if (zip!=null && unzippedList == null)
                 {
-                    if (zip == null || !zip.Exists)
+                    if (!zip.Exists)
                     {
                         throw new FileNotFoundException("Zip archive could not be found.");
                     }
                     menu = PDFiller.Menu.getInstance();
 
                     unzippedList = menu.UnzipArchive(zip, ref saveDir);
-                    textBox1.Text += "Extracted archive: " + zip.Name + "\r\n";
-                    textBox1.Text += "Extracted " + unzippedList.Count + " files.\r\n";
+                    textBox1.Text += $"Extracted archive: {zip.Name}\r\n";
+                    textBox1.Text += $"Extracted {unzippedList.Count} orders.\r\n";
                 }
 
-                foreach (FileInfo pdf in unzippedList)
-                {
-                    if (!pdf.Exists)
-                    {
-                        textBox1.Text += pdf.Name + "could not be found, something happened to it.";
-                        unzippedList.Remove(pdf);
-                    }
-                }
-                menu = PDFiller.Menu.getInstance();
+
                 orders = menu.ReadExcel(excel);
-                saveDir = unzippedList[0].DirectoryName;
+                saveDir = unzippedList.First().DirectoryName;
                 int failed = 0;
                 string path = mergedPath = menu.WriteOnOrders(unzippedList, orders, saveDir, out failed, "CustomPDF");
                 if (failed > 0)
@@ -389,7 +392,7 @@ namespace PDFiller
                     textBox1.Text += "All were filled succesfully.\r\n";
                 }
                 textBox1.Text += "Merged order PDF was saved at location:\r\n" + path + "\r\n";
-                if (tabControl2.SelectedIndex == 1 ) updateTabIndex();
+                if (tabControl2.SelectedIndex == 1) updateTabIndex();
 
                 if (openPdfCheck.Checked)
                 {
@@ -570,6 +573,16 @@ namespace PDFiller
         private void button1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void rootTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void rootTextBox_DoubleClick(object sender, EventArgs e)
+        {
+            Process.Start(rootTextBox.Text);
         }
     }
 }

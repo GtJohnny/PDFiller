@@ -222,6 +222,56 @@
             label5.TabIndex = 11;
             label5.Text = "Magic Button:";
             // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label8.Location = new System.Drawing.Point(29, 50);
+            label8.Name = "label8";
+            label8.Size = new System.Drawing.Size(64, 15);
+            label8.TabIndex = 12;
+            label8.Text = "The Good:";
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label9.Location = new System.Drawing.Point(29, 142);
+            label9.Name = "label9";
+            label9.Size = new System.Drawing.Size(56, 15);
+            label9.TabIndex = 13;
+            label9.Text = "The Bad:";
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label10.Location = new System.Drawing.Point(29, 234);
+            label10.Name = "label10";
+            label10.Size = new System.Drawing.Size(60, 15);
+            label10.TabIndex = 14;
+            label10.Text = "The Ugly:";
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label11.Location = new System.Drawing.Point(34, 159);
+            label11.Name = "label11";
+            label11.Size = new System.Drawing.Size(102, 15);
+            label11.TabIndex = 12;
+            label11.Text = "Today\'s work dir:";
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label12.Location = new System.Drawing.Point(34, 67);
+            label12.Name = "label12";
+            label12.Size = new System.Drawing.Size(103, 15);
+            label12.TabIndex = 13;
+            label12.Text = "All time work dir:";
+            // 
             // autoFillBtn
             // 
             this.autoFillBtn.BackColor = System.Drawing.SystemColors.ControlLight;
@@ -463,6 +513,8 @@
             this.rootTextBox.ReadOnly = true;
             this.rootTextBox.Size = new System.Drawing.Size(725, 25);
             this.rootTextBox.TabIndex = 6;
+            this.rootTextBox.TextChanged += new System.EventHandler(this.rootTextBox_TextChanged);
+            this.rootTextBox.DoubleClick += new System.EventHandler(this.rootTextBox_DoubleClick);
             // 
             // excelPathBox
             // 
@@ -657,56 +709,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(211, 532);
             this.panel1.TabIndex = 3;
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label8.Location = new System.Drawing.Point(29, 50);
-            label8.Name = "label8";
-            label8.Size = new System.Drawing.Size(64, 15);
-            label8.TabIndex = 12;
-            label8.Text = "The Good:";
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label9.Location = new System.Drawing.Point(29, 142);
-            label9.Name = "label9";
-            label9.Size = new System.Drawing.Size(56, 15);
-            label9.TabIndex = 13;
-            label9.Text = "The Bad:";
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label10.Location = new System.Drawing.Point(29, 234);
-            label10.Name = "label10";
-            label10.Size = new System.Drawing.Size(60, 15);
-            label10.TabIndex = 14;
-            label10.Text = "The Ugly:";
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label11.Location = new System.Drawing.Point(34, 159);
-            label11.Name = "label11";
-            label11.Size = new System.Drawing.Size(102, 15);
-            label11.TabIndex = 12;
-            label11.Text = "Today\'s work dir:";
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label12.Location = new System.Drawing.Point(34, 67);
-            label12.Name = "label12";
-            label12.Size = new System.Drawing.Size(103, 15);
-            label12.TabIndex = 13;
-            label12.Text = "All time work dir:";
             // 
             // Form1
             // 
