@@ -53,8 +53,15 @@ namespace PDFiller
             sw.Close();
         }
 
+
+        async public void SecondForm()
+        {
+
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
+
+
             StreamReader sr = null;
             if (File.Exists("options.ini"))
             {
@@ -280,10 +287,12 @@ namespace PDFiller
         {
 
 
-            CommonOpenFileDialog openFileDialog = new CommonOpenFileDialog();
-            openFileDialog.IsFolderPicker = true;
-            openFileDialog.Multiselect = false;
-
+            //CommonOpenFileDialog rootDirDialogue = new CommonOpenFileDialog();
+            //rootDirDialogue.IsFolderPicker = true;
+            //rootDirDialogue.Multiselect = false;
+            //rootDirDialogue.DefaultDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            //rootDirDialogue.EnsurePathExists = true;
+            //rootDirDialogue.NavigateToShortcut = true;
 
             FolderBrowserDialog ofd = new FolderBrowserDialog();
             ofd.RootFolder = Environment.SpecialFolder.MyComputer;
