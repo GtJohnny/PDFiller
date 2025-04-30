@@ -20,36 +20,36 @@ using System.Reflection;
 
 namespace PDFiller
 {
-    internal class Menu
+    internal class Builder
     {
 
         Form1 form=null;
-        static Menu menu=null;
-        private Menu()
+        static Builder menu=null;
+        private Builder()
         {
 
         }
 
-        private Menu(Form1 form)
+        private Builder(Form1 form)
         {
             this.form = form;
           //  this.rootDir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\AWB\\");
         }
    
 
-        static public Menu getInstance()
+        static public Builder getInstance()
         {
             if (menu == null)
             {
-                menu = new Menu();
+                menu = new Builder();
             }
             return menu;
         }
-        public static Menu getInstance(Form1 form)
+        public static Builder getInstance(Form1 form)
         {
             if (menu == null)
             {
-                menu = new Menu(form);
+                menu = new Builder(form);
             }
             return menu;
         }
@@ -437,10 +437,11 @@ namespace PDFiller
 
 
         /// <summary>
-        /// Writes topper count and name on an individual page.
+        /// For the given pdf page which represents a whole AWB, clears the lower half, 
+        /// then write the order contents: topper count, name and image (if exists).
         /// </summary>
-        /// <param name="page">Page to be written on</param>
-        /// <param name="toppere">What to write on the page (qnt + name)</param>
+        /// <param name="page">AWB Page to be written on</param>
+        /// <param name="toppere">What to write on the page (qnt + name + image)</param>
         /// <returns>True if successfull, false if not</returns>
         private bool WriteOnPage(PdfPage page, List<Order.topper> toppere)
         {
@@ -460,9 +461,18 @@ namespace PDFiller
                 int i = 0;
 
 
+
+                DirectoryInfo imagesDir = new DirectoryInfo("C:\\Users\\KZE PC\\Desktop\\VIsual studio projects\\PDFiller\\bin\\Debug\\images\\");
+                FileInfo[] images  = imagesDir.GetFiles("*.jpg");
+                //   PdfSharpCore.Drawing.XBitmapImage img = PdfSharpCore.Drawing.XBitmapSource.FromFile(imagesDir.FullName);    
+
+                XImage img = XImage.FromFile(images[0].FullName);
+
+
                 foreach (var topper in toppere)
                 {
-                    gfx.DrawString(topper.tQuantity + " buc: " + ModifyName(topper.tName), font, brush, 50, page.Height / 2 + 120 + 15 * (i++), XStringFormats.CenterLeft);
+                    gfx.DrawString(topper.tQuantity + " buc: " + ModifyName(topper.tName), font, brush, 50, page.Height / 2 + 100 + 15 * (i++), XStringFormats.CenterLeft);
+                    gfx.DrawImage(img, page.Width - 180 , page.Height / 2 + 50, 90, 90);
                 }
             }
             catch (Exception ex)
