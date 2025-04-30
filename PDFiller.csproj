@@ -215,7 +215,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AppPDF.ico" />
-    <Content Include="bin\Debug\images\Set 13 figurine tortbriose Roblox, KZE Prints, Photo Paper Glossy.jpg" />
+    <Content Include="bin\Debug\debugTests\Set 13 figurine tortbriose Roblox, KZE Prints, Photo Paper Glossy.jpg" />
     <Content Include="bin\Debug\PDFiller.exe" />
     <Content Include="bin\Debug\PDFiller.pdb" />
   </ItemGroup>

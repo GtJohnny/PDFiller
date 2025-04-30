@@ -452,7 +452,7 @@ namespace PDFiller
             {
                 XGraphics gfx = XGraphics.FromPdfPage(page);
 
-                XFont font = new XFont("Times New Roman", 12);
+                XFont font = new XFont("Times New Roman", 14);
                 XSolidBrush brush = new XSolidBrush(XColor.FromKnownColor(XKnownColor.Black));
 
                 XRect rect = new XRect(0, page.Height / 2 - 15, page.Width, page.Height / 2 + 15);
@@ -464,16 +464,34 @@ namespace PDFiller
 
                 DirectoryInfo imagesDir = new DirectoryInfo("C:\\Users\\KZE PC\\Desktop\\VIsual studio projects\\PDFiller\\bin\\Debug\\images\\");
                 FileInfo[] images  = imagesDir.GetFiles("*.jpg");
-                //   PdfSharpCore.Drawing.XBitmapImage img = PdfSharpCore.Drawing.XBitmapSource.FromFile(imagesDir.FullName);    
 
-                XImage img = XImage.FromFile(images[0].FullName);
 
+
+                Random rng = new Random(i);
+
+
+
+
+                XImage img = null;
+
+            //    XImage img = XImage.FromFile()
 
                 foreach (var topper in toppere)
                 {
-                    gfx.DrawString(topper.tQuantity + " buc: " + ModifyName(topper.tName), font, brush, 50, page.Height / 2 + 100 + 15 * (i++), XStringFormats.CenterLeft);
-                    gfx.DrawImage(img, page.Width - 180 , page.Height / 2 + 50, 90, 90);
+                    gfx.DrawString(topper.tQuantity + " buc: " + ModifyName(topper.tName), font, brush, 25, page.Height / 2 + 25  + 20 * i, XStringFormats.CenterLeft);
+              //      gfx.DrawImage(img, page.Width - 200 + 100 * (i / 4), page.Height / 2 + 100 * (i % 4), 90, 90);
+                    i++;
                 }
+
+                int nrImagini = 16;
+                for (int j = 0; j < nrImagini; j++)
+                {
+                    img = XImage.FromFile(images[rng.Next(8)].FullName);
+                    gfx.DrawImage(img, page.Width - 95*(nrImagini / 4) + 95 * (j / 4), page.Height / 2+ 20 + 95 * (j % 4), 90, 90);
+                }
+
+
+
             }
             catch (Exception ex)
             {

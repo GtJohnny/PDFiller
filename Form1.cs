@@ -137,13 +137,12 @@ namespace PDFiller
         {
             Builder builder = Builder.getInstance();
             manualSelect = true;
-            workDir = builder.FindWorkDir(rootDir);
-            unzippedList = new List<FileInfo>() { new FileInfo("C:\\Users\\KZE PC\\Desktop\\AWB\\30.04.2025\\422012166_eMAG_Courier_4EMGLN113394574001.pdf") };
+            workDir = new DirectoryInfo("C:\\Users\\KZE PC\\Desktop\\VIsual studio projects\\PDFiller\\bin\\Debug\\debugTests\\");
+            unzippedList = new List<FileInfo>() { new FileInfo("C:\\Users\\KZE PC\\Desktop\\VIsual studio projects\\PDFiller\\bin\\Debug\\debugTests\\\\417264331_Sameday_4EMG24107789758001.pdf") };
             excel = builder.FindExcel(workDir);
             var orders = builder.ReadExcel(excel);
             int failed;
             string resPath = builder.WriteOnOrders(unzippedList, orders, workDir.FullName, out failed, "ROBLOX_IMAGE_TEST");
-
             Process.Start(resPath);
 
         }
