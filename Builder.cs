@@ -166,14 +166,16 @@ namespace PDFiller
             {
                 sheet = book.Worksheets[1];
                 int row = 2;
-                const string IDCOL = "A";
-                const string AWBCOL = "C";
-                const string NAMECOL = "T";
-                const string TNAMECOL = "D";
-                const string TQNTCOL = "G";
+                const string IDCOL       = "A";
+                const string AWBCOL      = "C";
+                const string TNAMECOL    = "D";
+                const string IDPRODUCT   = "E";
+                const string TQNTCOL     = "G";
+                const string NAMECOL     = "T";
 
 
                 Order lastOrder = new Order();
+                Builder builder = new Builder();
                 while (true)
                 {
                     string id = sheet.Cells[row, IDCOL].Value2;
@@ -183,24 +185,26 @@ namespace PDFiller
                     {
                         string awb = sheet.Cells[row, AWBCOL].Value2;
                         string name = sheet.Cells[row, NAMECOL].Value2;
-                        string tname = sheet.Cells[row, TNAMECOL].Value2;
+                        string tName = sheet.Cells[row, TNAMECOL].Value2;
+                        tName = builder.ModifyName(tName);
+
+                        string idProduct = sheet.Cells[row, IDPRODUCT].Value2;
                         // , KZE Prints, Photo Paper Glossy
-
-
-                        tname = tname.Replace(", KZE Prints, Photo Paper Glossy", "");
+                  //      tname = tname.Replace(", KZE Prints, Photo Paper Glossy", "");
                   //      tname = tname.Remove(tname.Length - 32);
+
                         int qnt = (int)sheet.Cells[row, TQNTCOL].Value2;
 
 
                         if (id == lastOrder.id)
                         {
-                            lastOrder.toppere.Add(new Order.topper(tname, qnt));
+                            lastOrder.toppere.Add(new Order.topper(tName, qnt, idProduct));
                         }
                         else
                         {
                             if (lastOrder.id != "")
                                 orders.Add(lastOrder);
-                            lastOrder = new Order(id, awb,name, tname, qnt);
+                            lastOrder = new Order(id, awb,name, tName, qnt, idProduct);
 
                             //form.textBox1.Text += ++i + ". " + awb + ":\r\n" +
                             //    "-> " + qnt + ". " + name + "\r\n";
@@ -418,21 +422,18 @@ namespace PDFiller
 
         private string ModifyName(string name)
         {
-            string[] list = { "briose de", "briose", "tort", };
+            string[] list = { "briose de ", "briose ", "tort ", };
             foreach(string s in list)
             {
                 int index = name.LastIndexOf(s);
                 if (index > 0)
                 {
-                    return name.Substring(index + s.Length);
+                    return name.Substring(index + s.Length).Replace(", KZE Prints, Photo Paper Glossy", "");
                 }
 
             }
             return name;
-
         }
-
-
 
 
 
@@ -461,34 +462,29 @@ namespace PDFiller
                 int i = 0;
 
 
-
+                ///This WILL dissappear from here.
                 DirectoryInfo imagesDir = new DirectoryInfo("C:\\Users\\KZE PC\\Desktop\\VIsual studio projects\\PDFiller\\bin\\Debug\\images\\");
                 FileInfo[] images  = imagesDir.GetFiles("*.jpg");
-
-
-
                 Random rng = new Random(i);
 
 
 
 
-                XImage img = null;
-
-            //    XImage img = XImage.FromFile()
-
                 foreach (var topper in toppere)
                 {
-                    gfx.DrawString(topper.tQuantity + " buc: " + ModifyName(topper.tName), font, brush, 25, page.Height / 2 + 25  + 20 * i, XStringFormats.CenterLeft);
-              //      gfx.DrawImage(img, page.Width - 200 + 100 * (i / 4), page.Height / 2 + 100 * (i % 4), 90, 90);
+                    if (i < 16)
+                    {
+                        //    img = XImage.FromFile($"{imagesPath}\\{topper.tId}.jpg");
+                        XImage img = XImage.FromFile(images[rng.Next(8)].FullName);
+                        gfx.DrawImage(img, page.Width - 95 * (Math.Max(toppere.Count, 16) / 4) + 95 * (i / 4), page.Height / 2 + 20 + 95 * (i % 4), 90, 90);
+                    }
+                    gfx.DrawString($"{topper.tQuantity} buc: {topper.tName}", font, brush, 25, page.Height / 2 + 25 + 20 * i, XStringFormats.CenterLeft);
+                        // gfx.DrawImage(img, page.Width - 95 * (nrImagini / 4) + 95 * (j / 4), page.Height / 2 + 20 + 95 * (j % 4), 90, 90);
                     i++;
+
+                    if (i == 20) break;
                 }
 
-                int nrImagini = 16;
-                for (int j = 0; j < nrImagini; j++)
-                {
-                    img = XImage.FromFile(images[rng.Next(8)].FullName);
-                    gfx.DrawImage(img, page.Width - 95*(nrImagini / 4) + 95 * (j / 4), page.Height / 2+ 20 + 95 * (j % 4), 90, 90);
-                }
 
 
 
