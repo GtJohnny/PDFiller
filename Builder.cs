@@ -461,23 +461,25 @@ namespace PDFiller
 
                 int i = 0;
 
-
+                /*
                 ///This WILL dissappear from here.
                 DirectoryInfo imagesDir = new DirectoryInfo("C:\\Users\\KZE PC\\Desktop\\VIsual studio projects\\PDFiller\\bin\\Debug\\images\\");
                 FileInfo[] images  = imagesDir.GetFiles("*.jpg");
                 Random rng = new Random(i);
-
+                */
 
 
 
                 foreach (var topper in toppere)
                 {
+                    /*
                     if (i < 16)
                     {
                         //    img = XImage.FromFile($"{imagesPath}\\{topper.tId}.jpg");
                         XImage img = XImage.FromFile(images[rng.Next(8)].FullName);
                         gfx.DrawImage(img, page.Width - 95 * (Math.Max(toppere.Count, 16) / 4) + 95 * (i / 4), page.Height / 2 + 20 + 95 * (i % 4), 90, 90);
                     }
+                    */
                     gfx.DrawString($"{topper.tQuantity} buc: {topper.tName}", font, brush, 25, page.Height / 2 + 25 + 20 * i, XStringFormats.CenterLeft);
                         // gfx.DrawImage(img, page.Width - 95 * (nrImagini / 4) + 95 * (j / 4), page.Height / 2 + 20 + 95 * (j % 4), 90, 90);
                     i++;

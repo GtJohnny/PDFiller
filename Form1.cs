@@ -35,6 +35,8 @@ namespace PDFiller
             InitializeComponent();
         }
 
+        private string DebugPath = Environment.CurrentDirectory+ "\\debugTests\\";
+
         private DirectoryInfo rootDir = null;
         private DirectoryInfo workDir = null;
         private FileInfo zip = null;
@@ -134,8 +136,8 @@ namespace PDFiller
         {
             Builder builder = Builder.getInstance();
             manualSelect = true;
-            workDir = new DirectoryInfo("C:\\Users\\KZE PC\\Desktop\\VIsual studio projects\\PDFiller\\bin\\Debug\\debugTests\\");
-            unzippedList = new List<FileInfo>() { new FileInfo("C:\\Users\\KZE PC\\Desktop\\VIsual studio projects\\PDFiller\\bin\\Debug\\debugTests\\\\417264331_Sameday_4EMG24107789758001.pdf") };
+            workDir = new DirectoryInfo(DebugPath);
+            unzippedList = new List<FileInfo>() { new FileInfo(DebugPath + "417264331_Sameday_4EMG24107789758001.pdf") };
             excel = builder.FindExcel(workDir);
             var orders = builder.ReadExcel(excel);
             int failed;
@@ -149,7 +151,7 @@ namespace PDFiller
         private void Form1_Shown(object sender, EventArgs e)
         {
 
-            Builder menu = PDFiller.Builder.getInstance(this);
+            Builder menu = Builder.getInstance(this);
 
             HelpMeOut();    
 
