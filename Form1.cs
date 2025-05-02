@@ -147,17 +147,90 @@ namespace PDFiller
         }
 
 
+        public void TestAsync()
+        {
+            Excel.Application app = new Excel.Application();
+            Workbook book = app.Workbooks.Open(DebugPath + "imagini.xlsx");
+      
+            if (book == null)
+            {
+                throw new Exception("Excel workbook could not be opened.");
+            }
+            Worksheet sheet;
+            try
+            {
+                sheet = book.Worksheets[1];
+                MessageBox.Show(sheet.Cells[1, 1].Value2.ToString());
+                MessageBox.Show(sheet.Cells[1, 2].Value2.ToString());
+                MessageBox.Show(sheet.Cells[1, 3].Value2.ToString());
+                MessageBox.Show(sheet.Cells[2, 1].Value2.ToString());
+                MessageBox.Show(sheet.Cells[2, 2].Value2.ToString());
+                MessageBox.Show(sheet.Cells[2, 3].Value2.ToString());
+                MessageBox.Show(sheet.Cells[3, 1].Value2.ToString());
+                MessageBox.Show(sheet.Cells[3, 2].Value2.ToString());
+                MessageBox.Show(sheet.Cells[3, 3].Value2.ToString());
 
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                book.Close();
+                app.Quit();
+            }
+        }
+
+
+        public async void HelpMeOutAsync()
+        {
+            await Task.Run(() => TestAsync());
+        }
         private void Form1_Shown(object sender, EventArgs e)
         {
 
             Builder menu = Builder.getInstance(this);
 
-            HelpMeOut();    
+            //   HelpMeOut();
+            Excel.Application app = new Excel.Application();
+            string exPath = DebugPath + "orders_details_file_02-05-2025-22-46-41.xlsx";
+            string exPath1 = DebugPath + "imagini.xlsx";
+            Workbook book = app.Workbooks.Open(exPath1);
+
+            if (book == null)
+            {
+                throw new Exception("Excel workbook could not be opened.");
+            }
+            Worksheet sheet;
+            try
+            {
+                sheet = book.Worksheets[1];
+                MessageBox.Show(sheet.Cells[1, 1].Value2.ToString());
+                MessageBox.Show(sheet.Cells[1, 2].Value2.ToString());
+                MessageBox.Show(sheet.Cells[1, 3].Value2.ToString());
+                MessageBox.Show(sheet.Cells[2, 1].Value2.ToString());
+                MessageBox.Show(sheet.Cells[2, 2].Value2.ToString());
+                MessageBox.Show(sheet.Cells[2, 3].Value2.ToString());
+                MessageBox.Show(sheet.Cells[3, 1].Value2.ToString());
+                MessageBox.Show(sheet.Cells[3, 2].Value2.ToString());
+                MessageBox.Show(sheet.Cells[3, 3].Value2.ToString());
 
 
 
-
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                book.Close();
+                app.Quit();
+            }
+            return;
 
 
 
