@@ -193,50 +193,45 @@ namespace PDFiller
         private void Form1_Shown(object sender, EventArgs e)
         {
 
-<<<<<<< HEAD
-            Builder menu = Builder.getInstance(this);
-=======
 
-    //        HelpMeOut();    
->>>>>>> 6c7c6ff (swap table)
 
             //   HelpMeOut();
-            Excel.Application app = new Excel.Application();
-            string exPath = DebugPath + "orders_details_file_02-05-2025-22-46-41.xlsx";
-            string exPath1 = DebugPath + "imagini.xlsx";
-            Workbook book = app.Workbooks.Open(exPath1);
+            //Excel.Application app = new Excel.Application();
+            //string exPath = DebugPath + "orders_details_file_02-05-2025-22-46-41.xlsx";
+            //string exPath1 = DebugPath + "imagini.xlsx";
+            //Workbook book = app.Workbooks.Open(exPath1);
 
-            if (book == null)
-            {
-                throw new Exception("Excel workbook could not be opened.");
-            }
-            Worksheet sheet;
-            try
-            {
-                sheet = book.Worksheets[1];
-                MessageBox.Show(sheet.Cells[1, 1].Value2.ToString());
-                MessageBox.Show(sheet.Cells[1, 2].Value2.ToString());
-                MessageBox.Show(sheet.Cells[1, 3].Value2.ToString());
-                MessageBox.Show(sheet.Cells[2, 1].Value2.ToString());
-                MessageBox.Show(sheet.Cells[2, 2].Value2.ToString());
-                MessageBox.Show(sheet.Cells[2, 3].Value2.ToString());
-                MessageBox.Show(sheet.Cells[3, 1].Value2.ToString());
-                MessageBox.Show(sheet.Cells[3, 2].Value2.ToString());
-                MessageBox.Show(sheet.Cells[3, 3].Value2.ToString());
+            //if (book == null)
+            //{
+            //    throw new Exception("Excel workbook could not be opened.");
+            //}
+            //Worksheet sheet;
+            //try
+            //{
+            //    sheet = book.Worksheets[1];
+            //    MessageBox.Show(sheet.Cells[1, 1].Value2.ToString());
+            //    MessageBox.Show(sheet.Cells[1, 2].Value2.ToString());
+            //    MessageBox.Show(sheet.Cells[1, 3].Value2.ToString());
+            //    MessageBox.Show(sheet.Cells[2, 1].Value2.ToString());
+            //    MessageBox.Show(sheet.Cells[2, 2].Value2.ToString());
+            //    MessageBox.Show(sheet.Cells[2, 3].Value2.ToString());
+            //    MessageBox.Show(sheet.Cells[3, 1].Value2.ToString());
+            //    MessageBox.Show(sheet.Cells[3, 2].Value2.ToString());
+            //    MessageBox.Show(sheet.Cells[3, 3].Value2.ToString());
 
 
 
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                book.Close();
-                app.Quit();
-            }
-            return;
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw ex;
+            //}
+            //finally
+            //{
+            //    book.Close();
+            //    app.Quit();
+            //}
+            //return;
 
 
 
