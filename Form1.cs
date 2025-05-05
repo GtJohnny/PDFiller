@@ -59,6 +59,7 @@ namespace PDFiller
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            Builder menu = PDFiller.Builder.GetInstance(this);
 
 
             StreamReader sr = null;
@@ -134,7 +135,7 @@ namespace PDFiller
 
         private void HelpMeOut()
         {
-            Builder builder = Builder.getInstance();
+            Builder builder = Builder.GetInstance();
             manualSelect = true;
             workDir = new DirectoryInfo(DebugPath);
             unzippedList = new List<FileInfo>() { new FileInfo(DebugPath + "417264331_Sameday_4EMG24107789758001.pdf") };
@@ -192,7 +193,12 @@ namespace PDFiller
         private void Form1_Shown(object sender, EventArgs e)
         {
 
+<<<<<<< HEAD
             Builder menu = Builder.getInstance(this);
+=======
+
+    //        HelpMeOut();    
+>>>>>>> 6c7c6ff (swap table)
 
             //   HelpMeOut();
             Excel.Application app = new Excel.Application();
@@ -245,7 +251,7 @@ namespace PDFiller
 
         private void zipButton_Click(object sender, EventArgs e)
         {
-            Builder menu = PDFiller.Builder.getInstance();
+            Builder menu = PDFiller.Builder.GetInstance();
             OpenFileDialog ofd = new OpenFileDialog()
             {
                 Filter = "Zip files (*.zip)|*.zip|All files (*.*)|*.*",
@@ -285,7 +291,7 @@ namespace PDFiller
      //   internal bool newExcel = false;
         private void excelButton_Click(object sender, EventArgs e)
         {
-            Builder menu = PDFiller.Builder.getInstance();
+            Builder menu = PDFiller.Builder.GetInstance();
 
             OpenFileDialog ofd = new OpenFileDialog()
             {
@@ -330,7 +336,7 @@ namespace PDFiller
                 //  InitialDirectory = envi.FullName,
                 RestoreDirectory = true
             };
-            Builder menu = PDFiller.Builder.getInstance();
+            Builder menu = PDFiller.Builder.GetInstance();
             zip = null;
             unzippedList = new List<FileInfo>();
 
@@ -418,7 +424,7 @@ namespace PDFiller
 
         private void workButton_Click(object sender, EventArgs e)
         {
-            Builder menu = PDFiller.Builder.getInstance();
+            Builder menu = PDFiller.Builder.GetInstance();
             FolderBrowserDialog ofd = new FolderBrowserDialog();
             ofd.Description = "This is where we will look the .zip and .excel files today!!\r\n" +
                               "Either use this or select said files manually.\r\n" +
@@ -469,14 +475,14 @@ namespace PDFiller
                     throw new FileNotFoundException("Excel could not be found.");
                 }
                 string saveDir = null;
-                Builder menu = PDFiller.Builder.getInstance();
+                Builder menu = PDFiller.Builder.GetInstance();
                 if (zip!=null && unzippedList == null)
                 {
                     if (!zip.Exists)
                     {
                         throw new FileNotFoundException("Zip archive could not be found.");
                     }
-                    menu = PDFiller.Builder.getInstance();
+                    menu = PDFiller.Builder.GetInstance();
 
                     unzippedList = menu.UnzipArchive(zip, ref saveDir);
                     textBox1.Text += $"Extracted archive: {zip.Name}\r\n";
@@ -518,7 +524,7 @@ namespace PDFiller
             try
             {
                 manualSelect = false;
-                Builder menu = PDFiller.Builder.getInstance(this);
+                Builder menu = PDFiller.Builder.GetInstance(this);
                 workDir = menu.FindWorkDir(rootDir);
                 textBox1.Text += $"Found work directory at:\r\n{workDir.FullName}\r\n";
                 zip = menu.FindZipsUnzipped(workDir);
@@ -600,7 +606,7 @@ namespace PDFiller
                     if(this.excel == null || excelGridView.Rows.Count > 0) return;
                     if (readOrders)
                     {
-                        Builder menu = PDFiller.Builder.getInstance();
+                        Builder menu = PDFiller.Builder.GetInstance();
                         this.orders = menu.ReadExcel(excel);
                     }
                     var rows = excelGridView.Rows;
@@ -618,7 +624,7 @@ namespace PDFiller
                     if (this.excel == null || summaryGridView.Rows.Count > 0 ) return;
                     if (readOrders)
                     {
-                        Builder menu = PDFiller.Builder.getInstance();
+                        Builder menu = PDFiller.Builder.GetInstance();
                         this.orders = menu.ReadExcel(excel);
                     }
                     rows = summaryGridView.Rows;
