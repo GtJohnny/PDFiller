@@ -167,7 +167,7 @@
     <Compile Include="Form2.Designer.cs">
       <DependentUpon>Form2.cs</DependentUpon>
     </Compile>
-    <Compile Include="Menu.cs" />
+    <Compile Include="Builder.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -215,6 +215,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AppPDF.ico" />
+    <Content Include="bin\Debug\debugTests\Set 13 figurine tortbriose Roblox, KZE Prints, Photo Paper Glossy.jpg" />
     <Content Include="bin\Debug\PDFiller.exe" />
     <Content Include="bin\Debug\PDFiller.pdb" />
   </ItemGroup>

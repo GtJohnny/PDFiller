@@ -35,6 +35,8 @@ namespace PDFiller
             InitializeComponent();
         }
 
+        private string DebugPath = Environment.CurrentDirectory+ "\\debugTests\\";
+
         private DirectoryInfo rootDir = null;
         private DirectoryInfo workDir = null;
         private FileInfo zip = null;
@@ -54,12 +56,10 @@ namespace PDFiller
         }
 
 
-        async public void SecondForm()
-        {
 
-        }
         private void Form1_Load(object sender, EventArgs e)
         {
+            Builder menu = PDFiller.Builder.GetInstance(this);
 
 
             StreamReader sr = null;
@@ -133,10 +133,112 @@ namespace PDFiller
             sr.Close();
         }
 
+        private void HelpMeOut()
+        {
+            Builder builder = Builder.GetInstance();
+            manualSelect = true;
+            workDir = new DirectoryInfo(DebugPath);
+            unzippedList = new List<FileInfo>() { new FileInfo(DebugPath + "417264331_Sameday_4EMG24107789758001.pdf") };
+            excel = builder.FindExcel(workDir);
+            var orders = builder.ReadExcel(excel);
+            int failed;
+            string resPath = builder.WriteOnOrders(unzippedList, orders, workDir.FullName, out failed, "ROBLOX_IMAGE_TEST");
+            Process.Start(resPath);
+
+        }
+
+
+        public void TestAsync()
+        {
+            Excel.Application app = new Excel.Application();
+            Workbook book = app.Workbooks.Open(DebugPath + "imagini.xlsx");
+      
+            if (book == null)
+            {
+                throw new Exception("Excel workbook could not be opened.");
+            }
+            Worksheet sheet;
+            try
+            {
+                sheet = book.Worksheets[1];
+                MessageBox.Show(sheet.Cells[1, 1].Value2.ToString());
+                MessageBox.Show(sheet.Cells[1, 2].Value2.ToString());
+                MessageBox.Show(sheet.Cells[1, 3].Value2.ToString());
+                MessageBox.Show(sheet.Cells[2, 1].Value2.ToString());
+                MessageBox.Show(sheet.Cells[2, 2].Value2.ToString());
+                MessageBox.Show(sheet.Cells[2, 3].Value2.ToString());
+                MessageBox.Show(sheet.Cells[3, 1].Value2.ToString());
+                MessageBox.Show(sheet.Cells[3, 2].Value2.ToString());
+                MessageBox.Show(sheet.Cells[3, 3].Value2.ToString());
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                book.Close();
+                app.Quit();
+            }
+        }
+
+
+        public async void HelpMeOutAsync()
+        {
+            await Task.Run(() => TestAsync());
+        }
         private void Form1_Shown(object sender, EventArgs e)
         {
 
-            Menu menu = PDFiller.Menu.getInstance(this);
+<<<<<<< HEAD
+            Builder menu = Builder.getInstance(this);
+=======
+
+    //        HelpMeOut();    
+>>>>>>> 6c7c6ff (swap table)
+
+            //   HelpMeOut();
+            Excel.Application app = new Excel.Application();
+            string exPath = DebugPath + "orders_details_file_02-05-2025-22-46-41.xlsx";
+            string exPath1 = DebugPath + "imagini.xlsx";
+            Workbook book = app.Workbooks.Open(exPath1);
+
+            if (book == null)
+            {
+                throw new Exception("Excel workbook could not be opened.");
+            }
+            Worksheet sheet;
+            try
+            {
+                sheet = book.Worksheets[1];
+                MessageBox.Show(sheet.Cells[1, 1].Value2.ToString());
+                MessageBox.Show(sheet.Cells[1, 2].Value2.ToString());
+                MessageBox.Show(sheet.Cells[1, 3].Value2.ToString());
+                MessageBox.Show(sheet.Cells[2, 1].Value2.ToString());
+                MessageBox.Show(sheet.Cells[2, 2].Value2.ToString());
+                MessageBox.Show(sheet.Cells[2, 3].Value2.ToString());
+                MessageBox.Show(sheet.Cells[3, 1].Value2.ToString());
+                MessageBox.Show(sheet.Cells[3, 2].Value2.ToString());
+                MessageBox.Show(sheet.Cells[3, 3].Value2.ToString());
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                book.Close();
+                app.Quit();
+            }
+            return;
+
+
 
             if (autoFillCheck.Checked)
             {
@@ -149,7 +251,7 @@ namespace PDFiller
 
         private void zipButton_Click(object sender, EventArgs e)
         {
-            Menu menu = PDFiller.Menu.getInstance();
+            Builder menu = PDFiller.Builder.GetInstance();
             OpenFileDialog ofd = new OpenFileDialog()
             {
                 Filter = "Zip files (*.zip)|*.zip|All files (*.*)|*.*",
@@ -189,7 +291,7 @@ namespace PDFiller
      //   internal bool newExcel = false;
         private void excelButton_Click(object sender, EventArgs e)
         {
-            Menu menu = PDFiller.Menu.getInstance();
+            Builder menu = PDFiller.Builder.GetInstance();
 
             OpenFileDialog ofd = new OpenFileDialog()
             {
@@ -234,7 +336,7 @@ namespace PDFiller
                 //  InitialDirectory = envi.FullName,
                 RestoreDirectory = true
             };
-            Menu menu = PDFiller.Menu.getInstance();
+            Builder menu = PDFiller.Builder.GetInstance();
             zip = null;
             unzippedList = new List<FileInfo>();
 
@@ -322,7 +424,7 @@ namespace PDFiller
 
         private void workButton_Click(object sender, EventArgs e)
         {
-            Menu menu = PDFiller.Menu.getInstance();
+            Builder menu = PDFiller.Builder.GetInstance();
             FolderBrowserDialog ofd = new FolderBrowserDialog();
             ofd.Description = "This is where we will look the .zip and .excel files today!!\r\n" +
                               "Either use this or select said files manually.\r\n" +
@@ -373,14 +475,14 @@ namespace PDFiller
                     throw new FileNotFoundException("Excel could not be found.");
                 }
                 string saveDir = null;
-                Menu menu = PDFiller.Menu.getInstance();
+                Builder menu = PDFiller.Builder.GetInstance();
                 if (zip!=null && unzippedList == null)
                 {
                     if (!zip.Exists)
                     {
                         throw new FileNotFoundException("Zip archive could not be found.");
                     }
-                    menu = PDFiller.Menu.getInstance();
+                    menu = PDFiller.Builder.GetInstance();
 
                     unzippedList = menu.UnzipArchive(zip, ref saveDir);
                     textBox1.Text += $"Extracted archive: {zip.Name}\r\n";
@@ -422,7 +524,7 @@ namespace PDFiller
             try
             {
                 manualSelect = false;
-                Menu menu = PDFiller.Menu.getInstance(this);
+                Builder menu = PDFiller.Builder.GetInstance(this);
                 workDir = menu.FindWorkDir(rootDir);
                 textBox1.Text += $"Found work directory at:\r\n{workDir.FullName}\r\n";
                 zip = menu.FindZipsUnzipped(workDir);
@@ -504,7 +606,7 @@ namespace PDFiller
                     if(this.excel == null || excelGridView.Rows.Count > 0) return;
                     if (readOrders)
                     {
-                        Menu menu = PDFiller.Menu.getInstance();
+                        Builder menu = PDFiller.Builder.GetInstance();
                         this.orders = menu.ReadExcel(excel);
                     }
                     var rows = excelGridView.Rows;
@@ -522,7 +624,7 @@ namespace PDFiller
                     if (this.excel == null || summaryGridView.Rows.Count > 0 ) return;
                     if (readOrders)
                     {
-                        Menu menu = PDFiller.Menu.getInstance();
+                        Builder menu = PDFiller.Builder.GetInstance();
                         this.orders = menu.ReadExcel(excel);
                     }
                     rows = summaryGridView.Rows;
@@ -592,6 +694,13 @@ namespace PDFiller
         private void rootTextBox_DoubleClick(object sender, EventArgs e)
         {
             Process.Start(rootTextBox.Text);
+        }
+
+
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
