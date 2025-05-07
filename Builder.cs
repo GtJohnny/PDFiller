@@ -18,6 +18,9 @@ using System.Reflection;
 using System.Numerics;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using System.Threading;
+using Aspose.Pdf;
+using System.Text.RegularExpressions;
+using Aspose.Pdf.Text;
 
 
 
@@ -269,15 +272,16 @@ namespace PDFiller
         /// <param name="extractedZip">A refference to the folder that was extracted, for convenience</param>
         /// <returns>A list containing all the pdf files extracted.</returns>
         /// <exception cref="Exception"></exception>
-        internal List<FileInfo> UnzipArchive(FileInfo zip,ref string extractedZip)
+        public List<FileInfo> UnzipArchive(FileInfo zip,ref string extractedZip)
         {
             if (zip == null || !zip.Exists) throw new ArgumentNullException("Zip Archive doesn't exist");
             extractedZip = zip.FullName.Replace(".zip", "");
-            if (Directory.Exists(extractedZip))Directory.Delete(extractedZip, true);
-            ZipFile.ExtractToDirectory(zip.FullName, extractedZip);
-            List<FileInfo> fileInfos = new DirectoryInfo(extractedZip).GetFiles().ToList();
 
-            return fileInfos;
+            if (Directory.Exists(extractedZip))
+                Directory.Delete(extractedZip, true);
+
+            ZipFile.ExtractToDirectory(zip.FullName, extractedZip);
+            return new DirectoryInfo(extractedZip).GetFiles().ToList();
         }
 
 
@@ -326,6 +330,24 @@ namespace PDFiller
         }
 
 
+        public bool ReadAwbId(Aspose.Pdf.Page page, out string idAWB)
+        {
+            idAWB = "";
+
+            Regex regex = new Regex(@"\b4EMG\w{11}001\b");
+            TextSearchOptions textSearchOptions = new TextSearchOptions(true);
+            Aspose.Pdf.Text.TextFragmentAbsorber textFragmentAbsorber = new Aspose.Pdf.Text.TextFragmentAbsorber(regex,textSearchOptions);
+            page.Accept(textFragmentAbsorber);
+            if(textFragmentAbsorber.TextFragments.Count == 0)
+            {
+                return false;
+            }
+            idAWB = textFragmentAbsorber.TextFragments[1].Text;
+            return true;
+        }
+
+
+
         /// <summary>
         ///  
         /// </summary>
@@ -349,69 +371,37 @@ namespace PDFiller
                     failed++;
                     continue;
                 }
-                //string idOrder, curier, idAWB;
-
-                string[] tokens = Path.GetFileNameWithoutExtension(file.Name).Split('_');
-
-                string idOrder = tokens[0];
-                string curier = String.Join("_", tokens.Skip(1).Take(tokens.Length - 2));
-                string idAwb = tokens.Last();
+                string idOrder,idAWB;
+                PdfDocument pdfDocument = PdfReader.Open(file.FullName, PdfDocumentOpenMode.Import);
 
 
-                //try
-                //{
-                //    string[] tokens = Path.GetFileNameWithoutExtension(file.Name).Split('_');
-                //    idOrder = tokens[0];
-                //    switch (tokens[1])
-                //    {
-                //        case "eMAG":
-                //            curier = tokens[1] + '_' + tokens[2];
-                //            idAWB = tokens[3];
-                //            break;
-                //        case "Sameday":
-                //            curier = tokens[1];
-                //            idAWB = tokens[2];
-                //            break;
-                //        default:
-                //            //alt curier?
-                //            curier = String.Join("_", tokens.Skip(1).Take(tokens.Length - 2));
-                //            idAWB = tokens.Last();
-                //            break;
-                //    }
-                //}
-                //catch(IndexOutOfRangeException)
-                //{
-                //    failed++;
-                //    continue;
-                //}
-
-                Order o = null;
-                try
+                Aspose.Pdf.Document pdf = new Aspose.Pdf.Document(file.FullName);
+                for (int i = 0; i<pdf.Pages.Count; i++ )
                 {
-                    /*
-                     * Sometimes the excel may not actually have the AWB id listed when you download it.
-                     * Despite the fact said AWB had been succesfully generated.
-                     * 
-                     */
-                    o = orders.Find(p => p.id == idOrder/* && p.awb!="" && p.awb.Substring(0,p.awb.Length-3) == idAWB*/);
-                    if (o == null)
+                    if (!ReadAwbId(pdf.Pages[i+1],out idAWB))
                     {
                         failed++;
                         continue;
                     }
-                    PdfDocument pdf = PdfReader.Open(file.FullName, PdfDocumentOpenMode.Import);
-                    PdfPage page = pdf.Pages[0];
-                    doc.AddPage(page);
+                    idOrder = idAWB.Substring(0, idAWB.Length - 3);
+                    try
+                    {
+                        Order o = orders.Find(p => p.awb == idAWB);
+                        doc.AddPage(pdfDocument.Pages[i]);
+                        if (WriteOnPage(doc.Pages[doc.PageCount - 1], o.toppere))
+                        {
+                            failed++;
+                            continue;
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        failed++;
+                        throw ex;
+                    }
+
                 }
-                catch (Exception ex)
-                {
-                    failed++;
-                    throw ex;
-                }
-                if (WriteOnPage(doc.Pages[doc.PageCount - 1], o.toppere))
-                {
-                    failed++;
-                }
+                pdfDocument.Close();
 
             }
             if (doc.PageCount == 0)
@@ -424,6 +414,10 @@ namespace PDFiller
             return returnPath;
         }
 
+        /// <summary>
+        /// List of special swaps. Checks for topper name (in future it will be ID) and associates it with a new, more readable name.
+        /// 
+        /// </summary>
 
         private List<KeyValuePair<String, String>> SpecialSwaps = new List<KeyValuePair<String, String>>()
             {
@@ -444,10 +438,10 @@ namespace PDFiller
         };
 
         /// <summary>
-        /// Given the name of a topper, removes the unnecessary prefix
+        /// Given the name {and id???} of a topper, removes the unnecessary prefix
         /// OR switches the name completely with a hardcoded table.
         /// </summary>
-        /// <param name="name">Topper name</param>
+        /// <param name="name">A more readable topper name</param>
         /// <returns>A string that contains only the name of the topper mascot, or the same string unchanged if it couldn't be found.</returns>
         private string ModifyName(string name)
         {
