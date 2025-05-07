@@ -60,9 +60,9 @@ namespace PDFiller
         private Builder(Form1 form)
         {
             this.form = form;
-          //  this.rootDir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\AWB\\");
+            //  this.rootDir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\AWB\\");
         }
-   
+
 
         static public Builder GetInstance()
         {
@@ -113,14 +113,14 @@ namespace PDFiller
             {
                 throw new ArgumentNullException("Root no longer exists!\r\n");
             }
-      //      form.textBox1.Text += "Root directory found at:\r\n " + rootDir.FullName + "\r\n";
-      //      form.rootTextBox.Text = rootDir.FullName;
+            //      form.textBox1.Text += "Root directory found at:\r\n " + rootDir.FullName + "\r\n";
+            //      form.rootTextBox.Text = rootDir.FullName;
             DirectoryInfo[] dirs = rootDir.GetDirectories();
             if (dirs.Length == 0) throw new DirectoryNotFoundException("Root Directory contains no subdirectories.\r\n");
             DirectoryInfo workDir;
-            workDir = dirs.OrderByDescending(d=>d.CreationTime).ToArray().First();
-      //      form.textBox1.Text+="Work directory found at:\r\n"+
-       //         workDir.FullName + "\r\n";
+            workDir = dirs.OrderByDescending(d => d.CreationTime).ToArray().First();
+            //      form.textBox1.Text+="Work directory found at:\r\n"+
+            //         workDir.FullName + "\r\n";
             return workDir;
         }
 
@@ -135,9 +135,9 @@ namespace PDFiller
         /// <exception cref="DirectoryNotFoundException">Directory somehow doesn't exist.</exception>
         public DirectoryInfo FindWorkDir(string selectedPath)
         {
-            if(selectedPath == null) throw new ArgumentNullException("No path was provided."); 
-            if(!Directory.Exists(selectedPath)) throw new DirectoryNotFoundException("Work directory doesn't exist");
-            return new DirectoryInfo(selectedPath); 
+            if (selectedPath == null) throw new ArgumentNullException("No path was provided.");
+            if (!Directory.Exists(selectedPath)) throw new DirectoryNotFoundException("Work directory doesn't exist");
+            return new DirectoryInfo(selectedPath);
         }
 
         //public void UpdateWorkDir(DirectoryInfo workDir)
@@ -169,12 +169,12 @@ namespace PDFiller
             {
                 excel = workDir.GetFiles().Where(o => o.Extension == ".xlsx").OrderByDescending(o => o.CreationTime).ToArray().First();
             }
-            catch(Exception)
+            catch (Exception)
             {
                 throw new FileNotFoundException("No excel file was found within the work directory!\r\n");
             }
             //      form.excelPathBox.Text = excel.FullName;
-               //form.newExcel = true;
+            //form.newExcel = true;
             return excel;
         }
 
@@ -193,12 +193,12 @@ namespace PDFiller
             {
                 sheet = book.Worksheets[1];
                 int row = 2;
-                const string IDCOL       = "A";
-                const string AWBCOL      = "C";
-                const string TNAMECOL    = "D";
-                const string IDPRODUCT   = "E";
-                const string TQNTCOL     = "G";
-                const string NAMECOL     = "T";
+                const string IDCOL = "A";
+                const string AWBCOL = "C";
+                const string TNAMECOL = "D";
+                const string IDPRODUCT = "E";
+                const string TQNTCOL = "G";
+                const string NAMECOL = "T";
 
 
                 Order lastOrder = new Order();
@@ -217,8 +217,8 @@ namespace PDFiller
 
                         string idProduct = sheet.Cells[row, IDPRODUCT].Value2;
                         // , KZE Prints, Photo Paper Glossy
-                  //      tname = tname.Replace(", KZE Prints, Photo Paper Glossy", "");
-                  //      tname = tname.Remove(tname.Length - 32);
+                        //      tname = tname.Replace(", KZE Prints, Photo Paper Glossy", "");
+                        //      tname = tname.Remove(tname.Length - 32);
 
                         int qnt = (int)sheet.Cells[row, TQNTCOL].Value2;
 
@@ -231,7 +231,7 @@ namespace PDFiller
                         {
                             if (lastOrder.id != "")
                                 orders.Add(lastOrder);
-                            lastOrder = new Order(id, awb,name, tName, qnt, idProduct);
+                            lastOrder = new Order(id, awb, name, tName, qnt, idProduct);
 
                             //form.textBox1.Text += ++i + ". " + awb + ":\r\n" +
                             //    "-> " + qnt + ". " + name + "\r\n";
@@ -271,10 +271,10 @@ namespace PDFiller
             rows.Clear();
             foreach (Order o in orders)
             {
-                rows.Add( o.name, o.toppere[0].tName, o.toppere[0].tQuantity );
+                rows.Add(o.name, o.toppere[0].tName, o.toppere[0].tQuantity);
                 foreach (Order.topper tp in o.toppere.GetRange(1, o.toppere.Count - 1))
                 {
-                    rows.Add( null, tp.tName, tp.tQuantity);
+                    rows.Add(null, tp.tName, tp.tQuantity);
                 }
             }
         }
@@ -293,7 +293,7 @@ namespace PDFiller
         /// <param name="extractedZip">A refference to the folder that was extracted, for convenience</param>
         /// <returns>A list containing all the pdf files extracted.</returns>
         /// <exception cref="Exception"></exception>
-        public List<FileInfo> UnzipArchive(FileInfo zip,ref string extractedZip)
+        public List<FileInfo> UnzipArchive(FileInfo zip, ref string extractedZip)
         {
             if (zip == null || !zip.Exists) throw new ArgumentNullException("Zip Archive doesn't exist");
             extractedZip = zip.FullName.Replace(".zip", "");
@@ -360,7 +360,7 @@ namespace PDFiller
             {
                 return false;
             }
-            idAWB = matches[0].Value.Substring(0,15);
+            idAWB = matches[0].Value.Substring(0, 15);
             return true;
 
         }
@@ -381,53 +381,78 @@ namespace PDFiller
         /// <param name="orders">The list of orders from which we'll write on the pdf.</param>
         /// <param name="failed">The number of AWBs we failed to process.</param>
         /// <returns></returns>
-        private bool WriteOnFile(FileInfo file,  List<Order> orders,out int failed)
+
+
+
+        private int failed { get; set; } = 0;
+        private int total { get; set; } = 0;
+
+
+
+
+
+        private List<string> WriteOnFile(PdfSharpCore.Pdf.PdfDocument pdfMerge, FileInfo file, List<Order> orders)
         {
+            List<string> errorMessages = new List<string>();
             string idAWB;
-            failed = 0;
             PdfSharpCore.Pdf.PdfDocument pdfWrite = PdfReader.Open(file.FullName, PdfDocumentOpenMode.Import);
             using (var pdfRead = UglyToad.PdfPig.PdfDocument.Open(file.FullName))
             {
-
+                total += pdfWrite.PageCount;
                 for (int i = 0; i < pdfWrite.PageCount; i++)
                 {
                     if (!ReadAwbId(pdfRead.GetPage(i + 1), out idAWB))
                     {
+                        errorMessages.Add($"Couldn't find AWB number for page {i + 1} for:\r\n{file.Name}\r\n");
                         failed++;
                         continue;
                     }
-                    try
+
+                    Order o = orders.Find(p => p.awb == idAWB);
+                    //Sometimes the excel file may NOT have the AWB id that we need
+                    //but we may still be able to match the order with the file name and order id.
+                    //as last resort only
+                    if (o == null)
                     {
-                        Order o = orders.Find(p => p.awb == idAWB);
+                        string fileId = file.Name.Substring(0, 9);
+                        o = orders.Find(p => p.id == fileId && new Regex(@"\b[0-9]{9}").IsMatch(fileId));
+
                         if (o == null)
                         {
+                            form.textBox1.Text += $"Neither the AWB nor the order id match for:\r\n{file.Name}\r\n";
                             if (pdfWrite.PageCount > 1)
                             {
-                                break;
+                                errorMessages.Add($"Couldn't find an order match at page {i + 1} for:\r\n{file.Name}\r\n");
                             }
-                            form.textBox1.Text += $"Couldn't find an order match  for:\r\n{file.Name}.\r\n";
-
+                            else
+                            {
+                                errorMessages.Add($"Couldn't find an order match for:\r\n{file.Name}\r\n");
+                            }
                             failed++;
                             continue;
                         }
-                        pdfWrite.AddPage(pdfWrite.Pages[i]);
-                        if (WriteOnPage(pdfMerge.Pages[pdfMerge.PageCount - 1], o.toppere))
+                        else
                         {
-                            failed++;
-                            continue;
+                            errorMessages.Add($"Failed to match the excel AWB id, but managed to match the file name and order ID\r\n");
                         }
+
+                        //errorMessages.Add($"Something bad happened for:\r\n{file.Name}\r\n");
+                        //failed++;
+                        //continue;
                     }
-                    catch (Exception ex)
+
+                    pdfMerge.AddPage(pdfWrite.Pages[i]);
+                    if (!WriteOnPage(pdfMerge.Pages[pdfMerge.PageCount - 1], o.toppere))
                     {
+                        errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
                         failed++;
-                        throw ex;
+                        continue;
                     }
+
 
                 }
-                pdfMerge.Close();
             }
-
-
+            return errorMessages;
         }
 
 
@@ -447,24 +472,41 @@ namespace PDFiller
 
 
 
-        public string WriteOnOrders(List<FileInfo> unzippedList, List<Order> orders, string saveDir,out int failed,string name)
+        public string WriteOnOrders(List<FileInfo> unzippedList, List<Order> orders, string saveDir, string saveName)
         {
-            failed = 0;
+            failed = total = 0;
             PdfSharpCore.Pdf.PdfDocument pdfMerge = new PdfSharpCore.Pdf.PdfDocument();
             foreach (FileInfo file in unzippedList)
             {
                 if (file == null || !file.Exists)
                 {
-                    failed++;
+                    form.textBox1.Text += $"File {file.Name} doesn't exist.\r\n";
                     continue;
                 }
-              
+
+
+                List<string> errorMessages = WriteOnFile(pdfMerge, file, orders);
+                foreach (string error in errorMessages)
+                {
+                    form.textBox1.Text += error;
+                }
+
             }
             if (pdfMerge.PageCount == 0)
             {
                 throw new ArgumentException("None of the orders in the excel matched the pdf files.\r\n");
             }
-            string returnPath = $"{saveDir}\\{name}.pdf";
+            string returnPath = $"{saveDir}\\{saveName}.pdf";
+
+            form.textBox1.Text += $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nSuccesfully wrote {total - failed} awbs out of {total} AWBS\r\n";
+            if (failed > 0)
+            {
+                form.textBox1.Text += $"\r\nFailed to write {failed} AWBs. Please check them or their excel spreadsheets.\r\n";
+            }
+            else
+            {
+                form.textBox1.Text += $"All AWBs were written successfully.\r\n";
+            }
             pdfMerge.Save(returnPath);
             pdfMerge.Close();
             return returnPath;
@@ -514,7 +556,7 @@ namespace PDFiller
         private bool WriteOnPage(PdfPage page, List<Order.topper> toppere)
         {
             if (page == null || toppere == null) {
-                return false;
+                return true;
             }
             try
             {
@@ -562,7 +604,7 @@ namespace PDFiller
             {
                 throw ex;
             }
-            return false;
+            return true;
         }
     }
 }
