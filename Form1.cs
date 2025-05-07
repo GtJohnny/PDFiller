@@ -87,7 +87,7 @@ namespace PDFiller
                 {
                     case "root":
                         rootDir = new DirectoryInfo(line[1]);
-                        textBox1.Text += "Root directory found at:\r\n" + line[1] + "\r\n";
+                        textBox1.Text += $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nRoot directory found at:\r\n{ line[1] }\r\n";
                         rootTextBox.Text = line[1];
                         break;
                     case "autofill":
@@ -136,13 +136,13 @@ namespace PDFiller
         private void HelpMeOut()
         {
             Builder builder = Builder.GetInstance();
-            manualSelect = true;
+           // manualSelect = true;
             workDir = new DirectoryInfo(DebugPath);
             unzippedList = new List<FileInfo>() { new FileInfo(DebugPath + "417264331_Sameday_4EMG24107789758001.pdf") };
             excel = builder.FindExcel(workDir);
             var orders = builder.ReadExcel(excel);
-            int failed;
-            string resPath = builder.WriteOnOrders(unzippedList, orders, workDir.FullName, out failed, "ROBLOX_IMAGE_TEST");
+         //   int failed;
+            string resPath = builder.WriteOnOrders(unzippedList, orders, workDir.FullName, "ROBLOX_IMAGE_TEST");
             Process.Start(resPath);
 
         }
@@ -260,11 +260,11 @@ namespace PDFiller
             switch (ofd.ShowDialog())
             {
                 case DialogResult.OK:
-                    manualSelect = false;
+                    //manualSelect = false;
                     zipPathBox.Text = ofd.FileName;
                     zip = new FileInfo(ofd.FileName);
                     unzippedList = null ;
-                    textBox1.Text += "Found zip archive at:\r\n" + zip.FullName + "\r\n";
+                    textBox1.Text += $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nFound zip archive at:\r\n { zip.FullName } \r\n";
                     zipLabel.Font = new System.Drawing.Font(zipLabel.Font, FontStyle.Regular);
                     break;
                 default:
@@ -294,7 +294,7 @@ namespace PDFiller
                 Multiselect = false,
                 Title = "Please select order summary excel file.",
                 DefaultExt = ".xlsx",
-                InitialDirectory = rootDir.FullName,
+          //      InitialDirectory = rootDir.FullName,
                 RestoreDirectory = true,
             };
 
@@ -305,7 +305,7 @@ namespace PDFiller
 
 
                     this.excel = new FileInfo(ofd.FileName);
-                    textBox1.Text += "Found excel summary at:\r\n" + excel.FullName + "\r\n";
+                    textBox1.Text += $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nFound.xlsx order summary at:\r\n" + excel.FullName + "\r\n";
                     excelGridView.Rows.Clear();
                     summaryGridView.Rows.Clear();
                     updateTabIndex(true);
@@ -317,7 +317,7 @@ namespace PDFiller
         }
 
 
-        private bool manualSelect = false;
+      // private bool manualSelect = false;
         private void unzippedButton_Click(object sender, EventArgs e)
         {
          
@@ -338,7 +338,8 @@ namespace PDFiller
             switch (ofd.ShowDialog())
             {
                 case DialogResult.OK:
-                    manualSelect = true;
+                 //   manualSelect = true;
+                    textBox1.Text += $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nSelected {ofd.FileNames.Count()} unzipped files:\r\n";
                     foreach (string fname in ofd.FileNames)
                     {
                         FileInfo t = new FileInfo(fname);
@@ -446,8 +447,6 @@ namespace PDFiller
                         zipPathBox.Text = zip.FullName;
                         
 
-
-
                     }
                     catch (Exception ex)
                     {
@@ -477,27 +476,27 @@ namespace PDFiller
                     {
                         throw new FileNotFoundException("Zip archive could not be found.");
                     }
-                    menu = PDFiller.Builder.GetInstance();
-
                     unzippedList = menu.UnzipArchive(zip, ref saveDir);
                     textBox1.Text += $"Extracted archive: {zip.Name}\r\n";
                     textBox1.Text += $"Extracted {unzippedList.Count} orders.\r\n";
                 }
+                textBox1.Text += $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nReading the excel file.\r\n";
 
 
                 orders = menu.ReadExcel(excel);
                 saveDir = unzippedList.First().DirectoryName;
-                int failed = 0;
-                string path = mergedPath = menu.WriteOnOrders(unzippedList, orders, saveDir, out failed, "CustomPDF");
-                if (failed > 0)
-                {
-                    textBox1.Text += failed + " files failed being filled.\r\n";
-                }
-                else
-                {
-                    textBox1.Text += "All were filled succesfully.\r\n";
-                }
-                textBox1.Text += "Merged order PDF was saved at location:\r\n" + path + "\r\n";
+
+                //    int failed = 0;
+                string path = mergedPath =  menu.WriteOnOrders(unzippedList, orders, saveDir, "CustomPDF");
+                //if (failed > 0)
+                //{
+                //    textBox1.Text += $"{failed} files failed being filled.\r\n";
+                //}
+                //else
+                //{
+                //    textBox1.Text += "All were filled succesfully.\r\n";
+                //}
+                textBox1.Text += $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nMerged order PDF was saved at location:\r\n" + path + "\r\n";
                 if (tabControl2.SelectedIndex == 1) updateTabIndex();
 
                 if (openPdfCheck.Checked)
@@ -518,7 +517,7 @@ namespace PDFiller
         {
             try
             {
-                manualSelect = false;
+             //   manualSelect = false;
                 Builder menu = PDFiller.Builder.GetInstance(this);
                 workDir = menu.FindWorkDir(rootDir);
                 textBox1.Text += $"Found work directory at:\r\n{workDir.FullName}\r\n";
@@ -540,17 +539,16 @@ namespace PDFiller
                 updateTabIndex(false);
 
 
-
-                int failed;
-                string path = mergedPath = menu.WriteOnOrders(unzippedList, orders, extractedDir, out failed, "Merged&Filled");
-                if (failed > 0)
-                {
-                    textBox1.Text += failed + " files failed being filled, please check them.\r\n";
-                }
-                else
-                {
-                    textBox1.Text += "All pdfs completed and merged with success.\r\n";
-                }
+             //   int failed = 0;
+                string path = mergedPath =  menu.WriteOnOrders(unzippedList, orders, extractedDir, "Merged&Filled");
+                //if (failed > 0)
+                //{
+                //    textBox1.Text += failed + " files failed being filled, please check them.\r\n";
+                //}
+                //else
+                //{
+                //    textBox1.Text += "All pdfs completed and merged with success.\r\n";
+                //}
                 textBox1.Text += $"Merged pdf was saved at \r\n{path}\r\n";
                 if (openPdfCheck.Checked)
                 {

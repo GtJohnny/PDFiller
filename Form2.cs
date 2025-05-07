@@ -25,24 +25,24 @@ namespace PDFiller
         }
 
 
-        public async Task<FileInfo> doWork()
-        {
+        //public async Task<FileInfo> doWork()
+        //{
 
-            ProgressBar bar = new ProgressBar();
+        //    ProgressBar bar = new ProgressBar();
 
-            for(int i = 0; i < 10; i++)
-            {
-                bar.PerformStep();
-                MessageBox.Show($"{bar.Value}");
-            }
-            return new FileInfo("");
-        }
+        //    for(int i = 0; i < 10; i++)
+        //    {
+        //        bar.PerformStep();
+        //        MessageBox.Show($"{bar.Value}");
+        //    }
+        //    return new FileInfo("");
+        //}
 
 
         private void button2_Click(object sender, EventArgs e)
         {
 
-            Task<FileInfo> fileTask =  doWork();
+       //     Task<FileInfo> fileTask =  doWork();
          //   FileInfo file = await fileTask;
 
 
