@@ -294,7 +294,7 @@ namespace PDFiller
                 Multiselect = false,
                 Title = "Please select order summary excel file.",
                 DefaultExt = ".xlsx",
-                InitialDirectory = rootDir.FullName,
+          //      InitialDirectory = rootDir.FullName,
                 RestoreDirectory = true,
             };
 
@@ -445,8 +445,6 @@ namespace PDFiller
                         zip = menu.FindZipsUnzipped(workDir);
                         zipPathBox.Text = zip.FullName;
                         
-
-
 
                     }
                     catch (Exception ex)

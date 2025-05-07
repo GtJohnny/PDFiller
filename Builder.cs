@@ -18,9 +18,10 @@ using System.Reflection;
 using System.Numerics;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using System.Threading;
-using Aspose.Pdf;
 using System.Text.RegularExpressions;
-using Aspose.Pdf.Text;
+using UglyToad.PdfPig;
+using static System.Net.WebRequestMethods;
+using UglyToad.PdfPig.Writer;
 
 
 
@@ -28,9 +29,29 @@ namespace PDFiller
 {
     internal class Builder
     {
+        static Builder menu = null;
 
-        private readonly Form1 form=null;
-        static Builder menu=null;
+        private readonly Form1 form = null;
+        private readonly Regex regex = new Regex(@"\b4EMG\w{11}00[0-9]");
+
+        private readonly List<KeyValuePair<String, String>> SpecialSwaps = new List<KeyValuePair<String, String>>()
+            {
+                new KeyValuePair<String, String>("Set 17 figurine tort/briose Patrula Catelusilor, KZE Prints, Photo Paper Glossy", "Paw Patrol tip2 (nou)"),
+                new KeyValuePair<String, String>("Set 9 figurine tort Patrula Catelusilor, KZE Prints, Photo Paper Glossy", "Paw Patrol tip1 (vechi)"),
+                new KeyValuePair<String, String>("Set 9 figurine tort Albine, KZE Prints, Photo Paper Glossy", "Albinute mici"),
+                new KeyValuePair<String, String>("Set 8 figurine tort Albine, Tip 2, KZE Prints, Photo Paper Glossy", "Albine + Apicultor"),
+                new KeyValuePair<String, String>("Set figurine tort/briose Barbie, Tip 4, KZE Prints, Photo Paper Glossy", "Barbie tip4 (cercuri)"),
+                new KeyValuePair<String, String>("Set figurine tort/briose Barbie, Tip 3, KZE Prints, Photo Paper Glossy", "Barbie tip3 (silueta cap)"),
+                new KeyValuePair<String, String>("Set figurine tort/briose Barbie, Tip 2, KZE Prints, Photo Paper Glossy", "Barbie tip2 (cercuri fancy)"),
+                new KeyValuePair<String, String>("Set figurine tort/briose Barbie, KZE Prints, Tip 1, Photo Paper Glossy", "Barbie tip1 (cercuri funda)"),
+                new KeyValuePair<String, String>("Set 10 figurine tort/briose Baby Boss, Tip 3, KZE Prints, Photo Paper Glossy", "Baby Boss tip3 (cercuri Logo)"),
+                new KeyValuePair<String, String>("Set figurine tort/briose Baby Boss, Tip 2, KZE Prints, Photo Paper Glossy", "Baby Boss tip2 (cercuri copil)"),
+                new KeyValuePair<String, String>("Set 12 figurine tort Buburuza, KZE Prints, Photo Paper Glossy", "12 Buburuze"),
+                new KeyValuePair<String, String>("Set 12 figurine tort Inima Roz, KZE Prints, Photo Paper Glossy", "12 Inimi Roz <3"),
+                new KeyValuePair<String, String>("Set 11 figurine tort Capsune, KZE Prints, Photo Paper Glossy", "11 Capsune + Vrej"),
+                new KeyValuePair<String, String>("Set 10 figurine tort/briose Baby Boss, Tip 3, KZE Prints, Photo Paper Glossy", "Baby Boss tip3 (cercuri Logo)"),
+        };
+
         private Builder()
         {
 
@@ -330,26 +351,89 @@ namespace PDFiller
         }
 
 
-        public bool ReadAwbId(Aspose.Pdf.Page page, out string idAWB)
+        public bool ReadAwbId(UglyToad.PdfPig.Content.Page page, out string idAWB)
         {
             idAWB = "";
-
-            Regex regex = new Regex(@"\b4EMG\w{11}001\b");
-            TextSearchOptions textSearchOptions = new TextSearchOptions(true);
-            Aspose.Pdf.Text.TextFragmentAbsorber textFragmentAbsorber = new Aspose.Pdf.Text.TextFragmentAbsorber(regex,textSearchOptions);
-            page.Accept(textFragmentAbsorber);
-            if(textFragmentAbsorber.TextFragments.Count == 0)
+            string text = page.Text;
+            MatchCollection matches = regex.Matches(text);
+            if (matches.Count == 0)
             {
                 return false;
             }
-            idAWB = textFragmentAbsorber.TextFragments[1].Text;
+            idAWB = matches[0].Value.Substring(0,15);
             return true;
+
         }
 
 
 
+
+
+
+
         /// <summary>
-        ///  
+        /// Writes the order details on the given file.
+        /// Reading and extracting the pdf file is done here.
+        /// -> Reads the AWB ID from the page with the UglyToad.PdfPig library.
+        /// -> Writes the order details on the page with the PdfSharpCore library.
+        /// </summary>
+        /// <param name="file">The physical pdf that can contain 1 or more AWBs.</param>
+        /// <param name="orders">The list of orders from which we'll write on the pdf.</param>
+        /// <param name="failed">The number of AWBs we failed to process.</param>
+        /// <returns></returns>
+        private bool WriteOnFile(FileInfo file,  List<Order> orders,out int failed)
+        {
+            string idAWB;
+            failed = 0;
+            PdfSharpCore.Pdf.PdfDocument pdfWrite = PdfReader.Open(file.FullName, PdfDocumentOpenMode.Import);
+            using (var pdfRead = UglyToad.PdfPig.PdfDocument.Open(file.FullName))
+            {
+
+                for (int i = 0; i < pdfWrite.PageCount; i++)
+                {
+                    if (!ReadAwbId(pdfRead.GetPage(i + 1), out idAWB))
+                    {
+                        failed++;
+                        continue;
+                    }
+                    try
+                    {
+                        Order o = orders.Find(p => p.awb == idAWB);
+                        if (o == null)
+                        {
+                            if (pdfWrite.PageCount > 1)
+                            {
+                                break;
+                            }
+                            form.textBox1.Text += $"Couldn't find an order match  for:\r\n{file.Name}.\r\n";
+
+                            failed++;
+                            continue;
+                        }
+                        pdfWrite.AddPage(pdfWrite.Pages[i]);
+                        if (WriteOnPage(pdfMerge.Pages[pdfMerge.PageCount - 1], o.toppere))
+                        {
+                            failed++;
+                            continue;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        failed++;
+                        throw ex;
+                    }
+
+                }
+                pdfMerge.Close();
+            }
+
+
+        }
+
+
+        /// <summary>
+        /// Processes a list of PDF files and writes order details onto the corresponding pages.
+        /// The method merges the modified PDFs into a single output file.
         /// </summary>
         /// <param name="unzippedList">All AWB files selected, automatically or manually, in PDF format and represented by the FileInfo proxy.</param>
         /// <param name="orders">All orders read from the Order Summary .xlsx file.</param>
@@ -360,10 +444,13 @@ namespace PDFiller
         /// <exception cref="ArgumentException">Selected files had incorrect names.</exception>
         /// <exception cref="FileNotFoundException">Selected files could not be found.</exception>
 
+
+
+
         public string WriteOnOrders(List<FileInfo> unzippedList, List<Order> orders, string saveDir,out int failed,string name)
         {
             failed = 0;
-            PdfDocument doc = new PdfDocument();
+            PdfSharpCore.Pdf.PdfDocument pdfMerge = new PdfSharpCore.Pdf.PdfDocument();
             foreach (FileInfo file in unzippedList)
             {
                 if (file == null || !file.Exists)
@@ -371,46 +458,15 @@ namespace PDFiller
                     failed++;
                     continue;
                 }
-                string idOrder,idAWB;
-                PdfDocument pdfDocument = PdfReader.Open(file.FullName, PdfDocumentOpenMode.Import);
-
-
-                Aspose.Pdf.Document pdf = new Aspose.Pdf.Document(file.FullName);
-                for (int i = 0; i<pdf.Pages.Count; i++ )
-                {
-                    if (!ReadAwbId(pdf.Pages[i+1],out idAWB))
-                    {
-                        failed++;
-                        continue;
-                    }
-                    idOrder = idAWB.Substring(0, idAWB.Length - 3);
-                    try
-                    {
-                        Order o = orders.Find(p => p.awb == idAWB);
-                        doc.AddPage(pdfDocument.Pages[i]);
-                        if (WriteOnPage(doc.Pages[doc.PageCount - 1], o.toppere))
-                        {
-                            failed++;
-                            continue;
-                        }
-                    }
-                    catch(Exception ex)
-                    {
-                        failed++;
-                        throw ex;
-                    }
-
-                }
-                pdfDocument.Close();
-
+              
             }
-            if (doc.PageCount == 0)
+            if (pdfMerge.PageCount == 0)
             {
                 throw new ArgumentException("None of the orders in the excel matched the pdf files.\r\n");
             }
             string returnPath = $"{saveDir}\\{name}.pdf";
-            doc.Save(returnPath);
-            doc.Close();
+            pdfMerge.Save(returnPath);
+            pdfMerge.Close();
             return returnPath;
         }
 
@@ -419,23 +475,7 @@ namespace PDFiller
         /// 
         /// </summary>
 
-        private List<KeyValuePair<String, String>> SpecialSwaps = new List<KeyValuePair<String, String>>()
-            {
-                new KeyValuePair<String, String>("Set 17 figurine tort/briose Patrula Catelusilor, KZE Prints, Photo Paper Glossy", "Paw Patrol tip2 (nou)"),
-                new KeyValuePair<String, String>("Set 9 figurine tort Patrula Catelusilor, KZE Prints, Photo Paper Glossy", "Paw Patrol tip1 (vechi)"),
-                new KeyValuePair<String, String>("Set 9 figurine tort Albine, KZE Prints, Photo Paper Glossy", "Albinute mici"),
-                new KeyValuePair<String, String>("Set 8 figurine tort Albine, Tip 2, KZE Prints, Photo Paper Glossy", "Albine + Apicultor"),
-                new KeyValuePair<String, String>("Set figurine tort/briose Barbie, Tip 4, KZE Prints, Photo Paper Glossy", "Barbie tip4 (cercuri)"),
-                new KeyValuePair<String, String>("Set figurine tort/briose Barbie, Tip 3, KZE Prints, Photo Paper Glossy", "Barbie tip3 (silueta cap)"),
-                new KeyValuePair<String, String>("Set figurine tort/briose Barbie, Tip 2, KZE Prints, Photo Paper Glossy", "Barbie tip2 (cercuri fancy)"),
-                new KeyValuePair<String, String>("Set figurine tort/briose Barbie, KZE Prints, Tip 1, Photo Paper Glossy", "Barbie tip1 (cercuri funda)"),
-                new KeyValuePair<String, String>("Set 10 figurine tort/briose Baby Boss, Tip 3, KZE Prints, Photo Paper Glossy", "Baby Boss tip3 (cercuri Logo)"),
-                new KeyValuePair<String, String>("Set figurine tort/briose Baby Boss, Tip 2, KZE Prints, Photo Paper Glossy", "Baby Boss tip2 (cercuri copil)"),
-                new KeyValuePair<String, String>("Set 12 figurine tort Buburuza, KZE Prints, Photo Paper Glossy", "12 Buburuze"),
-                new KeyValuePair<String, String>("Set 12 figurine tort Inima Roz, KZE Prints, Photo Paper Glossy", "12 Inimi Roz <3"),
-                new KeyValuePair<String, String>("Set 11 figurine tort Capsune, KZE Prints, Photo Paper Glossy", "11 Capsune + Vrej"),
-                new KeyValuePair<String, String>("Set 10 figurine tort/briose Baby Boss, Tip 3, KZE Prints, Photo Paper Glossy", "Baby Boss tip3 (cercuri Logo)"),
-        };
+
 
         /// <summary>
         /// Given the name {and id???} of a topper, removes the unnecessary prefix
