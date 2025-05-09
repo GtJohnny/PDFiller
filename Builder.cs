@@ -44,13 +44,19 @@ namespace PDFiller
             { "5941933302548", "Barbie tip1 (funda)" },
             { "5941933302470", "Baby Boss tip3 (Logo)" },
             { "5941933302487", "Baby Boss tip2 (baby)" },
-            { "Set 17 figurine tort/briose Patrula Catelusilor, KZE Prints, Photo Paper Glossy", "Paw Patrol tip2" },
-            { "Set 9 figurine tort Patrula Catelusilor, KZE Prints, Photo Paper Glossy", "Paw Patrol tip1" },
-            { "Set 9 figurine tort Albine, KZE Prints, Photo Paper Glossy", "Albinute mici" },
-            { "Set 8 figurine tort Albine, Tip 2, KZE Prints, Photo Paper Glossy", "Albine Mari" },
-            { "Set 12 figurine tort Buburuza, KZE Prints, Photo Paper Glossy", "12 Buburuze" },
-            { "Set 12 figurine tort Inima Roz, KZE Prints, Photo Paper Glossy", "12 Inimi Roz <3" },
-            { "Set 11 figurine tort Capsune, KZE Prints, Photo Paper Glossy", "11 Capsune" }
+            { "S4et 17 figurine tort/briose Patrula Catelusilor, KZE Prints, Photo Paper Glossy", "Paw Patrol tip2" },
+            { "S56et 9 figurine tort Patrula , KZE Prints, Photo Paper Glossy", "Paw Patrol tip1" },
+            { "Se6t 9  tort , KZE Prints, Photo Paper Glossy", "Albinute mici" },
+            { "S7686et 8 figurine tort Albine,  2, KZE Prints, Photo Paper Glossy", "Albine Mari" },
+            { "Set 312 figurine tort Buburuza, KZE Prints, Photo Paper Glossy", "12 Buburuze" },
+            { "Set 12 figurine tort Inima Roz,  Prints, Photo Paper Glossy", "12 Inimi Roz <3" },
+            { "18", "Buburuza & Motan Noir" },
+            { "S2n5e tort Capsune, KZE Prints, Photo Paper Glossy", "Squid Game" },
+            { "Se4t 113 tort Capsune, KZE Prints, Photo Paper Glossy", "Eroi in Pijama" },
+            { "Se2t 11 figurine  Capsune, KZE Prints, Photo Paper Glossy", "Gym" },
+            { "S7e4t 14rt C6e, KZE Prints, Photo Paper Glossy", "Blaze" },
+            { "S8et 115rt Capsune, KZE Prints,  Paper Glossy", "Peppa Pig" },
+            { "Set 11  tort Capsune, KZE Prints, Photo Paper Glossy", "Fulger McQueen" }
         };
 
         private Builder()
@@ -714,13 +720,13 @@ namespace PDFiller
 
                 //MATH =====>>       (scales with images/row)+ (pageH=90 +30 space)+no out of bounds  
                 if (img != null)
-                    gfx.DrawImage(img, (i % perPage) * (90 + perPage * 12) +20 + (perPage == 2 ? gfx.PageSize.Width / 2 : 20), (i / perPage) * 110 + gfx.PageSize.Height / 2 +20, 90, 90);
+                    gfx.DrawImage(img, (i % perPage) * (90 + perPage * 12) +20 + (perPage == 2 ? gfx.PageSize.Width / 2 : 20), (i / perPage) * 120 + gfx.PageSize.Height / 2 +25, 90, 90);
                 //MATH =====>>
                 //per pozition *  (pageH=90 +30 space + space with img/row) - (center text) + (even abscise per img/row (2= right column, 3=wide)
 
                 string temp_name = $"{topper.tQuantity}: {topper.tName}";
 
-                gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage*12) + 65 - 5.5f * (topper.tName.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2: 5  ), (i / perPage) * 110 + 70  + 30 + gfx.PageSize.Height / 2 + 20);
+                gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage*12) + 65 - 5.7f * (topper.tName.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2: 20  ), (i / perPage) * 120 + 100 + gfx.PageSize.Height / 2 + 35);
 
                 i++;
                 if (i == 3 * perPage)
