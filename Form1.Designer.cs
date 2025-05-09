@@ -47,6 +47,8 @@
             this.autoFillBtn = new System.Windows.Forms.Button();
             this.tabControlMenu = new System.Windows.Forms.TabControl();
             this.AutoFillPage = new System.Windows.Forms.TabPage();
+            this.drawComboBox = new System.Windows.Forms.ComboBox();
+            this.button2 = new System.Windows.Forms.Button();
             this.filePage = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
             this.excelButton = new System.Windows.Forms.Button();
@@ -79,6 +81,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             groupBox3 = new System.Windows.Forms.GroupBox();
             label3 = new System.Windows.Forms.Label();
@@ -106,6 +109,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.excelGridView)).BeginInit();
             this.tabPage1.SuspendLayout();
             this.tabControl2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -302,6 +306,8 @@
             // 
             // AutoFillPage
             // 
+            this.AutoFillPage.Controls.Add(this.drawComboBox);
+            this.AutoFillPage.Controls.Add(this.button2);
             this.AutoFillPage.Controls.Add(label5);
             this.AutoFillPage.Controls.Add(this.autoFillBtn);
             this.AutoFillPage.Location = new System.Drawing.Point(4, 27);
@@ -311,6 +317,37 @@
             this.AutoFillPage.TabIndex = 2;
             this.AutoFillPage.Text = "Autofill";
             this.AutoFillPage.UseVisualStyleBackColor = true;
+            // 
+            // drawComboBox
+            // 
+            this.drawComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.drawComboBox.CausesValidation = false;
+            this.drawComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.drawComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.drawComboBox.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.drawComboBox.FormattingEnabled = true;
+            this.drawComboBox.Items.AddRange(new object[] {
+            "Text + No image",
+            "Text + 2 images/row",
+            "No Text + 3 images/row"});
+            this.drawComboBox.Location = new System.Drawing.Point(6, 94);
+            this.drawComboBox.Name = "drawComboBox";
+            this.drawComboBox.Size = new System.Drawing.Size(191, 27);
+            this.drawComboBox.TabIndex = 15;
+            this.drawComboBox.DropDownClosed += new System.EventHandler(this.drawComboBox_DropDownClosed);
+            // 
+            // button2
+            // 
+            this.button2.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.button2.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
+            this.button2.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.Location = new System.Drawing.Point(27, 40);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(151, 39);
+            this.button2.TabIndex = 12;
+            this.button2.Text = "Load Images ";
+            this.button2.UseVisualStyleBackColor = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click_1);
             // 
             // filePage
             // 
@@ -703,6 +740,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.panel2);
             this.tabPage3.Location = new System.Drawing.Point(4, 26);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
@@ -710,6 +748,15 @@
             this.tabPage3.TabIndex = 4;
             this.tabPage3.Text = "Imagini";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // panel2
+            // 
+            this.panel2.AutoScroll = true;
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(3, 3);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(618, 493);
+            this.panel2.TabIndex = 0;
             // 
             // panel1
             // 
@@ -762,6 +809,7 @@
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tabControl2.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -807,6 +855,9 @@
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Panel panel2;
+        internal System.Windows.Forms.ComboBox drawComboBox;
     }
 }
 

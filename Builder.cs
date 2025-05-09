@@ -22,6 +22,7 @@ using System.Text.RegularExpressions;
 using UglyToad.PdfPig;
 using static System.Net.WebRequestMethods;
 using UglyToad.PdfPig.Writer;
+using static PDFiller.Order;
 
 
 
@@ -173,7 +174,7 @@ namespace PDFiller
             {
                 throw new FileNotFoundException("No excel file was found within the work directory!\r\n");
             }
-            //      form.excelPathBox.Text = excel.FullName;
+            form.excelPathBox.Text = excel.FullName;
             //form.newExcel = true;
             return excel;
         }
@@ -442,12 +443,59 @@ namespace PDFiller
                     }
 
                     pdfMerge.AddPage(pdfWrite.Pages[i]);
-                    if (!WriteOnPage(pdfMerge.Pages[pdfMerge.PageCount - 1], o.toppere))
+
+                    XGraphics gfx = XGraphics.FromPdfPage(pdfMerge.Pages[pdfMerge.PageCount - 1]);
+                    XRect rect = new XRect(0, gfx.PageSize.Height / 2 - 15, gfx.PageSize.Width, gfx.PageSize.Height / 2 + 15);
+                    gfx.DrawRectangle(XBrushes.White, rect);
+
+                    switch (form.drawComboBox.SelectedIndex)
                     {
-                        errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
-                        failed++;
-                        continue;
+                        case 0:
+
+                            if (!WriteOnPage(gfx, o.toppere))
+                            {
+                                errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
+                                failed++;
+                                continue;
+                            }
+
+
+                            break;
+                        case 1:
+                            if (!WriteOnPage(gfx, o.toppere))
+                            {
+                                errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
+                                failed++;
+                                continue;
+                            }
+                            DrawOnPage(gfx, o.toppere, 2);
+                            break;
+                        case 2:
+                            DrawOnPage(gfx, o.toppere, 3);
+                            break;
+
+                        default:
+                            if (!WriteOnPage(gfx, o.toppere))
+                            {
+                                errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
+                                failed++;
+                                continue;
+                            }
+                            break;
+                    
+
                     }
+
+
+
+                    //if (!WriteOnPage(gfx, o.toppere))
+                    //{
+                    //    errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
+                    //    failed++;
+                    //    continue;
+                    //}
+
+                    //DrawOnPage(gfx, o.toppere);
 
 
                 }
@@ -553,21 +601,19 @@ namespace PDFiller
         /// <param name="page">AWB Page to be written on</param>
         /// <param name="toppere">What to write on the page (qnt + name + image)</param>
         /// <returns>True if successfull, false if not</returns>
-        private bool WriteOnPage(PdfPage page, List<Order.topper> toppere)
+        private bool WriteOnPage(XGraphics gfx, List<Order.topper> toppere)
         {
-            if (page == null || toppere == null) {
+            if (gfx == null || toppere == null) {
                 return true;
             }
             try
             {
-                XGraphics gfx = XGraphics.FromPdfPage(page);
+          //      XGraphics gfx = XGraphics.FromPdfPage(page);
 
                 XFont font = new XFont("Times New Roman", 14);
                 XSolidBrush brush = new XSolidBrush(XColor.FromKnownColor(XKnownColor.Black));
 
-                XRect rect = new XRect(0, page.Height / 2 - 15, page.Width, page.Height / 2 + 15);
-                gfx.DrawRectangle(XBrushes.White, rect);
-
+  
                 int i = 0;
 
                 /*
@@ -589,7 +635,7 @@ namespace PDFiller
                      //   gfx.DrawImage(img, page.Width - 95 * (Math.Max(toppere.Count, 16) / 4) + 95 * (i / 4)+100, page.Height / 2 + 20 + 95 * (i % 4), 90, 90);
                     }
                     */
-                    gfx.DrawString($"{topper.tQuantity} buc: {topper.tName}", font, brush, 25, page.Height / 2 + 25 + 20 * i, XStringFormats.CenterLeft);
+                    gfx.DrawString($"{topper.tQuantity} buc: {topper.tName}", font, brush, 25, gfx.PageSize.Height / 2 + 25 + 20 * i, XStringFormats.CenterLeft);
                         // gfx.DrawImage(img, page.Width - 95 * (nrImagini / 4) + 95 * (j / 4), page.Height / 2 + 20 + 95 * (j % 4), 90, 90);
                     i++;
 
@@ -606,5 +652,87 @@ namespace PDFiller
             }
             return true;
         }
+
+        private readonly Dictionary<String, String> SpecialSwaps__ = new Dictionary<String, String>()
+        {
+
+            { "5941933302517", "Barbie tip4 (cercuri)" },
+            { "5941933302524", "Barbie tip3 (silueta cap)" },
+            { "5941933302531", "Barbie tip2 (cercuri fancy)" },
+            { "5941933302548", "Barbie tip1 (cercuri funda)" },
+            { "5941933302470", "Baby Boss tip3 (cercuri Logo)" },
+            { "5941933302487", "Baby Boss tip2 (cercuri copil)" }
+        };
+
+
+        public void startTest()
+        {
+
+            Builder builder = Builder.GetInstance();
+            const string path = @"C:\Users\KZE PC\Desktop\VIsual studio projects\PDFiller\bin\Debug\debugTests\";
+            string inputfPath = "417264331_Sameday_4EMG24107789758001.pdf";
+            string excelPath = "orders_details_file_30-04-2025-21-52-52.xlsx";
+            List<Order> orders = builder.ReadExcel(new FileInfo(path+excelPath));
+            List<FileInfo> unzipped = new List<FileInfo>()
+            {
+                new FileInfo(path+inputfPath)
+            };
+            string savedPDFpath = builder.WriteOnOrders(unzipped, orders, path, "TestName");
+            Process.Start(savedPDFpath);
+        }
+
+
+        private XImage TryFindImage(string tId)
+        {
+            const string imgPath = @"C:\Users\KZE PC\Desktop\DEBUGGING\ImaginiAwb-uri";
+            string[] extensions = { ".png", ".jpeg", ".jpg" };
+            foreach (string ext in extensions)
+            {
+                if (System.IO.File.Exists($"{imgPath}\\{tId}{ext}"))
+                {
+                    return XImage.FromFile($"{imgPath}\\{tId}{ext}");
+                }
+            }
+            return null; 
+        }
+
+
+
+
+
+
+        private void DrawOnPage(XGraphics gfx, List<Order.topper> toppere,int perPage)
+        {
+            Dictionary<string,XImage> images = new Dictionary<string, XImage>();
+            int i = 0;
+            foreach (Order.topper topper in toppere)
+            {
+                XImage img = null;
+                if(images.ContainsKey(topper.tId))
+                {
+                    img = images[topper.tId];
+                }
+                else
+                {
+                    img = TryFindImage(topper.tId);
+                }
+                if(img == null)
+                {
+                    continue;
+                }
+                else
+                {
+                    images.Add(topper.tId, img);
+                }
+                //MATH =====>>       (scales with images/row)+ (pageH=90 +30 space)+no out of bounds  
+                gfx.DrawImage(img, (i % perPage) * (120 + 120 / perPage) + (perPage == 2 ? gfx.PageSize.Width / 2.2 : gfx.PageSize.Width / 6), (i / perPage) * 120 + 70 + gfx.PageSize.Height / 2, 90, 90);
+                //MATH =====>>                                                                           per pozition *  (pageH=90 +30 space + space with img/row) - (center text) + (even abscise per img/row (2= right column, 3=wide)
+                gfx.DrawString(topper.tName, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (120 + 120 / perPage) + 45 - 4.5f * (topper.tName.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2.2 : gfx.PageSize.Width / 6), (i / perPage) * 120 + 50 + 90 + 30 + gfx.PageSize.Height / 2);
+
+                i++;
+            }
+        }
+
+
     }
 }
