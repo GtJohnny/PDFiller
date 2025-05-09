@@ -15,7 +15,6 @@ using System.IO;
 using ICSharpCode.SharpZipLib.Zip;
 using System.IO.Compression;
 using Excel = Microsoft.Office.Interop.Excel;
-using Microsoft.Office.Interop.Excel;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Dialogs.Controls;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -45,14 +44,14 @@ namespace PDFiller
         private FileInfo excel = null;
         private List<FileInfo> unzippedList = null;
         private List<Order> orders = null;
-        private string mergedPath = null;
+        internal string mergedPath = null;
 
         private void writeOptions()
         {
             StreamWriter sw = new StreamWriter(new FileStream("options.ini", FileMode.OpenOrCreate, FileAccess.Write));
             sw.WriteLine("root=" + rootDir.FullName);
             sw.WriteLine("autofill=" + autoFillCheck.Checked);
-            sw.WriteLine("print=" + PrintCheck.Checked);
+            sw.WriteLine("print=true" /* PrintCheck.Checked*/);
             sw.WriteLine("open=" + openPdfCheck.Checked);
             sw.Close();
         }
@@ -62,7 +61,6 @@ namespace PDFiller
         private void Form1_Load(object sender, EventArgs e)
         {
             Builder menu = PDFiller.Builder.GetInstance(this);
-
 
             StreamReader sr = null;
             if (File.Exists("options.ini"))
@@ -84,6 +82,7 @@ namespace PDFiller
             while (!sr.EndOfStream)
             {
                 string[] line = sr.ReadLine().Split("=".ToCharArray(), 2);
+                drawComboBox.SelectedIndex = 2;
 
                 switch (line[0])
                 {
@@ -107,11 +106,11 @@ namespace PDFiller
                         bool print = true;
                         if (Boolean.TryParse(line[1], out print))
                         {
-                            PrintCheck.Checked = print;
+                     //       PrintCheck.Checked = print;
                         }
                         else
                         {
-                            PrintCheck.Checked = true;
+                  //          PrintCheck.Checked = true;
                         }
                         break;
                     case "open":
@@ -153,13 +152,13 @@ namespace PDFiller
         public void TestAsync()
         {
             Excel.Application app = new Excel.Application();
-            Workbook book = app.Workbooks.Open(DebugPath + "imagini.xlsx");
+            Excel.Workbook book = app.Workbooks.Open(DebugPath + "imagini.xlsx");
 
             if (book == null)
             {
                 throw new Exception("Excel workbook could not be opened.");
             }
-            Worksheet sheet;
+            Excel.Worksheet sheet;
             try
             {
                 sheet = book.Worksheets[1];
@@ -710,6 +709,25 @@ namespace PDFiller
         private void drawComboBox_DropDownClosed(object sender, EventArgs e)
         {
             this.ActiveControl = null;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if(mergedPath != null && File.Exists(mergedPath))
+                Process.Start(mergedPath);
+        }
+
+        private void drawComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+            Panel panel = (Panel)sender;
+            Graphics g = e.Graphics;
+            Rectangle rect = panel.ClientRectangle;
+            g.FillRectangle(new SolidBrush(Color.FromArgb(255, 255, 255)), rect);
         }
     }
 }

@@ -35,22 +35,22 @@ namespace PDFiller
         private readonly Form1 form = null;
         private readonly Regex regex = new Regex(@"\b4EMG\w{11}00[0-9]");
 
-        private readonly List<KeyValuePair<String, String>> SpecialSwaps = new List<KeyValuePair<String, String>>()
-            {
-                new KeyValuePair<String, String>("Set 17 figurine tort/briose Patrula Catelusilor, KZE Prints, Photo Paper Glossy", "Paw Patrol tip2 (nou)"),
-                new KeyValuePair<String, String>("Set 9 figurine tort Patrula Catelusilor, KZE Prints, Photo Paper Glossy", "Paw Patrol tip1 (vechi)"),
-                new KeyValuePair<String, String>("Set 9 figurine tort Albine, KZE Prints, Photo Paper Glossy", "Albinute mici"),
-                new KeyValuePair<String, String>("Set 8 figurine tort Albine, Tip 2, KZE Prints, Photo Paper Glossy", "Albine + Apicultor"),
-                new KeyValuePair<String, String>("Set figurine tort/briose Barbie, Tip 4, KZE Prints, Photo Paper Glossy", "Barbie tip4 (cercuri)"),
-                new KeyValuePair<String, String>("Set figurine tort/briose Barbie, Tip 3, KZE Prints, Photo Paper Glossy", "Barbie tip3 (silueta cap)"),
-                new KeyValuePair<String, String>("Set figurine tort/briose Barbie, Tip 2, KZE Prints, Photo Paper Glossy", "Barbie tip2 (cercuri fancy)"),
-                new KeyValuePair<String, String>("Set figurine tort/briose Barbie, KZE Prints, Tip 1, Photo Paper Glossy", "Barbie tip1 (cercuri funda)"),
-                new KeyValuePair<String, String>("Set 10 figurine tort/briose Baby Boss, Tip 3, KZE Prints, Photo Paper Glossy", "Baby Boss tip3 (cercuri Logo)"),
-                new KeyValuePair<String, String>("Set figurine tort/briose Baby Boss, Tip 2, KZE Prints, Photo Paper Glossy", "Baby Boss tip2 (cercuri copil)"),
-                new KeyValuePair<String, String>("Set 12 figurine tort Buburuza, KZE Prints, Photo Paper Glossy", "12 Buburuze"),
-                new KeyValuePair<String, String>("Set 12 figurine tort Inima Roz, KZE Prints, Photo Paper Glossy", "12 Inimi Roz <3"),
-                new KeyValuePair<String, String>("Set 11 figurine tort Capsune, KZE Prints, Photo Paper Glossy", "11 Capsune + Vrej"),
-                new KeyValuePair<String, String>("Set 10 figurine tort/briose Baby Boss, Tip 3, KZE Prints, Photo Paper Glossy", "Baby Boss tip3 (cercuri Logo)"),
+
+        private readonly Dictionary<String, String> SpecialSwaps = new Dictionary<String, String>()
+{
+            { "5941933302517", "Barbie tip4 (cercuri)" },
+            { "5941933302524", "Barbie tip3 (silueta)" },
+            { "5941933302531", "Barbie tip2 (fancy)" },
+            { "5941933302548", "Barbie tip1 (funda)" },
+            { "5941933302470", "Baby Boss tip3 (Logo)" },
+            { "5941933302487", "Baby Boss tip2 (baby)" },
+            { "Set 17 figurine tort/briose Patrula Catelusilor, KZE Prints, Photo Paper Glossy", "Paw Patrol tip2" },
+            { "Set 9 figurine tort Patrula Catelusilor, KZE Prints, Photo Paper Glossy", "Paw Patrol tip1" },
+            { "Set 9 figurine tort Albine, KZE Prints, Photo Paper Glossy", "Albinute mici" },
+            { "Set 8 figurine tort Albine, Tip 2, KZE Prints, Photo Paper Glossy", "Albine Mari" },
+            { "Set 12 figurine tort Buburuza, KZE Prints, Photo Paper Glossy", "12 Buburuze" },
+            { "Set 12 figurine tort Inima Roz, KZE Prints, Photo Paper Glossy", "12 Inimi Roz <3" },
+            { "Set 11 figurine tort Capsune, KZE Prints, Photo Paper Glossy", "11 Capsune" }
         };
 
         private Builder()
@@ -471,7 +471,7 @@ namespace PDFiller
                             DrawOnPage(gfx, o.toppere, 2);
                             break;
                         case 2:
-                            DrawOnPage(gfx, o.toppere, 3);
+                            DrawOnPage(gfx, o.toppere, 4);
                             break;
 
                         default:
@@ -575,8 +575,9 @@ namespace PDFiller
         /// <returns>A string that contains only the name of the topper mascot, or the same string unchanged if it couldn't be found.</returns>
         private string ModifyName(string name)
         {
-            foreach(var pair in SpecialSwaps) {
-                if(name == pair.Key) return pair.Value;
+            if(SpecialSwaps.ContainsKey(name))
+            {
+                return SpecialSwaps[name];
             }
 
             string[] list = { "briose de ", "briose ", "tort ", };
@@ -653,17 +654,6 @@ namespace PDFiller
             return true;
         }
 
-        private readonly Dictionary<String, String> SpecialSwaps__ = new Dictionary<String, String>()
-        {
-
-            { "5941933302517", "Barbie tip4 (cercuri)" },
-            { "5941933302524", "Barbie tip3 (silueta cap)" },
-            { "5941933302531", "Barbie tip2 (cercuri fancy)" },
-            { "5941933302548", "Barbie tip1 (cercuri funda)" },
-            { "5941933302470", "Baby Boss tip3 (cercuri Logo)" },
-            { "5941933302487", "Baby Boss tip2 (cercuri copil)" }
-        };
-
 
         public void startTest()
         {
@@ -677,7 +667,7 @@ namespace PDFiller
             {
                 new FileInfo(path+inputfPath)
             };
-            string savedPDFpath = builder.WriteOnOrders(unzipped, orders, path, "TestName");
+            string savedPDFpath = form.mergedPath =  builder.WriteOnOrders(unzipped, orders, path, "TestName");
             Process.Start(savedPDFpath);
         }
 
@@ -707,6 +697,7 @@ namespace PDFiller
             int i = 0;
             foreach (Order.topper topper in toppere)
             {
+               
                 XImage img = null;
                 if(images.ContainsKey(topper.tId))
                 {
@@ -714,23 +705,30 @@ namespace PDFiller
                 }
                 else
                 {
-                    img = TryFindImage(topper.tId);
+                     img = TryFindImage(topper.tId);
+                     if (img != null)
+                     {
+                        images.Add(topper.tId, img);
+                     }
                 }
-                if(img == null)
-                {
-                    continue;
-                }
-                else
-                {
-                    images.Add(topper.tId, img);
-                }
+
                 //MATH =====>>       (scales with images/row)+ (pageH=90 +30 space)+no out of bounds  
-                gfx.DrawImage(img, (i % perPage) * (120 + 120 / perPage) + (perPage == 2 ? gfx.PageSize.Width / 2.2 : gfx.PageSize.Width / 6), (i / perPage) * 120 + 70 + gfx.PageSize.Height / 2, 90, 90);
-                //MATH =====>>                                                                           per pozition *  (pageH=90 +30 space + space with img/row) - (center text) + (even abscise per img/row (2= right column, 3=wide)
-                gfx.DrawString(topper.tName, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (120 + 120 / perPage) + 45 - 4.5f * (topper.tName.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2.2 : gfx.PageSize.Width / 6), (i / perPage) * 120 + 50 + 90 + 30 + gfx.PageSize.Height / 2);
+                if (img != null)
+                    gfx.DrawImage(img, (i % perPage) * (90 + perPage * 12) +20 + (perPage == 2 ? gfx.PageSize.Width / 2 : 20), (i / perPage) * 110 + gfx.PageSize.Height / 2 +20, 90, 90);
+                //MATH =====>>
+                //per pozition *  (pageH=90 +30 space + space with img/row) - (center text) + (even abscise per img/row (2= right column, 3=wide)
+
+                string temp_name = $"{topper.tQuantity}: {topper.tName}";
+
+                gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage*12) + 65 - 5.5f * (topper.tName.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2: 5  ), (i / perPage) * 110 + 70  + 30 + gfx.PageSize.Height / 2 + 20);
 
                 i++;
+                if (i == 3 * perPage)
+                {
+                    return;
+                }
             }
+
         }
 
 

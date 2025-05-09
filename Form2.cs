@@ -76,61 +76,61 @@ namespace PDFiller
             return;
 
 
-            const string imgPath = @"C:\Users\KZE PC\Desktop\DEBUGGING\ImaginiAwb-uri";
-            Regex regex = new Regex(@"\b[0-9]{13}.(png|jpeg)\b");
-            DirectoryInfo directory = new DirectoryInfo(imgPath);
+         //   const string imgPath = @"C:\Users\KZE PC\Desktop\DEBUGGING\ImaginiAwb-uri";
+         //   Regex regex = new Regex(@"\b[0-9]{13}.(png|jpeg)\b");
+         //   DirectoryInfo directory = new DirectoryInfo(imgPath);
 
-            // Get files asynchronously
-            FileInfo[] files = directory.GetFiles().Where(f => regex.IsMatch(f.Name) && SpecialSwaps__.Any(item => item.Key == Path.GetFileNameWithoutExtension(f.Name))).ToArray();
+         //   // Get files asynchronously
+         //   FileInfo[] files = directory.GetFiles().Where(f => regex.IsMatch(f.Name) && SpecialSwaps__.Any(item => item.Key == Path.GetFileNameWithoutExtension(f.Name))).ToArray();
 
-            PdfDocument pdf = new PdfDocument();
-            pdf.AddPage(new PdfPage());
-            PdfPage page = pdf.Pages[0];
+         //   PdfDocument pdf = new PdfDocument();
+         //   pdf.AddPage(new PdfPage());
+         //   PdfPage page = pdf.Pages[0];
 
-            XGraphics gfx = XGraphics.FromPdfPage(page);
+         //   XGraphics gfx = XGraphics.FromPdfPage(page);
 
-            int i = 0;
-            int perPage = 3;
-         //   bool doWrite = true;
+         //   int i = 0;
+         //   int perPage = 3;
+         ////   bool doWrite = true;
 
-            switch (comboBox1.SelectedIndex)
-            {
-                case 0:
-                    //Write
-                    //NoDraw
-                    break;
-                case 1:
+         //   switch (comboBox1.SelectedIndex)
+         //   {
+         //       case 0:
+         //           //Write
+         //           //NoDraw
+         //           break;
+         //       case 1:
 
-                    perPage = 2;
-                    //doWrite = true;
-                    //Draw
-                    break;
-                case 2:
-                    perPage = 3;
-                    //noWrite
-                    //Draw
-                    break;
-            }
+         //           perPage = 2;
+         //           //doWrite = true;
+         //           //Draw
+         //           break;
+         //       case 2:
+         //           perPage = 3;
+         //           //noWrite
+         //           //Draw
+         //           break;
+         //   }
       
 
-            foreach (FileInfo file in files)
-            {
+         //   foreach (FileInfo file in files)
+         //   {
 
-                XImage image = XImage.FromFile(file.FullName);
-                string name = SpecialSwaps__[Path.GetFileNameWithoutExtension(file.Name)];
-                //                                                                                       (scales with images/row)+ (pageH=90 +30 space)+no out of bounds  
-                gfx.DrawImage(image, (i % perPage) * (120 + 120/perPage) +(perPage==2 ? page.Width/2.2 : page.Width/6), (i / perPage) * 120 + 70 + page.Height/2 , 90, 90);
-                                                                                                           //per pozition *  (pageH=90 +30 space + space with img/row) - (center text) + (even abscise per img/row (2= right column, 3=wide)
-                gfx.DrawString(name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (120 + 120 / perPage) + 45 - 4.5f*(name.Count()/2) + (perPage == 2 ? page.Width / 2.2 : page.Width / 6), (i / perPage) * 120 + 50 + 90 + 30 + page.Height / 2);
+         //       XImage image = XImage.FromFile(file.FullName);
+         //       string name = SpecialSwaps__[Path.GetFileNameWithoutExtension(file.Name)];
+         //       //                                                                                       (scales with images/row)+ (pageH=90 +30 space)+no out of bounds  
+         //       gfx.DrawImage(image, (i % perPage) * (120 + 120/perPage) +(perPage==2 ? page.Width/2.2 : page.Width/6), (i / perPage) * 120 + 70 + page.Height/2 , 90, 90);
+         //                                                                                                  //per pozition *  (pageH=90 +30 space + space with img/row) - (center text) + (even abscise per img/row (2= right column, 3=wide)
+         //       gfx.DrawString(name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (120 + 120 / perPage) + 45 - 4.5f*(name.Count()/2) + (perPage == 2 ? page.Width / 2.2 : page.Width / 6), (i / perPage) * 120 + 50 + 90 + 30 + page.Height / 2);
 
-                i++;
-            }
+         //       i++;
+         //   }
 
 
-            string pdfPath = $"{path}\\MULTE_POZE.pdf";
-            pdf.Save(pdfPath);
-            pdf.Close();
-            Process.Start(pdfPath);
+         //   string pdfPath = $"{path}\\MULTE_POZE.pdf";
+         //   pdf.Save(pdfPath);
+         //   pdf.Close();
+         //   Process.Start(pdfPath);
         }
         private void Form2_Load_1(object sender, EventArgs e)
         {

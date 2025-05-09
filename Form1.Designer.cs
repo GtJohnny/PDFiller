@@ -40,15 +40,15 @@
             System.Windows.Forms.Label label10;
             System.Windows.Forms.Label label11;
             System.Windows.Forms.Label label12;
+            System.Windows.Forms.Label label13;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.openPdfCheck = new System.Windows.Forms.CheckBox();
-            this.PrintCheck = new System.Windows.Forms.CheckBox();
+            this.drawComboBox = new System.Windows.Forms.ComboBox();
             this.autoFillCheck = new System.Windows.Forms.CheckBox();
             this.autoFillBtn = new System.Windows.Forms.Button();
             this.tabControlMenu = new System.Windows.Forms.TabControl();
             this.AutoFillPage = new System.Windows.Forms.TabPage();
-            this.drawComboBox = new System.Windows.Forms.ComboBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             this.filePage = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
             this.excelButton = new System.Windows.Forms.Button();
@@ -62,6 +62,7 @@
             this.emagBtn = new System.Windows.Forms.Button();
             this.SamedayBtn = new System.Windows.Forms.Button();
             this.CelBtn = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.rootTextBox = new System.Windows.Forms.TextBox();
             this.excelPathBox = new System.Windows.Forms.TextBox();
@@ -95,6 +96,7 @@
             label10 = new System.Windows.Forms.Label();
             label11 = new System.Windows.Forms.Label();
             label12 = new System.Windows.Forms.Label();
+            label13 = new System.Windows.Forms.Label();
             groupBox3.SuspendLayout();
             this.tabControlMenu.SuspendLayout();
             this.AutoFillPage.SuspendLayout();
@@ -117,7 +119,7 @@
             // 
             groupBox3.BackColor = System.Drawing.Color.White;
             groupBox3.Controls.Add(this.openPdfCheck);
-            groupBox3.Controls.Add(this.PrintCheck);
+            groupBox3.Controls.Add(this.drawComboBox);
             groupBox3.Controls.Add(this.autoFillCheck);
             groupBox3.Dock = System.Windows.Forms.DockStyle.Bottom;
             groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -134,26 +136,30 @@
             this.openPdfCheck.Checked = true;
             this.openPdfCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.openPdfCheck.Font = new System.Drawing.Font("Times New Roman", 14.25F);
-            this.openPdfCheck.Location = new System.Drawing.Point(13, 106);
+            this.openPdfCheck.Location = new System.Drawing.Point(13, 62);
             this.openPdfCheck.Name = "openPdfCheck";
             this.openPdfCheck.Size = new System.Drawing.Size(185, 25);
             this.openPdfCheck.TabIndex = 8;
             this.openPdfCheck.Text = "Open pdf in browser";
             this.openPdfCheck.UseVisualStyleBackColor = true;
             // 
-            // PrintCheck
+            // drawComboBox
             // 
-            this.PrintCheck.AutoSize = true;
-            this.PrintCheck.Checked = true;
-            this.PrintCheck.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.PrintCheck.Enabled = false;
-            this.PrintCheck.Font = new System.Drawing.Font("Times New Roman", 14.25F);
-            this.PrintCheck.Location = new System.Drawing.Point(13, 63);
-            this.PrintCheck.Name = "PrintCheck";
-            this.PrintCheck.Size = new System.Drawing.Size(150, 25);
-            this.PrintCheck.TabIndex = 7;
-            this.PrintCheck.Text = "Also print on fill";
-            this.PrintCheck.UseVisualStyleBackColor = true;
+            this.drawComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.drawComboBox.CausesValidation = false;
+            this.drawComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.drawComboBox.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.drawComboBox.FormattingEnabled = true;
+            this.drawComboBox.Items.AddRange(new object[] {
+            "Text",
+            "Text + 2 images/row",
+            "4 images/row"});
+            this.drawComboBox.Location = new System.Drawing.Point(13, 102);
+            this.drawComboBox.Name = "drawComboBox";
+            this.drawComboBox.Size = new System.Drawing.Size(185, 27);
+            this.drawComboBox.TabIndex = 15;
+            this.drawComboBox.SelectedIndexChanged += new System.EventHandler(this.drawComboBox_SelectedIndexChanged);
+            this.drawComboBox.DropDownClosed += new System.EventHandler(this.drawComboBox_DropDownClosed);
             // 
             // autoFillCheck
             // 
@@ -221,7 +227,7 @@
             // 
             label5.AutoSize = true;
             label5.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label5.Location = new System.Drawing.Point(24, 147);
+            label5.Location = new System.Drawing.Point(24, 96);
             label5.Name = "label5";
             label5.Size = new System.Drawing.Size(86, 15);
             label5.TabIndex = 11;
@@ -277,12 +283,22 @@
             label12.TabIndex = 13;
             label12.Text = "All time work dir:";
             // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label13.Location = new System.Drawing.Point(24, 197);
+            label13.Name = "label13";
+            label13.Size = new System.Drawing.Size(86, 15);
+            label13.TabIndex = 17;
+            label13.Text = "Tragic Button:";
+            // 
             // autoFillBtn
             // 
             this.autoFillBtn.BackColor = System.Drawing.SystemColors.ControlLight;
             this.autoFillBtn.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
             this.autoFillBtn.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.autoFillBtn.Location = new System.Drawing.Point(27, 165);
+            this.autoFillBtn.Location = new System.Drawing.Point(27, 114);
             this.autoFillBtn.Name = "autoFillBtn";
             this.autoFillBtn.Size = new System.Drawing.Size(151, 39);
             this.autoFillBtn.TabIndex = 8;
@@ -306,8 +322,8 @@
             // 
             // AutoFillPage
             // 
-            this.AutoFillPage.Controls.Add(this.drawComboBox);
-            this.AutoFillPage.Controls.Add(this.button2);
+            this.AutoFillPage.Controls.Add(label13);
+            this.AutoFillPage.Controls.Add(this.button3);
             this.AutoFillPage.Controls.Add(label5);
             this.AutoFillPage.Controls.Add(this.autoFillBtn);
             this.AutoFillPage.Location = new System.Drawing.Point(4, 27);
@@ -318,36 +334,18 @@
             this.AutoFillPage.Text = "Autofill";
             this.AutoFillPage.UseVisualStyleBackColor = true;
             // 
-            // drawComboBox
+            // button3
             // 
-            this.drawComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.drawComboBox.CausesValidation = false;
-            this.drawComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.drawComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.drawComboBox.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.drawComboBox.FormattingEnabled = true;
-            this.drawComboBox.Items.AddRange(new object[] {
-            "Text + No image",
-            "Text + 2 images/row",
-            "No Text + 3 images/row"});
-            this.drawComboBox.Location = new System.Drawing.Point(6, 94);
-            this.drawComboBox.Name = "drawComboBox";
-            this.drawComboBox.Size = new System.Drawing.Size(191, 27);
-            this.drawComboBox.TabIndex = 15;
-            this.drawComboBox.DropDownClosed += new System.EventHandler(this.drawComboBox_DropDownClosed);
-            // 
-            // button2
-            // 
-            this.button2.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.button2.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
-            this.button2.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(27, 40);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(151, 39);
-            this.button2.TabIndex = 12;
-            this.button2.Text = "Load Images ";
-            this.button2.UseVisualStyleBackColor = false;
-            this.button2.Click += new System.EventHandler(this.button2_Click_1);
+            this.button3.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.button3.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
+            this.button3.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button3.Location = new System.Drawing.Point(27, 215);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(151, 39);
+            this.button3.TabIndex = 16;
+            this.button3.Text = "Open PDF";
+            this.button3.UseVisualStyleBackColor = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // filePage
             // 
@@ -523,6 +521,19 @@
             this.CelBtn.Text = "Open Cel.ro";
             this.CelBtn.UseVisualStyleBackColor = false;
             this.CelBtn.Click += new System.EventHandler(this.CelBtn_Click);
+            // 
+            // button2
+            // 
+            this.button2.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.button2.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
+            this.button2.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.Location = new System.Drawing.Point(448, 6);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(151, 39);
+            this.button2.TabIndex = 12;
+            this.button2.Text = "Load Images ";
+            this.button2.UseVisualStyleBackColor = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click_1);
             // 
             // groupBox8
             // 
@@ -703,6 +714,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.button2);
             this.tabPage1.Controls.Add(this.textBox1);
             this.tabPage1.Location = new System.Drawing.Point(4, 26);
             this.tabPage1.Name = "tabPage1";
@@ -757,6 +769,7 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(618, 493);
             this.panel2.TabIndex = 0;
+            this.panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.panel2_Paint);
             // 
             // panel1
             // 
@@ -833,7 +846,6 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button SamedayBtn;
         internal System.Windows.Forms.CheckBox autoFillCheck;
-        internal System.Windows.Forms.CheckBox PrintCheck;
         internal System.Windows.Forms.CheckBox openPdfCheck;
         internal System.Windows.Forms.TextBox zipPathBox;
         internal System.Windows.Forms.Label zipLabel;
@@ -858,6 +870,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Panel panel2;
         internal System.Windows.Forms.ComboBox drawComboBox;
+        private System.Windows.Forms.Button button3;
     }
 }
 
