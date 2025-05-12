@@ -299,6 +299,7 @@
     <Content Include="bin\Debug\PDFiller.pdb" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="bin\Debug\images\" />
     <Folder Include="x64\" />
     <Folder Include="x86\" />
   </ItemGroup>

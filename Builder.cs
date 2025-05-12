@@ -19,10 +19,8 @@ using System.Numerics;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using System.Threading;
 using System.Text.RegularExpressions;
-using UglyToad.PdfPig;
-using static System.Net.WebRequestMethods;
-using UglyToad.PdfPig.Writer;
-using static PDFiller.Order;
+using System.Web;
+using System.Net;
 
 
 
@@ -33,9 +31,10 @@ namespace PDFiller
         static Builder menu = null;
 
         private readonly Form1 form = null;
-        private readonly Regex regex = new Regex(@"\b4EMG\w{11}00[0-9]");
+        private readonly Regex regex = new Regex(@"4(EMG|ONB)\w{11}00[0-9]");
+        private readonly string imagesDir = Environment.CurrentDirectory+@"\images";
 
-
+        
         private readonly Dictionary<String, String> SpecialSwaps = new Dictionary<String, String>()
 {
             { "5941933302517", "Barbie tip4 (cercuri)" },
@@ -44,19 +43,20 @@ namespace PDFiller
             { "5941933302548", "Barbie tip1 (funda)" },
             { "5941933302470", "Baby Boss tip3 (Logo)" },
             { "5941933302487", "Baby Boss tip2 (baby)" },
-            { "S4et 17 figurine tort/briose Patrula Catelusilor, KZE Prints, Photo Paper Glossy", "Paw Patrol tip2" },
-            { "S56et 9 figurine tort Patrula , KZE Prints, Photo Paper Glossy", "Paw Patrol tip1" },
-            { "Se6t 9  tort , KZE Prints, Photo Paper Glossy", "Albinute mici" },
-            { "S7686et 8 figurine tort Albine,  2, KZE Prints, Photo Paper Glossy", "Albine Mari" },
+            { "5941933307475", "Paw Patrol tip2" },
+            { "5941933302135", "Paw Patrol tip1" },
+            { "5941933302197", "Minnie Mouse" },
+            { "5941933302333", "Albinute mici" },
+            { "5941933302326", "Albine mari" },
             { "Set 312 figurine tort Buburuza, KZE Prints, Photo Paper Glossy", "12 Buburuze" },
             { "Set 12 figurine tort Inima Roz,  Prints, Photo Paper Glossy", "12 Inimi Roz <3" },
             { "18", "Buburuza & Motan Noir" },
-            { "S2n5e tort Capsune, KZE Prints, Photo Paper Glossy", "Squid Game" },
+            { "5941933307703", "Squid Game" },
             { "Se4t 113 tort Capsune, KZE Prints, Photo Paper Glossy", "Eroi in Pijama" },
-            { "Se2t 11 figurine  Capsune, KZE Prints, Photo Paper Glossy", "Gym" },
-            { "S7e4t 14rt C6e, KZE Prints, Photo Paper Glossy", "Blaze" },
+            { "5941933307536", "Gym" },
+            { "5941933307789", "Blaze" },
             { "S8et 115rt Capsune, KZE Prints,  Paper Glossy", "Peppa Pig" },
-            { "Set 11  tort Capsune, KZE Prints, Photo Paper Glossy", "Fulger McQueen" }
+            { "Set 11  tort Capsune, K65ZE Prints, Photo Paper Glossy", "Fulger McQueen" }
         };
 
         private Builder()
@@ -220,9 +220,10 @@ namespace PDFiller
                         string awb = sheet.Cells[row, AWBCOL].Value2;
                         string name = sheet.Cells[row, NAMECOL].Value2;
                         string tName = sheet.Cells[row, TNAMECOL].Value2;
-                        tName = builder.ModifyName(tName);
-
                         string idProduct = sheet.Cells[row, IDPRODUCT].Value2;
+                        tName = ModifyName(idProduct, tName);
+
+
                         // , KZE Prints, Photo Paper Glossy
                         //      tname = tname.Replace(", KZE Prints, Photo Paper Glossy", "");
                         //      tname = tname.Remove(tname.Length - 32);
@@ -232,7 +233,9 @@ namespace PDFiller
 
                         if (id == lastOrder.id)
                         {
-                            lastOrder.toppere.Add(new Order.topper(tName, qnt, idProduct));
+                            Order.topper topper = new Order.topper(tName, qnt, idProduct);
+                            lastOrder.toppere.Add(topper);
+
                         }
                         else
                         {
@@ -579,24 +582,25 @@ namespace PDFiller
         /// </summary>
         /// <param name="name">A more readable topper name</param>
         /// <returns>A string that contains only the name of the topper mascot, or the same string unchanged if it couldn't be found.</returns>
-        private string ModifyName(string name)
+        private string ModifyName(string tId,string tName)
         {
-            if(SpecialSwaps.ContainsKey(name))
+            if(SpecialSwaps.ContainsKey(tId))
             {
-                return SpecialSwaps[name];
+                return tName = SpecialSwaps[tId];
             }
 
             string[] list = { "briose de ", "briose ", "tort ", };
             foreach(string s in list)
             {
-                int index = name.LastIndexOf(s);
+                int index = tName.LastIndexOf(s);
                 if (index > 0)
                 {
-                    return name.Substring(index + s.Length).Replace(", KZE Prints, Photo Paper Glossy", "");
+                    return tName = tName.Substring(index + s.Length).Replace(", KZE Prints, Photo Paper Glossy", "");
                 }
 
             }
-            return name;
+            return tName;
+            
         }
 
 
@@ -661,8 +665,13 @@ namespace PDFiller
         }
 
 
-        public void startTest()
+        public void ZStartTest()
         {
+       //     var cli = new WebClient();
+       //     cli.DownloadFile("")
+
+
+
 
             Builder builder = Builder.GetInstance();
             const string path = @"C:\Users\KZE PC\Desktop\VIsual studio projects\PDFiller\bin\Debug\debugTests\";
@@ -675,18 +684,23 @@ namespace PDFiller
             };
             string savedPDFpath = form.mergedPath =  builder.WriteOnOrders(unzipped, orders, path, "TestName");
             Process.Start(savedPDFpath);
+
+
+            
+
+
+
         }
 
 
         private XImage TryFindImage(string tId)
         {
-            const string imgPath = @"C:\Users\KZE PC\Desktop\DEBUGGING\ImaginiAwb-uri";
             string[] extensions = { ".png", ".jpeg", ".jpg" };
             foreach (string ext in extensions)
             {
-                if (System.IO.File.Exists($"{imgPath}\\{tId}{ext}"))
+                if (System.IO.File.Exists($"{imagesDir}\\{tId}{ext}"))
                 {
-                    return XImage.FromFile($"{imgPath}\\{tId}{ext}");
+                    return XImage.FromFile($"{imagesDir}\\{tId}{ext}");
                 }
             }
             return null; 
@@ -724,7 +738,7 @@ namespace PDFiller
                 //MATH =====>>
                 //per pozition *  (pageH=90 +30 space + space with img/row) - (center text) + (even abscise per img/row (2= right column, 3=wide)
 
-                string temp_name = $"{topper.tQuantity}: {topper.tName}";
+                string temp_name = $"{topper.tQuantity}:{topper.tName}";
 
                 gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage*12) + 65 - 5.7f * (topper.tName.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2: 20  ), (i / perPage) * 120 + 100 + gfx.PageSize.Height / 2 + 35);
 

@@ -697,11 +697,12 @@ namespace PDFiller
 
         }
 
-        private void button2_Click_1(object sender, EventArgs e)
-        {
-         //   drawComboBox.SelectedIndex = 1;
+        private void button2_Click_1(object sender, EventArgs e) { 
+  
+
+            //   drawComboBox.SelectedIndex = 1;
             Builder builder = Builder.GetInstance();
-            builder.startTest();
+            builder.ZStartTest();
 
 
         }
