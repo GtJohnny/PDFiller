@@ -378,29 +378,19 @@ namespace PDFiller
 
 
 
-
-
-
-        /// <summary>
-        /// Writes the order details on the given file.
-        /// Reading and extracting the pdf file is done here.
-        /// -> Reads the AWB ID from the page with the UglyToad.PdfPig library.
-        /// -> Writes the order details on the page with the PdfSharpCore library.
-        /// </summary>
-        /// <param name="file">The physical pdf that can contain 1 or more AWBs.</param>
-        /// <param name="orders">The list of orders from which we'll write on the pdf.</param>
-        /// <param name="failed">The number of AWBs we failed to process.</param>
-        /// <returns></returns>
-
-
-
         private int failed { get; set; } = 0;
         private int total { get; set; } = 0;
 
 
 
 
-
+        /// <summary>
+        /// Given a PDF file, reads the AWB number from it, and writes the order details on the page.
+        /// </summary>
+        /// <param name="pdfMerge">The final document upon which we constantly attach pages on</param>
+        /// <param name="file">The pdf file that we'll complete page by page</param>
+        /// <param name="orders">The entire orders file from the excel</param>
+        /// <returns></returns>
         private List<string> WriteOnFile(PdfSharpCore.Pdf.PdfDocument pdfMerge, FileInfo file, List<Order> orders)
         {
             List<string> errorMessages = new List<string>();
@@ -520,8 +510,7 @@ namespace PDFiller
         /// <param name="unzippedList">All AWB files selected, automatically or manually, in PDF format and represented by the FileInfo proxy.</param>
         /// <param name="orders">All orders read from the Order Summary .xlsx file.</param>
         /// <param name="saveDir">The directory path where we want to save the resulting pdf.</param>
-        /// <param name="failed">Returns the number of AWBs that failed processing.</param>
-        /// <param name="name">The file name for the resulting PDF.</param>
+        /// <param name="saveName">The file name for the resulting PDF.</param>
         /// <returns>The full file path of the merged PDF.</returns>
         /// <exception cref="ArgumentException">Selected files had incorrect names.</exception>
         /// <exception cref="FileNotFoundException">Selected files could not be found.</exception>
@@ -569,19 +558,14 @@ namespace PDFiller
             return returnPath;
         }
 
-        /// <summary>
-        /// List of special swaps. Checks for topper name (in future it will be ID) and associates it with a new, more readable name.
-        /// 
-        /// </summary>
-
-
 
         /// <summary>
-        /// Given the name {and id???} of a topper, removes the unnecessary prefix
-        /// OR switches the name completely with a hardcoded table.
+        /// Modifies the name of the topper, if it is in the special swaps dictionary.
+        /// Otherwise, it trims the worthless words out.
         /// </summary>
-        /// <param name="name">A more readable topper name</param>
-        /// <returns>A string that contains only the name of the topper mascot, or the same string unchanged if it couldn't be found.</returns>
+        /// <param name="tId">The Product Number (PN) of the product</param>
+        /// <param name="tName">The original name of said product</param>
+        /// <returns></returns>
         private string ModifyName(string tId,string tName)
         {
             if(SpecialSwaps.ContainsKey(tId))
@@ -609,7 +593,7 @@ namespace PDFiller
         /// For the given pdf page which represents a whole AWB, clears the lower half, 
         /// then write the order contents: topper count, name and image (if exists).
         /// </summary>
-        /// <param name="page">AWB Page to be written on</param>
+        /// <param name="gfx">AWB graphics to be written and/or drawn on</param>
         /// <param name="toppere">What to write on the page (qnt + name + image)</param>
         /// <returns>True if successfull, false if not</returns>
         private bool WriteOnPage(XGraphics gfx, List<Order.topper> toppere)
