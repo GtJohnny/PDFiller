@@ -16,7 +16,6 @@
 3. Extract the ZIP file to any folder.
 4. Double-click `PDFiller.exe` to run the application.
 
-> ⚠️ If Windows shows a SmartScreen warning, click **"More info"** > **"Run anyway"**. This is normal for unsigned apps.
 
 ---
 
