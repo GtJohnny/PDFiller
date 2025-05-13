@@ -19,9 +19,8 @@ using System.Numerics;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using System.Threading;
 using System.Text.RegularExpressions;
-using UglyToad.PdfPig;
-using static System.Net.WebRequestMethods;
-using UglyToad.PdfPig.Writer;
+using System.Web;
+using System.Net;
 
 
 
@@ -32,24 +31,32 @@ namespace PDFiller
         static Builder menu = null;
 
         private readonly Form1 form = null;
-        private readonly Regex regex = new Regex(@"\b4EMG\w{11}00[0-9]");
+        private readonly Regex regex = new Regex(@"4(EMG|ONB)\w{11}00[0-9]");
+        private readonly string imagesDir = Environment.CurrentDirectory+@"\images";
 
-        private readonly List<KeyValuePair<String, String>> SpecialSwaps = new List<KeyValuePair<String, String>>()
-            {
-                new KeyValuePair<String, String>("Set 17 figurine tort/briose Patrula Catelusilor, KZE Prints, Photo Paper Glossy", "Paw Patrol tip2 (nou)"),
-                new KeyValuePair<String, String>("Set 9 figurine tort Patrula Catelusilor, KZE Prints, Photo Paper Glossy", "Paw Patrol tip1 (vechi)"),
-                new KeyValuePair<String, String>("Set 9 figurine tort Albine, KZE Prints, Photo Paper Glossy", "Albinute mici"),
-                new KeyValuePair<String, String>("Set 8 figurine tort Albine, Tip 2, KZE Prints, Photo Paper Glossy", "Albine + Apicultor"),
-                new KeyValuePair<String, String>("Set figurine tort/briose Barbie, Tip 4, KZE Prints, Photo Paper Glossy", "Barbie tip4 (cercuri)"),
-                new KeyValuePair<String, String>("Set figurine tort/briose Barbie, Tip 3, KZE Prints, Photo Paper Glossy", "Barbie tip3 (silueta cap)"),
-                new KeyValuePair<String, String>("Set figurine tort/briose Barbie, Tip 2, KZE Prints, Photo Paper Glossy", "Barbie tip2 (cercuri fancy)"),
-                new KeyValuePair<String, String>("Set figurine tort/briose Barbie, KZE Prints, Tip 1, Photo Paper Glossy", "Barbie tip1 (cercuri funda)"),
-                new KeyValuePair<String, String>("Set 10 figurine tort/briose Baby Boss, Tip 3, KZE Prints, Photo Paper Glossy", "Baby Boss tip3 (cercuri Logo)"),
-                new KeyValuePair<String, String>("Set figurine tort/briose Baby Boss, Tip 2, KZE Prints, Photo Paper Glossy", "Baby Boss tip2 (cercuri copil)"),
-                new KeyValuePair<String, String>("Set 12 figurine tort Buburuza, KZE Prints, Photo Paper Glossy", "12 Buburuze"),
-                new KeyValuePair<String, String>("Set 12 figurine tort Inima Roz, KZE Prints, Photo Paper Glossy", "12 Inimi Roz <3"),
-                new KeyValuePair<String, String>("Set 11 figurine tort Capsune, KZE Prints, Photo Paper Glossy", "11 Capsune + Vrej"),
-                new KeyValuePair<String, String>("Set 10 figurine tort/briose Baby Boss, Tip 3, KZE Prints, Photo Paper Glossy", "Baby Boss tip3 (cercuri Logo)"),
+        
+        private readonly Dictionary<String, String> SpecialSwaps = new Dictionary<String, String>()
+{
+            { "5941933302517", "Barbie tip4 (cercuri)" },
+            { "5941933302524", "Barbie tip3 (silueta)" },
+            { "5941933302531", "Barbie tip2 (fancy)" },
+            { "5941933302548", "Barbie tip1 (funda)" },
+            { "5941933302470", "Baby Boss tip3 (Logo)" },
+            { "5941933302487", "Baby Boss tip2 (baby)" },
+            { "5941933307475", "Paw Patrol tip2" },
+            { "5941933302135", "Paw Patrol tip1" },
+            { "5941933302197", "Minnie Mouse" },
+            { "5941933302333", "Albinute mici" },
+            { "5941933302326", "Albine mari" },
+            { "Set 312 figurine tort Buburuza, KZE Prints, Photo Paper Glossy", "12 Buburuze" },
+            { "Set 12 figurine tort Inima Roz,  Prints, Photo Paper Glossy", "12 Inimi Roz <3" },
+            { "18", "Buburuza & Motan Noir" },
+            { "5941933307703", "Squid Game" },
+            { "Se4t 113 tort Capsune, KZE Prints, Photo Paper Glossy", "Eroi in Pijama" },
+            { "5941933307536", "Gym" },
+            { "5941933307789", "Blaze" },
+            { "S8et 115rt Capsune, KZE Prints,  Paper Glossy", "Peppa Pig" },
+            { "Set 11  tort Capsune, K65ZE Prints, Photo Paper Glossy", "Fulger McQueen" }
         };
 
         private Builder()
@@ -173,7 +180,7 @@ namespace PDFiller
             {
                 throw new FileNotFoundException("No excel file was found within the work directory!\r\n");
             }
-            //      form.excelPathBox.Text = excel.FullName;
+            form.excelPathBox.Text = excel.FullName;
             //form.newExcel = true;
             return excel;
         }
@@ -213,9 +220,10 @@ namespace PDFiller
                         string awb = sheet.Cells[row, AWBCOL].Value2;
                         string name = sheet.Cells[row, NAMECOL].Value2;
                         string tName = sheet.Cells[row, TNAMECOL].Value2;
-                        tName = builder.ModifyName(tName);
-
                         string idProduct = sheet.Cells[row, IDPRODUCT].Value2;
+                        tName = ModifyName(idProduct, tName);
+
+
                         // , KZE Prints, Photo Paper Glossy
                         //      tname = tname.Replace(", KZE Prints, Photo Paper Glossy", "");
                         //      tname = tname.Remove(tname.Length - 32);
@@ -225,7 +233,9 @@ namespace PDFiller
 
                         if (id == lastOrder.id)
                         {
-                            lastOrder.toppere.Add(new Order.topper(tName, qnt, idProduct));
+                            Order.topper topper = new Order.topper(tName, qnt, idProduct);
+                            lastOrder.toppere.Add(topper);
+
                         }
                         else
                         {
@@ -442,12 +452,59 @@ namespace PDFiller
                     }
 
                     pdfMerge.AddPage(pdfWrite.Pages[i]);
-                    if (!WriteOnPage(pdfMerge.Pages[pdfMerge.PageCount - 1], o.toppere))
+
+                    XGraphics gfx = XGraphics.FromPdfPage(pdfMerge.Pages[pdfMerge.PageCount - 1]);
+                    XRect rect = new XRect(0, gfx.PageSize.Height / 2 - 15, gfx.PageSize.Width, gfx.PageSize.Height / 2 + 15);
+                    gfx.DrawRectangle(XBrushes.White, rect);
+
+                    switch (form.drawComboBox.SelectedIndex)
                     {
-                        errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
-                        failed++;
-                        continue;
+                        case 0:
+
+                            if (!WriteOnPage(gfx, o.toppere))
+                            {
+                                errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
+                                failed++;
+                                continue;
+                            }
+
+
+                            break;
+                        case 1:
+                            if (!WriteOnPage(gfx, o.toppere))
+                            {
+                                errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
+                                failed++;
+                                continue;
+                            }
+                            DrawOnPage(gfx, o.toppere, 2);
+                            break;
+                        case 2:
+                            DrawOnPage(gfx, o.toppere, 4);
+                            break;
+
+                        default:
+                            if (!WriteOnPage(gfx, o.toppere))
+                            {
+                                errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
+                                failed++;
+                                continue;
+                            }
+                            break;
+                    
+
                     }
+
+
+
+                    //if (!WriteOnPage(gfx, o.toppere))
+                    //{
+                    //    errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
+                    //    failed++;
+                    //    continue;
+                    //}
+
+                    //DrawOnPage(gfx, o.toppere);
 
 
                 }
@@ -525,23 +582,25 @@ namespace PDFiller
         /// </summary>
         /// <param name="name">A more readable topper name</param>
         /// <returns>A string that contains only the name of the topper mascot, or the same string unchanged if it couldn't be found.</returns>
-        private string ModifyName(string name)
+        private string ModifyName(string tId,string tName)
         {
-            foreach(var pair in SpecialSwaps) {
-                if(name == pair.Key) return pair.Value;
+            if(SpecialSwaps.ContainsKey(tId))
+            {
+                return tName = SpecialSwaps[tId];
             }
 
             string[] list = { "briose de ", "briose ", "tort ", };
             foreach(string s in list)
             {
-                int index = name.LastIndexOf(s);
+                int index = tName.LastIndexOf(s);
                 if (index > 0)
                 {
-                    return name.Substring(index + s.Length).Replace(", KZE Prints, Photo Paper Glossy", "");
+                    return tName = tName.Substring(index + s.Length).Replace(", KZE Prints, Photo Paper Glossy", "");
                 }
 
             }
-            return name;
+            return tName;
+            
         }
 
 
@@ -553,21 +612,19 @@ namespace PDFiller
         /// <param name="page">AWB Page to be written on</param>
         /// <param name="toppere">What to write on the page (qnt + name + image)</param>
         /// <returns>True if successfull, false if not</returns>
-        private bool WriteOnPage(PdfPage page, List<Order.topper> toppere)
+        private bool WriteOnPage(XGraphics gfx, List<Order.topper> toppere)
         {
-            if (page == null || toppere == null) {
+            if (gfx == null || toppere == null) {
                 return true;
             }
             try
             {
-                XGraphics gfx = XGraphics.FromPdfPage(page);
+          //      XGraphics gfx = XGraphics.FromPdfPage(page);
 
                 XFont font = new XFont("Times New Roman", 14);
                 XSolidBrush brush = new XSolidBrush(XColor.FromKnownColor(XKnownColor.Black));
 
-                XRect rect = new XRect(0, page.Height / 2 - 15, page.Width, page.Height / 2 + 15);
-                gfx.DrawRectangle(XBrushes.White, rect);
-
+  
                 int i = 0;
 
                 /*
@@ -589,7 +646,7 @@ namespace PDFiller
                      //   gfx.DrawImage(img, page.Width - 95 * (Math.Max(toppere.Count, 16) / 4) + 95 * (i / 4)+100, page.Height / 2 + 20 + 95 * (i % 4), 90, 90);
                     }
                     */
-                    gfx.DrawString($"{topper.tQuantity} buc: {topper.tName}", font, brush, 25, page.Height / 2 + 25 + 20 * i, XStringFormats.CenterLeft);
+                    gfx.DrawString($"{topper.tQuantity} buc: {topper.tName}", font, brush, 25, gfx.PageSize.Height / 2 + 25 + 20 * i, XStringFormats.CenterLeft);
                         // gfx.DrawImage(img, page.Width - 95 * (nrImagini / 4) + 95 * (j / 4), page.Height / 2 + 20 + 95 * (j % 4), 90, 90);
                     i++;
 
@@ -606,5 +663,94 @@ namespace PDFiller
             }
             return true;
         }
+
+
+        public void ZStartTest()
+        {
+       //     var cli = new WebClient();
+       //     cli.DownloadFile("")
+
+
+
+
+            Builder builder = Builder.GetInstance();
+            const string path = @"C:\Users\KZE PC\Desktop\VIsual studio projects\PDFiller\bin\Debug\debugTests\";
+            string inputfPath = "417264331_Sameday_4EMG24107789758001.pdf";
+            string excelPath = "orders_details_file_30-04-2025-21-52-52.xlsx";
+            List<Order> orders = builder.ReadExcel(new FileInfo(path+excelPath));
+            List<FileInfo> unzipped = new List<FileInfo>()
+            {
+                new FileInfo(path+inputfPath)
+            };
+            string savedPDFpath = form.mergedPath =  builder.WriteOnOrders(unzipped, orders, path, "TestName");
+            Process.Start(savedPDFpath);
+
+
+            
+
+
+
+        }
+
+
+        private XImage TryFindImage(string tId)
+        {
+            string[] extensions = { ".png", ".jpeg", ".jpg" };
+            foreach (string ext in extensions)
+            {
+                if (System.IO.File.Exists($"{imagesDir}\\{tId}{ext}"))
+                {
+                    return XImage.FromFile($"{imagesDir}\\{tId}{ext}");
+                }
+            }
+            return null; 
+        }
+
+
+
+
+
+
+        private void DrawOnPage(XGraphics gfx, List<Order.topper> toppere,int perPage)
+        {
+            Dictionary<string,XImage> images = new Dictionary<string, XImage>();
+            int i = 0;
+            foreach (Order.topper topper in toppere)
+            {
+               
+                XImage img = null;
+                if(images.ContainsKey(topper.tId))
+                {
+                    img = images[topper.tId];
+                }
+                else
+                {
+                     img = TryFindImage(topper.tId);
+                     if (img != null)
+                     {
+                        images.Add(topper.tId, img);
+                     }
+                }
+
+                //MATH =====>>       (scales with images/row)+ (pageH=90 +30 space)+no out of bounds  
+                if (img != null)
+                    gfx.DrawImage(img, (i % perPage) * (90 + perPage * 12) +20 + (perPage == 2 ? gfx.PageSize.Width / 2 : 20), (i / perPage) * 120 + gfx.PageSize.Height / 2 +25, 90, 90);
+                //MATH =====>>
+                //per pozition *  (pageH=90 +30 space + space with img/row) - (center text) + (even abscise per img/row (2= right column, 3=wide)
+
+                string temp_name = $"{topper.tQuantity}:{topper.tName}";
+
+                gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage*12) + 65 - 5.7f * (topper.tName.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2: 20  ), (i / perPage) * 120 + 100 + gfx.PageSize.Height / 2 + 35);
+
+                i++;
+                if (i == 3 * perPage)
+                {
+                    return;
+                }
+            }
+
+        }
+
+
     }
 }

@@ -15,11 +15,12 @@ using System.IO;
 using ICSharpCode.SharpZipLib.Zip;
 using System.IO.Compression;
 using Excel = Microsoft.Office.Interop.Excel;
-using Microsoft.Office.Interop.Excel;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Dialogs.Controls;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Data.Odbc;
+using System.Threading;
+using System.Text.RegularExpressions;
 
 
 
@@ -35,7 +36,7 @@ namespace PDFiller
             InitializeComponent();
         }
 
-        private string DebugPath = Environment.CurrentDirectory+ "\\debugTests\\";
+        private string DebugPath = Environment.CurrentDirectory + "\\debugTests\\";
 
         private DirectoryInfo rootDir = null;
         private DirectoryInfo workDir = null;
@@ -43,14 +44,14 @@ namespace PDFiller
         private FileInfo excel = null;
         private List<FileInfo> unzippedList = null;
         private List<Order> orders = null;
-        private string mergedPath = null;
+        internal string mergedPath = null;
 
         private void writeOptions()
         {
             StreamWriter sw = new StreamWriter(new FileStream("options.ini", FileMode.OpenOrCreate, FileAccess.Write));
             sw.WriteLine("root=" + rootDir.FullName);
             sw.WriteLine("autofill=" + autoFillCheck.Checked);
-            sw.WriteLine("print=" + PrintCheck.Checked);
+            sw.WriteLine("print=true" /* PrintCheck.Checked*/);
             sw.WriteLine("open=" + openPdfCheck.Checked);
             sw.Close();
         }
@@ -60,7 +61,6 @@ namespace PDFiller
         private void Form1_Load(object sender, EventArgs e)
         {
             Builder menu = PDFiller.Builder.GetInstance(this);
-
 
             StreamReader sr = null;
             if (File.Exists("options.ini"))
@@ -82,12 +82,13 @@ namespace PDFiller
             while (!sr.EndOfStream)
             {
                 string[] line = sr.ReadLine().Split("=".ToCharArray(), 2);
+                drawComboBox.SelectedIndex = 2;
 
                 switch (line[0])
                 {
                     case "root":
                         rootDir = new DirectoryInfo(line[1]);
-                        textBox1.Text += $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nRoot directory found at:\r\n{ line[1] }\r\n";
+                        textBox1.AppendText( $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nRoot directory found at:\r\n{line[1]}\r\n");
                         rootTextBox.Text = line[1];
                         break;
                     case "autofill":
@@ -105,11 +106,11 @@ namespace PDFiller
                         bool print = true;
                         if (Boolean.TryParse(line[1], out print))
                         {
-                            PrintCheck.Checked = print;
+                     //       PrintCheck.Checked = print;
                         }
                         else
                         {
-                            PrintCheck.Checked = true;
+                  //          PrintCheck.Checked = true;
                         }
                         break;
                     case "open":
@@ -136,12 +137,12 @@ namespace PDFiller
         private void HelpMeOut()
         {
             Builder builder = Builder.GetInstance();
-           // manualSelect = true;
+            // manualSelect = true;
             workDir = new DirectoryInfo(DebugPath);
             unzippedList = new List<FileInfo>() { new FileInfo(DebugPath + "417264331_Sameday_4EMG24107789758001.pdf") };
             excel = builder.FindExcel(workDir);
             var orders = builder.ReadExcel(excel);
-         //   int failed;
+            //   int failed;
             string resPath = builder.WriteOnOrders(unzippedList, orders, workDir.FullName, "ROBLOX_IMAGE_TEST");
             Process.Start(resPath);
 
@@ -151,13 +152,13 @@ namespace PDFiller
         public void TestAsync()
         {
             Excel.Application app = new Excel.Application();
-            Workbook book = app.Workbooks.Open(DebugPath + "imagini.xlsx");
-      
+            Excel.Workbook book = app.Workbooks.Open(DebugPath + "imagini.xlsx");
+
             if (book == null)
             {
                 throw new Exception("Excel workbook could not be opened.");
             }
-            Worksheet sheet;
+            Excel.Worksheet sheet;
             try
             {
                 sheet = book.Worksheets[1];
@@ -263,8 +264,8 @@ namespace PDFiller
                     //manualSelect = false;
                     zipPathBox.Text = ofd.FileName;
                     zip = new FileInfo(ofd.FileName);
-                    unzippedList = null ;
-                    textBox1.Text += $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nFound zip archive at:\r\n { zip.FullName } \r\n";
+                    unzippedList = null;
+                    textBox1.AppendText( $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nFound zip archive at:\r\n {zip.FullName} \r\n");
                     zipLabel.Font = new System.Drawing.Font(zipLabel.Font, FontStyle.Regular);
                     break;
                 default:
@@ -283,7 +284,7 @@ namespace PDFiller
             tabControlMenu.SelectedTab = filePage;
             excelButton.PerformClick();
         }
-     //   internal bool newExcel = false;
+        //   internal bool newExcel = false;
         private void excelButton_Click(object sender, EventArgs e)
         {
             Builder menu = PDFiller.Builder.GetInstance();
@@ -294,7 +295,7 @@ namespace PDFiller
                 Multiselect = false,
                 Title = "Please select order summary excel file.",
                 DefaultExt = ".xlsx",
-          //      InitialDirectory = rootDir.FullName,
+                //      InitialDirectory = rootDir.FullName,
                 RestoreDirectory = true,
             };
 
@@ -305,7 +306,7 @@ namespace PDFiller
 
 
                     this.excel = new FileInfo(ofd.FileName);
-                    textBox1.Text += $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nFound.xlsx order summary at:\r\n" + excel.FullName + "\r\n";
+                    textBox1.AppendText( $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nFound.xlsx order summary at:\r\n" + excel.FullName + "\r\n");
                     excelGridView.Rows.Clear();
                     summaryGridView.Rows.Clear();
                     updateTabIndex(true);
@@ -317,10 +318,10 @@ namespace PDFiller
         }
 
 
-      // private bool manualSelect = false;
+        // private bool manualSelect = false;
         private void unzippedButton_Click(object sender, EventArgs e)
         {
-         
+
 
             OpenFileDialog ofd = new OpenFileDialog()
             {
@@ -338,21 +339,21 @@ namespace PDFiller
             switch (ofd.ShowDialog())
             {
                 case DialogResult.OK:
-                 //   manualSelect = true;
-                    textBox1.Text += $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nSelected {ofd.FileNames.Count()} unzipped files:\r\n";
+                    //   manualSelect = true;
+                    textBox1.AppendText( $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nSelected {ofd.FileNames.Count()} unzipped files:\r\n");
                     foreach (string fname in ofd.FileNames)
                     {
                         FileInfo t = new FileInfo(fname);
                         unzippedList.Add(t);
-                        textBox1.Text += "Selected " + t.Name + "\r\n";
+                        textBox1.AppendText( $"Selected { t.Name }\r\n");
 
                     }
                     zipPathBox.Text = unzippedList[0].Name;
                     zipLabel.Text = unzippedList.Count + " file";
                     if (unzippedList.Count > 1)
                     {
-                        zipPathBox.Text += " + " + (unzippedList.Count - 1) + " others";
-                        zipLabel.Text += "s";
+                        zipPathBox.AppendText( $" + {unzippedList.Count - 1} others");
+                        zipLabel.Text+= "s";
 
                     }
                     break;
@@ -405,7 +406,7 @@ namespace PDFiller
             {
                 case DialogResult.OK:
                     rootDir = new DirectoryInfo(ofd.SelectedPath);
-                    textBox1.Text += "New root folder set at:\r\n" + (rootDir.FullName) + "\r\n";
+                    textBox1.AppendText($"New root folder set at:\r\n {rootDir.FullName} \r\n");
                     rootTextBox.Text = ofd.SelectedPath;
                     StreamWriter sw = new StreamWriter(new FileStream("options.ini", FileMode.OpenOrCreate, FileAccess.Write));
                     sw.WriteLine("root=" + ofd.SelectedPath);
@@ -432,7 +433,7 @@ namespace PDFiller
             {
                 case DialogResult.OK:
                     workDir = menu.FindWorkDir(ofd.SelectedPath);
-                    textBox1.Text += "New work directory set at:\r\n" + (workDir.FullName) + "\r\n";
+                    textBox1.AppendText( $"New work directory set at:\r\n{workDir.FullName}r\n");
                     try
                     {
                         excel = menu.FindExcel(workDir);
@@ -445,12 +446,12 @@ namespace PDFiller
 
                         zip = menu.FindZipsUnzipped(workDir);
                         zipPathBox.Text = zip.FullName;
-                        
+
 
                     }
                     catch (Exception ex)
                     {
-                        textBox1.Text += ex.Message;
+                        textBox1.AppendText( ex.Message);
                     }
                     break;
                 default:
@@ -470,44 +471,44 @@ namespace PDFiller
                 }
                 string saveDir = null;
                 Builder menu = PDFiller.Builder.GetInstance();
-                if (zip!=null && unzippedList == null)
+                if (zip != null && unzippedList == null)
                 {
                     if (!zip.Exists)
                     {
                         throw new FileNotFoundException("Zip archive could not be found.");
                     }
                     unzippedList = menu.UnzipArchive(zip, ref saveDir);
-                    textBox1.Text += $"Extracted archive: {zip.Name}\r\n";
-                    textBox1.Text += $"Extracted {unzippedList.Count} orders.\r\n";
+                    textBox1.AppendText($"Extracted archive: {zip.Name}\r\n");
+                    textBox1.AppendText($"Extracted {unzippedList.Count} orders.\r\n");
                 }
-                textBox1.Text += $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nReading the excel file.\r\n";
+                textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nReading the excel file.\r\n");
 
 
                 orders = menu.ReadExcel(excel);
                 saveDir = unzippedList.First().DirectoryName;
 
                 //    int failed = 0;
-                string path = mergedPath =  menu.WriteOnOrders(unzippedList, orders, saveDir, "CustomPDF");
+                string path = mergedPath = menu.WriteOnOrders(unzippedList, orders, saveDir, "CustomPDF");
                 //if (failed > 0)
                 //{
-                //    textBox1.Text += $"{failed} files failed being filled.\r\n";
+                //    textBox1.AppendText( $"{failed} files failed being filled.\r\n";
                 //}
                 //else
                 //{
-                //    textBox1.Text += "All were filled succesfully.\r\n";
+                //    textBox1.AppendText( "All were filled succesfully.\r\n";
                 //}
-                textBox1.Text += $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nMerged order PDF was saved at location:\r\n" + path + "\r\n";
+                textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nMerged order PDF was saved at location:\r\n{ path }\r\n");
                 if (tabControl2.SelectedIndex == 1) updateTabIndex();
 
                 if (openPdfCheck.Checked)
                 {
-                    textBox1.Text += "The pdf should open about now:\r\n";
+                    textBox1.AppendText( "The pdf should open about now:\r\n");
                     Process.Start(path);
                 }
             }
             catch (Exception ex)
             {
-                textBox1.Text += ex.Message + "\r\n";
+                textBox1.AppendText( ex.Message + "\r\n");
                 return;
             }
 
@@ -517,48 +518,48 @@ namespace PDFiller
         {
             try
             {
-             //   manualSelect = false;
+                //   manualSelect = false;
                 Builder menu = PDFiller.Builder.GetInstance(this);
                 workDir = menu.FindWorkDir(rootDir);
-                textBox1.Text += $"Found work directory at:\r\n{workDir.FullName}\r\n";
+                textBox1.AppendText( $"Found work directory at:\r\n{workDir.FullName}\r\n");
                 zip = menu.FindZipsUnzipped(workDir);
-                textBox1.Text += $"Found zip archive at:\r\n{zip.FullName}\r\n";
+                textBox1.AppendText( $"Found zip archive at:\r\n{zip.FullName}\r\n");
                 zipPathBox.Text = zip.FullName;
                 string extractedDir = null;
                 unzippedList = menu.UnzipArchive(zip, ref extractedDir);
-                textBox1.Text += $"Found {unzippedList.Count} orders.\r\n";
+                textBox1.AppendText( $"Found {unzippedList.Count} orders.\r\n");
 
                 excel = menu.FindExcel(workDir);
                 excelGridView.Rows.Clear();
                 summaryGridView.Rows.Clear();
 
 
-                textBox1.Text += "Found excel file at:\r\n" + excel.FullName + "\r\n";
+                textBox1.AppendText( $"Found excel file at:\r\n{ excel.FullName }\r\n");
                 excelPathBox.Text = excel.FullName;
                 orders = menu.ReadExcel(excel);
                 updateTabIndex(false);
 
 
-             //   int failed = 0;
-                string path = mergedPath =  menu.WriteOnOrders(unzippedList, orders, extractedDir, "Merged&Filled");
+                //   int failed = 0;
+                string path = mergedPath = menu.WriteOnOrders(unzippedList, orders, extractedDir, "Merged&Filled");
                 //if (failed > 0)
                 //{
-                //    textBox1.Text += failed + " files failed being filled, please check them.\r\n";
+                //    textBox1.AppendText( failed + " files failed being filled, please check them.\r\n";
                 //}
                 //else
                 //{
-                //    textBox1.Text += "All pdfs completed and merged with success.\r\n";
+                //    textBox1.AppendText( "All pdfs completed and merged with success.\r\n";
                 //}
-                textBox1.Text += $"Merged pdf was saved at \r\n{path}\r\n";
+                textBox1.AppendText( $"Merged pdf was saved at \r\n{path}\r\n");
                 if (openPdfCheck.Checked)
                 {
-                    textBox1.Text += "It should open about now.\r\n";
+                    textBox1.AppendText( "It should open about now.\r\n");
                     Process.Start(path);
                 }
             }
             catch (Exception ex)
             {
-                textBox1.Text += ex.Message;
+                textBox1.AppendText( ex.Message);
             }
         }
 
@@ -573,8 +574,8 @@ namespace PDFiller
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             writeOptions();
-         //   if (tabControl2.SelectedIndex == 1) updateTabIndex(); 
-         //why tf did i put that there?
+            //   if (tabControl2.SelectedIndex == 1) updateTabIndex(); 
+            //why tf did i put that there?
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -587,16 +588,16 @@ namespace PDFiller
         }
 
 
-        private void updateTabIndex(bool readOrders=false)
+        private void updateTabIndex(bool readOrders = false)
         {
             switch (tabControl2.SelectedIndex)
             {
                 case 0:
-             //       if (mergedPath == null || (chromiumWebBrowser1.Address!= null && mergedPath != chromiumWebBrowser1.Address)) return;
-               //     chromiumWebBrowser1.LoadUrlAsync(mergedPath);
+                    //       if (mergedPath == null || (chromiumWebBrowser1.Address!= null && mergedPath != chromiumWebBrowser1.Address)) return;
+                    //     chromiumWebBrowser1.LoadUrlAsync(mergedPath);
                     break;
                 case 1:
-                    if(this.excel == null || excelGridView.Rows.Count > 0) return;
+                    if (this.excel == null || excelGridView.Rows.Count > 0) return;
                     if (readOrders)
                     {
                         Builder menu = PDFiller.Builder.GetInstance();
@@ -614,7 +615,7 @@ namespace PDFiller
                     break;
                 case 2:
 
-                    if (this.excel == null || summaryGridView.Rows.Count > 0 ) return;
+                    if (this.excel == null || summaryGridView.Rows.Count > 0) return;
                     if (readOrders)
                     {
                         Builder menu = PDFiller.Builder.GetInstance();
@@ -639,7 +640,7 @@ namespace PDFiller
                             }
                         }
                     }
-                    foreach(var pair in dict)
+                    foreach (var pair in dict)
                     {
                         summaryGridView.Rows.Add(pair.Key, pair.Value);
                     }
@@ -662,7 +663,7 @@ namespace PDFiller
 
         }
 
-   
+
 
         private void groupBox8_Enter(object sender, EventArgs e)
         {
@@ -694,6 +695,40 @@ namespace PDFiller
         private void button2_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void button2_Click_1(object sender, EventArgs e) { 
+  
+
+            //   drawComboBox.SelectedIndex = 1;
+            Builder builder = Builder.GetInstance();
+            builder.ZStartTest();
+
+
+        }
+
+        private void drawComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            this.ActiveControl = null;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if(mergedPath != null && File.Exists(mergedPath))
+                Process.Start(mergedPath);
+        }
+
+        private void drawComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+            Panel panel = (Panel)sender;
+            Graphics g = e.Graphics;
+            Rectangle rect = panel.ClientRectangle;
+            g.FillRectangle(new SolidBrush(Color.FromArgb(255, 255, 255)), rect);
         }
     }
 }
