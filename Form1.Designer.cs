@@ -148,7 +148,7 @@
             this.drawComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.drawComboBox.CausesValidation = false;
             this.drawComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.drawComboBox.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.drawComboBox.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.drawComboBox.FormattingEnabled = true;
             this.drawComboBox.Items.AddRange(new object[] {
             "Text",
@@ -156,7 +156,7 @@
             "4 images/row"});
             this.drawComboBox.Location = new System.Drawing.Point(13, 102);
             this.drawComboBox.Name = "drawComboBox";
-            this.drawComboBox.Size = new System.Drawing.Size(185, 27);
+            this.drawComboBox.Size = new System.Drawing.Size(185, 29);
             this.drawComboBox.TabIndex = 15;
             this.drawComboBox.SelectedIndexChanged += new System.EventHandler(this.drawComboBox_SelectedIndexChanged);
             this.drawComboBox.DropDownClosed += new System.EventHandler(this.drawComboBox_DropDownClosed);
