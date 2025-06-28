@@ -70,19 +70,20 @@
             this.zipLabel = new System.Windows.Forms.Label();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.summaryGridView = new System.Windows.Forms.DataGridView();
+            this.qntColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.topperColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.excelTab = new System.Windows.Forms.TabPage();
             this.excelGridView = new System.Windows.Forms.DataGridView();
             this.numeCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.nameCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.qntCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.button2 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.qntColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.topperColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             groupBox3 = new System.Windows.Forms.GroupBox();
             label3 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
@@ -618,6 +619,20 @@
             this.summaryGridView.Size = new System.Drawing.Size(624, 499);
             this.summaryGridView.TabIndex = 9;
             // 
+            // qntColumn
+            // 
+            this.qntColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.qntColumn.HeaderText = "Quantity";
+            this.qntColumn.Name = "qntColumn";
+            this.qntColumn.ReadOnly = true;
+            // 
+            // topperColumn
+            // 
+            this.topperColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.topperColumn.HeaderText = "Topper";
+            this.topperColumn.Name = "topperColumn";
+            this.topperColumn.ReadOnly = true;
+            // 
             // excelTab
             // 
             this.excelTab.Controls.Add(this.excelGridView);
@@ -685,6 +700,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.button2);
             this.tabPage1.Controls.Add(this.textBox1);
             this.tabPage1.Location = new System.Drawing.Point(4, 26);
             this.tabPage1.Name = "tabPage1";
@@ -693,6 +709,17 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "WorkflowStatus";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(524, 6);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 1;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Visible = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click_3);
             // 
             // textBox1
             // 
@@ -726,7 +753,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 26);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(554, 499);
+            this.tabPage3.Size = new System.Drawing.Size(624, 499);
             this.tabPage3.TabIndex = 4;
             this.tabPage3.Text = "Imagini";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -737,7 +764,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(3, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(548, 493);
+            this.panel2.Size = new System.Drawing.Size(618, 493);
             this.panel2.TabIndex = 0;
             this.panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.panel2_Paint);
             // 
@@ -751,20 +778,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(211, 532);
             this.panel1.TabIndex = 3;
-            // 
-            // qntColumn
-            // 
-            this.qntColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.qntColumn.HeaderText = "Quantity";
-            this.qntColumn.Name = "qntColumn";
-            this.qntColumn.ReadOnly = true;
-            // 
-            // topperColumn
-            // 
-            this.topperColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.topperColumn.HeaderText = "Topper";
-            this.topperColumn.Name = "topperColumn";
-            this.topperColumn.ReadOnly = true;
             // 
             // Form1
             // 
@@ -854,6 +867,7 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.DataGridViewTextBoxColumn qntColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn topperColumn;
+        private System.Windows.Forms.Button button2;
     }
 }
 

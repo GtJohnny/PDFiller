@@ -31,8 +31,8 @@ namespace PDFiller
         static Builder menu = null;
 
         private readonly Form1 form = null;
-        private readonly Regex regex = new Regex(@"4(EMG|ONB)\w{11}00[0-9]");
-        private readonly string imagesDir = Environment.CurrentDirectory+@"\images";
+        private readonly Regex regex = new Regex(@"4(EMG|ONB)\w{11}[0-9]{3}");
+        private readonly string imagesDir =Environment.CurrentDirectory + @"\images";
 
         
         private readonly Dictionary<String, String> SpecialSwaps = new Dictionary<String, String>()
@@ -48,15 +48,17 @@ namespace PDFiller
             { "5941933302197", "Minnie Mouse" },
             { "5941933302333", "Albinute mici" },
             { "5941933302326", "Albine mari" },
-            { "Set 312 figurine tort Buburuza, KZE Prints, Photo Paper Glossy", "12 Buburuze" },
-            { "Set 12 figurine tort Inima Roz,  Prints, Photo Paper Glossy", "12 Inimi Roz <3" },
-            { "18", "Buburuza & Motan Noir" },
+            { "5941933302265", "12 Buburuze" },
+            { "5941933302227", "12 Inimi Roz <3" },
+            { "5941933302258", "Buburuza & Chat Noir" },
             { "5941933307703", "Squid Game" },
-            { "Se4t 113 tort Capsune, KZE Prints, Photo Paper Glossy", "Eroi in Pijama" },
+            { "5941933307567", "Eroi in Pijama" },
             { "5941933307536", "Gym" },
             { "5941933307789", "Blaze" },
-            { "S8et 115rt Capsune, KZE Prints,  Paper Glossy", "Peppa Pig" },
-            { "Set 11  tort Capsune, K65ZE Prints, Photo Paper Glossy", "Fulger McQueen" }
+            { "5941933302128", "Peppa Pig" },
+            { "5941933307758", "Fulger McQueen" },
+            { "5941933307543", "Grizzy & Lemmings"},
+            { "5941933307642", "BanBan"}
         };
 
         private Builder()
@@ -123,11 +125,13 @@ namespace PDFiller
             //      form.textBox1.Text += "Root directory found at:\r\n " + rootDir.FullName + "\r\n";
             //      form.rootTextBox.Text = rootDir.FullName;
             DirectoryInfo[] dirs = rootDir.GetDirectories();
-            if (dirs.Length == 0) throw new DirectoryNotFoundException("Root Directory contains no subdirectories.\r\n");
+            if (dirs.Length == 0)
+            {
+                throw new DirectoryNotFoundException("Root Directory contains no subdirectories.\r\n");
+            }
+
             DirectoryInfo workDir;
             workDir = dirs.OrderByDescending(d => d.CreationTime).ToArray().First();
-            //      form.textBox1.Text+="Work directory found at:\r\n"+
-            //         workDir.FullName + "\r\n";
             return workDir;
         }
 
@@ -360,11 +364,15 @@ namespace PDFiller
             try
             {
                 zips = workDir.GetFiles().Where(x => x.Extension == ".zip").ToArray();
+                if(zips.Length == 0)
+                {
+                    throw new FileNotFoundException("No zip files exist in the work directory.\r\n");
+                }
                 extractedZips = workDir.GetDirectories().ToArray();
             }
-            catch (IndexOutOfRangeException)
+            catch (IndexOutOfRangeException ex)
             {
-                throw (new FileNotFoundException("No zip files exist"));
+                throw ex;
             }
             bool found = false;
             foreach (FileInfo zip in zips)
@@ -682,22 +690,9 @@ namespace PDFiller
        //     cli.DownloadFile("")
 
 
-
-
-            Builder builder = Builder.GetInstance();
-            const string path = @"C:\Users\KZE PC\Desktop\VIsual studio projects\PDFiller\bin\Debug\debugTests\";
-            string inputfPath = "417264331_Sameday_4EMG24107789758001.pdf";
-            string excelPath = "orders_details_file_30-04-2025-21-52-52.xlsx";
-            List<Order> orders = builder.ReadExcel(new FileInfo(path+excelPath));
-            List<FileInfo> unzipped = new List<FileInfo>()
-            {
-                new FileInfo(path+inputfPath)
-            };
-            string savedPDFpath = form.mergedPath =  builder.WriteOnOrders(unzipped, orders, path, "TestName");
-            Process.Start(savedPDFpath);
-
-
-            
+            WebClient client = new WebClient();
+            byte[] image = client.DownloadData(@"https://raw.githubusercontent.com/GtJohnny/PDFillerImages/main/5941933302180.png");
+            //File.WriteAllBytes($"5941933302180.png", image);
 
 
 
@@ -709,7 +704,7 @@ namespace PDFiller
             string[] extensions = { ".png", ".jpeg", ".jpg" };
             foreach (string ext in extensions)
             {
-                if (System.IO.File.Exists($"{imagesDir}\\{tId}{ext}"))
+                if (File.Exists($"{imagesDir}\\{tId}{ext}"))
                 {
                     return XImage.FromFile($"{imagesDir}\\{tId}{ext}");
                 }
@@ -726,21 +721,35 @@ namespace PDFiller
         {
             Dictionary<string,XImage> images = new Dictionary<string, XImage>();
             int i = 0;
+            WebClient client = new WebClient();
             foreach (Order.topper topper in toppere)
             {
                
                 XImage img = null;
-                if(images.ContainsKey(topper.tId))
+                if (images.ContainsKey(topper.tId))
                 {
                     img = images[topper.tId];
                 }
                 else
                 {
-                     img = TryFindImage(topper.tId);
-                     if (img != null)
-                     {
+                    img = TryFindImage(topper.tId);
+                    if (img != null)
+                    {
                         images.Add(topper.tId, img);
-                     }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            client.DownloadFile($@"https://raw.githubusercontent.com/GtJohnny/PDFillerImages/main/{topper.tId}.png", $"{imagesDir}/{topper.tId}.png");
+
+                        }catch (WebException)
+                        {
+                            form.textBox1.Text += $"Couldn't download image for {topper.tId}.\r\n";
+                        }
+
+                        img = TryFindImage(topper.tId);
+                    }
                 }
 
                 //MATH =====>>       (scales with images/row)+ (pageH=90 +30 space)+no out of bounds  
@@ -751,7 +760,7 @@ namespace PDFiller
 
                 string temp_name = $"{topper.tQuantity}:{topper.tName}";
 
-                gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage*12) + 65 - 5.7f * (topper.tName.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2: 20  ), (i / perPage) * 120 + 100 + gfx.PageSize.Height / 2 + 35);
+                gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage*12) + 65 - 5.7f * (topper.tName.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2: 16  ), (i / perPage) * 120 + 100 + gfx.PageSize.Height / 2 + 35);
 
                 i++;
                 if (i == 3 * perPage)

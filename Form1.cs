@@ -731,6 +731,18 @@ namespace PDFiller
             Rectangle rect = panel.ClientRectangle;
             g.FillRectangle(new SolidBrush(Color.FromArgb(255, 255, 255)), rect);
         }
+
+        private void button2_Click_2(object sender, EventArgs e)
+        {
+        }
+
+        private void button2_Click_3(object sender, EventArgs e)
+        {
+            Builder builder = Builder.GetInstance();
+
+            builder.ZStartTest();
+
+        }
     }
 }
 
