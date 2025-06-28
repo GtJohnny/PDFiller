@@ -655,7 +655,8 @@ namespace PDFiller
 
         private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            updateTabIndex(true);
+
+            updateTabIndex(this.orders != null);
         }
 
         private void excelTab_Click(object sender, EventArgs e)

@@ -185,6 +185,29 @@ namespace PDFiller
             return excel;
         }
 
+
+        /// <summary>
+        /// Because the excel format may be updates from time to time,
+        /// We just take all columns from the first row,
+        /// Regardless of their order.
+        /// </summary>
+        /// <param name="sheet">The worksheet with all the orders</param>
+        /// <returns>A dictionary that has as key the header of each column, and the index of the column in a byte</returns>
+        private Dictionary<string,byte> GetExcelColumns(Worksheet sheet)
+        {
+            Dictionary<string, byte> columns = new Dictionary<string, byte>();
+            byte col = 1;
+            while (true)
+            {
+                string value = sheet.Cells[1, col].Value2;
+                if (value == null) break;
+                columns.Add(value, col);
+                col++;
+            }
+            return columns;
+        }
+
+
         /// <summary>
         /// Read the excel file, and return a list of orders.
         /// </summary>
@@ -198,28 +221,32 @@ namespace PDFiller
             Worksheet sheet;
             try
             {
+
                 sheet = book.Worksheets[1];
-                int row = 2;
-                const string IDCOL = "A";
-                const string AWBCOL = "C";
-                const string TNAMECOL = "D";
-                const string IDPRODUCT = "E";
-                const string TQNTCOL = "G";
-                const string NAMECOL = "T";
+                Dictionary<string, byte> columns = GetExcelColumns(sheet);
+
+                byte row = 2;
+                byte IDCOL               = columns["Nr. comanda"];
+                byte AWBCOL              = columns["Numar AWB"];
+                byte TOPPER_NAME_COL     = columns["Nume produs"];
+                byte IDPRODUCT           = columns["Cod produs"];
+                byte TOPPER_QUANTITY_COL = columns["Cantitate"];
+                byte CLIENT_NAME         = columns["Nume client"];
 
 
                 Order lastOrder = new Order();
                 Builder builder = new Builder();
                 while (true)
                 {
+
                     string id = sheet.Cells[row, IDCOL].Value2;
 
 
                     if (id != null)
                     {
                         string awb = sheet.Cells[row, AWBCOL].Value2;
-                        string name = sheet.Cells[row, NAMECOL].Value2;
-                        string tName = sheet.Cells[row, TNAMECOL].Value2;
+                        string name = sheet.Cells[row, CLIENT_NAME].Value2;
+                        string tName = sheet.Cells[row, TOPPER_NAME_COL].Value2;
                         string idProduct = sheet.Cells[row, IDPRODUCT].Value2;
                         tName = ModifyName(idProduct, tName);
 
@@ -228,7 +255,7 @@ namespace PDFiller
                         //      tname = tname.Replace(", KZE Prints, Photo Paper Glossy", "");
                         //      tname = tname.Remove(tname.Length - 32);
 
-                        int qnt = (int)sheet.Cells[row, TQNTCOL].Value2;
+                        int qnt = (int)sheet.Cells[row, TOPPER_QUANTITY_COL].Value2;
 
 
                         if (id == lastOrder.id)
