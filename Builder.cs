@@ -722,6 +722,10 @@ namespace PDFiller
             Dictionary<string,XImage> images = new Dictionary<string, XImage>();
             int i = 0;
             WebClient client = new WebClient();
+            if (!Directory.Exists(imagesDir))
+            {
+                Directory.CreateDirectory(imagesDir);
+            }
             foreach (Order.topper topper in toppere)
             {
                
