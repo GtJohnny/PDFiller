@@ -41,6 +41,7 @@
             System.Windows.Forms.Label label11;
             System.Windows.Forms.Label label12;
             System.Windows.Forms.Label label13;
+            System.Windows.Forms.Label label14;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.openPdfCheck = new System.Windows.Forms.CheckBox();
             this.drawComboBox = new System.Windows.Forms.ComboBox();
@@ -55,6 +56,7 @@
             this.zipButton = new System.Windows.Forms.Button();
             this.mergeFillButton = new System.Windows.Forms.Button();
             this.ConfigPage = new System.Windows.Forms.TabPage();
+            this.button4 = new System.Windows.Forms.Button();
             this.workButton = new System.Windows.Forms.Button();
             this.rootButton = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -97,6 +99,7 @@
             label11 = new System.Windows.Forms.Label();
             label12 = new System.Windows.Forms.Label();
             label13 = new System.Windows.Forms.Label();
+            label14 = new System.Windows.Forms.Label();
             groupBox3.SuspendLayout();
             this.tabControlMenu.SuspendLayout();
             this.AutoFillPage.SuspendLayout();
@@ -267,7 +270,7 @@
             // 
             label11.AutoSize = true;
             label11.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label11.Location = new System.Drawing.Point(32, 186);
+            label11.Location = new System.Drawing.Point(33, 140);
             label11.Name = "label11";
             label11.Size = new System.Drawing.Size(102, 15);
             label11.TabIndex = 12;
@@ -277,7 +280,7 @@
             // 
             label12.AutoSize = true;
             label12.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label12.Location = new System.Drawing.Point(32, 94);
+            label12.Location = new System.Drawing.Point(32, 39);
             label12.Name = "label12";
             label12.Size = new System.Drawing.Size(103, 15);
             label12.TabIndex = 13;
@@ -292,6 +295,16 @@
             label13.Size = new System.Drawing.Size(86, 15);
             label13.TabIndex = 17;
             label13.Text = "Tragic Button:";
+            // 
+            // label14
+            // 
+            label14.AutoSize = true;
+            label14.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label14.Location = new System.Drawing.Point(33, 241);
+            label14.Name = "label14";
+            label14.Size = new System.Drawing.Size(68, 15);
+            label14.TabIndex = 15;
+            label14.Text = "Local Files";
             // 
             // autoFillBtn
             // 
@@ -418,6 +431,8 @@
             // 
             // ConfigPage
             // 
+            this.ConfigPage.Controls.Add(label14);
+            this.ConfigPage.Controls.Add(this.button4);
             this.ConfigPage.Controls.Add(label12);
             this.ConfigPage.Controls.Add(label11);
             this.ConfigPage.Controls.Add(this.workButton);
@@ -430,12 +445,25 @@
             this.ConfigPage.Text = "Config";
             this.ConfigPage.UseVisualStyleBackColor = true;
             // 
+            // button4
+            // 
+            this.button4.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.button4.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
+            this.button4.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.button4.Location = new System.Drawing.Point(35, 259);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(135, 52);
+            this.button4.TabIndex = 14;
+            this.button4.Text = "Open Local Files";
+            this.button4.UseVisualStyleBackColor = false;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
             // workButton
             // 
             this.workButton.BackColor = System.Drawing.SystemColors.ControlLight;
             this.workButton.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
             this.workButton.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.workButton.Location = new System.Drawing.Point(35, 204);
+            this.workButton.Location = new System.Drawing.Point(35, 158);
             this.workButton.Name = "workButton";
             this.workButton.Size = new System.Drawing.Size(135, 52);
             this.workButton.TabIndex = 6;
@@ -448,7 +476,7 @@
             this.rootButton.BackColor = System.Drawing.SystemColors.ControlLight;
             this.rootButton.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.Control;
             this.rootButton.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.rootButton.Location = new System.Drawing.Point(35, 112);
+            this.rootButton.Location = new System.Drawing.Point(35, 57);
             this.rootButton.Name = "rootButton";
             this.rootButton.Size = new System.Drawing.Size(135, 52);
             this.rootButton.TabIndex = 3;
@@ -868,6 +896,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn qntColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn topperColumn;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button4;
     }
 }
 

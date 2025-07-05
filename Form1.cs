@@ -45,50 +45,37 @@ namespace PDFiller
         private List<FileInfo> unzippedList = null;
         private List<Order> orders = null;
         internal string mergedPath = null;
+        private FileInfo summaryExcel = null;
+        private FileInfo previewExcel = null;
+        private bool newExcel = false;
+
+
+        
+
+
 
         private void writeOptions()
         {
             StreamWriter sw = new StreamWriter(new FileStream("options.ini", FileMode.OpenOrCreate, FileAccess.Write));
             sw.WriteLine("root=" + rootDir.FullName);
             sw.WriteLine("autofill=" + autoFillCheck.Checked);
-            sw.WriteLine("print=true" /* PrintCheck.Checked*/);
             sw.WriteLine("open=" + openPdfCheck.Checked);
+            sw.WriteLine("draw=" + drawComboBox.SelectedIndex);
             sw.Close();
         }
 
-
-
-        private void Form1_Load(object sender, EventArgs e)
+        private void readOptions()
         {
-            Builder menu = PDFiller.Builder.GetInstance(this);
-
-            StreamReader sr = null;
-            if (File.Exists("options.ini"))
-            {
-                sr = new StreamReader(new FileStream("options.ini", FileMode.Open, FileAccess.Read));
-            }
-            else
-            {
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\AWB";
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-                rootDir = new DirectoryInfo(path);
-                rootTextBox.Text = rootDir.FullName;
-                writeOptions();
-                return;
-            }
+            StreamReader sr = new StreamReader(new FileStream("options.ini", FileMode.Open, FileAccess.Read));
             while (!sr.EndOfStream)
             {
                 string[] line = sr.ReadLine().Split("=".ToCharArray(), 2);
-                drawComboBox.SelectedIndex = 2;
 
                 switch (line[0])
                 {
                     case "root":
                         rootDir = new DirectoryInfo(line[1]);
-                        textBox1.AppendText( $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nRoot directory found at:\r\n{line[1]}\r\n");
+                        textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nRoot directory found at:\r\n{line[1]}\r\n");
                         rootTextBox.Text = line[1];
                         break;
                     case "autofill":
@@ -102,17 +89,6 @@ namespace PDFiller
                             autoFillCheck.Checked = true;
                         }
                         break;
-                    case "print":
-                        bool print = true;
-                        if (Boolean.TryParse(line[1], out print))
-                        {
-                     //       PrintCheck.Checked = print;
-                        }
-                        else
-                        {
-                  //          PrintCheck.Checked = true;
-                        }
-                        break;
                     case "open":
                         bool res = true;
                         if (Boolean.TryParse(line[1], out res))
@@ -124,14 +100,61 @@ namespace PDFiller
                             openPdfCheck.Checked = true;
                         }
                         break;
+                    case "draw":
+                        int draw = 0;
+                        if (int.TryParse(line[1], out draw))
+                        {
+                            drawComboBox.SelectedIndex = draw;
+                        }
+                        else
+                        {
+                            drawComboBox.SelectedIndex = 2;
+                        }
+                        break;
                     case "":
                         break;
                     default:
                         sr.Close();
-                        throw new Exception("options.ini was corrupted");
+                        textBox1.AppendText("Options.ini was corrupted, rewriting it");
+                        File.Delete("options.ini");
+                        drawComboBox.SelectedIndex = 2;
+                        string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\AWB";
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+                        rootDir = new DirectoryInfo(path);
+
+                        writeOptions();
+
+                        break;
                 }
             }
             sr.Close();
+        }
+
+
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            if (File.Exists("options.ini"))
+            {
+                readOptions();
+                return;
+            }
+            else
+            {
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\AWB";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                rootDir = new DirectoryInfo(path);
+                rootTextBox.Text = rootDir.FullName;
+                if(drawComboBox.SelectedIndex==-1) drawComboBox.SelectedIndex = 2;
+                writeOptions();
+                return;
+            }
         }
 
         private void HelpMeOut()
@@ -142,7 +165,7 @@ namespace PDFiller
             unzippedList = new List<FileInfo>() { new FileInfo(DebugPath + "417264331_Sameday_4EMG24107789758001.pdf") };
             excel = builder.FindExcel(workDir);
             var orders = builder.ReadExcel(excel);
-            //   int failed;
+            this.newExcel = false;
             string resPath = builder.WriteOnOrders(unzippedList, orders, workDir.FullName, "ROBLOX_IMAGE_TEST");
             Process.Start(resPath);
 
@@ -309,7 +332,8 @@ namespace PDFiller
                     textBox1.AppendText( $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nFound.xlsx order summary at:\r\n" + excel.FullName + "\r\n");
                     excelGridView.Rows.Clear();
                     summaryGridView.Rows.Clear();
-                    updateTabIndex(true);
+                    this.newExcel = true;
+                    updateTabIndex();
                     break;
                 default:
                     break;
@@ -441,7 +465,8 @@ namespace PDFiller
 
                         excelGridView.Rows.Clear();
                         summaryGridView.Rows.Clear();
-                        updateTabIndex(true);
+                        this.newExcel = true; 
+                        updateTabIndex();
 
 
                         zip = menu.FindZipsUnzipped(workDir);
@@ -483,8 +508,9 @@ namespace PDFiller
                 }
                 textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nReading the excel file.\r\n");
 
-
+                
                 orders = menu.ReadExcel(excel);
+                this.newExcel = false; //reset the new excel flag, so we don't read it again next time
                 saveDir = unzippedList.First().DirectoryName;
 
                 //    int failed = 0;
@@ -537,7 +563,8 @@ namespace PDFiller
                 textBox1.AppendText( $"Found excel file at:\r\n{ excel.FullName }\r\n");
                 excelPathBox.Text = excel.FullName;
                 orders = menu.ReadExcel(excel);
-                updateTabIndex(false);
+                this.newExcel = false;
+                updateTabIndex();
 
 
                 //   int failed = 0;
@@ -588,7 +615,7 @@ namespace PDFiller
         }
 
 
-        private void updateTabIndex(bool readOrders = false)
+        private void updateTabIndex()
         {
             switch (tabControl2.SelectedIndex)
             {
@@ -596,12 +623,17 @@ namespace PDFiller
                     //       if (mergedPath == null || (chromiumWebBrowser1.Address!= null && mergedPath != chromiumWebBrowser1.Address)) return;
                     //     chromiumWebBrowser1.LoadUrlAsync(mergedPath);
                     break;
-                case 1:
-                    if (this.excel == null || excelGridView.Rows.Count > 0) return;
-                    if (readOrders)
+                case 1: //Excel Preview
+                    if (this.excel == null) return;
+                    if (this.previewExcel != null && this.excel == this.previewExcel) return;
+
+
+                    if (this.newExcel)
                     {
                         Builder menu = PDFiller.Builder.GetInstance();
                         this.orders = menu.ReadExcel(excel);
+                        this.previewExcel = this.excel;
+                        this.newExcel = false;
                     }
                     var rows = excelGridView.Rows;
                     foreach (Order o in orders)
@@ -613,15 +645,19 @@ namespace PDFiller
                         }
                     }
                     break;
-                case 2:
+                case 2://ExcelSummary
 
-                    if (this.excel == null || summaryGridView.Rows.Count > 0) return;
-                    if (readOrders)
+                    if (this.excel == null) return;
+                    if (this.summaryExcel != null && this.excel == this.summaryExcel) return;
+                    if (newExcel)
                     {
                         Builder menu = PDFiller.Builder.GetInstance();
                         this.orders = menu.ReadExcel(excel);
+                        this.newExcel = false;
+                        this.summaryExcel = this.excel;
                     }
-                    rows = summaryGridView.Rows;
+
+                    summaryGridView.Rows.Clear();
 
                     Dictionary<string, int> dict = new Dictionary<string, int>();
 
@@ -642,9 +678,9 @@ namespace PDFiller
                     }
                     foreach (var pair in dict)
                     {
-                        summaryGridView.Rows.Add(pair.Key, pair.Value);
+                        summaryGridView.Rows.Add(pair.Value, pair.Key);
                     }
-                    summaryGridView.Sort(summaryGridView.Columns[1], ListSortDirection.Descending);
+                    summaryGridView.Sort(summaryGridView.Columns[0], ListSortDirection.Descending);
 
                     break;
                 default:
@@ -656,7 +692,7 @@ namespace PDFiller
         private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
         {
 
-            updateTabIndex(this.orders != null);
+            updateTabIndex();
         }
 
         private void excelTab_Click(object sender, EventArgs e)
@@ -742,6 +778,11 @@ namespace PDFiller
 
             builder.ZStartTest();
 
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Process.Start(Environment.CurrentDirectory);
         }
     }
 }

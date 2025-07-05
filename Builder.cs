@@ -28,37 +28,38 @@ namespace PDFiller
 {
     internal class Builder
     {
-        static Builder menu = null;
-
+        private static Builder menu = null;
+        
+        private readonly FileInfo excel = null;
         private readonly Form1 form = null;
         private readonly Regex regex = new Regex(@"4(EMG|ONB)\w{11}[0-9]{3}");
         private readonly string imagesDir =Environment.CurrentDirectory + @"\images";
 
-        
-        private readonly Dictionary<String, String> SpecialSwaps = new Dictionary<String, String>()
-{
+
+        private readonly SortedDictionary<string, string> SpecialSwaps = new SortedDictionary<string, string>()
+        {
+            { "5941933302128", "Peppa Pig" },
+            { "5941933302135", "Paw Patrol tip1" },
+            { "5941933302197", "Minnie Mouse" },
+            { "5941933302227", "12 Inimi Roz <3" },
+            { "5941933302258", "Buburuza & Chat Noir" },
+            { "5941933302265", "12 Buburuze" },
+            { "5941933302326", "Albine mari" },
+            { "5941933302333", "Albinute mici" },
+            { "5941933302470", "Baby Boss tip3 (Logo)" },
+            { "5941933302487", "Baby Boss tip2 (baby)" },
             { "5941933302517", "Barbie tip4 (cercuri)" },
             { "5941933302524", "Barbie tip3 (silueta)" },
             { "5941933302531", "Barbie tip2 (fancy)" },
             { "5941933302548", "Barbie tip1 (funda)" },
-            { "5941933302470", "Baby Boss tip3 (Logo)" },
-            { "5941933302487", "Baby Boss tip2 (baby)" },
             { "5941933307475", "Paw Patrol tip2" },
-            { "5941933302135", "Paw Patrol tip1" },
-            { "5941933302197", "Minnie Mouse" },
-            { "5941933302333", "Albinute mici" },
-            { "5941933302326", "Albine mari" },
-            { "5941933302265", "12 Buburuze" },
-            { "5941933302227", "12 Inimi Roz <3" },
-            { "5941933302258", "Buburuza & Chat Noir" },
-            { "5941933307703", "Squid Game" },
-            { "5941933307567", "Eroi in Pijama" },
             { "5941933307536", "Gym" },
-            { "5941933307789", "Blaze" },
-            { "5941933302128", "Peppa Pig" },
-            { "5941933307758", "Fulger McQueen" },
-            { "5941933307543", "Grizzy & Lemmings"},
-            { "5941933307642", "BanBan"}
+            { "5941933307543", "Grizzy" },
+            { "5941933307567", "Eroi in Pijama" },
+            { "5941933307642", "BanBan" },
+            { "5941933307703", "Squid Game" },
+            { "5941933307758", "Cars" },
+            { "5941933307789", "Blaze" }
         };
 
         private Builder()
@@ -69,7 +70,6 @@ namespace PDFiller
         private Builder(Form1 form)
         {
             this.form = form;
-            //  this.rootDir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\AWB\\");
         }
 
 
@@ -287,7 +287,6 @@ namespace PDFiller
                     }
                     row++;
                 }
-
                 book.Close();
                 app.Quit();
                 return orders;
@@ -306,19 +305,19 @@ namespace PDFiller
 
 
 
-        internal void ReadExcelTable(List<Order> orders, DataGridViewRowCollection rows)
-        {
-            //    System.Data.DataTable dt = new System.Data.DataTable("Order Preview");
-            rows.Clear();
-            foreach (Order o in orders)
-            {
-                rows.Add(o.name, o.toppere[0].tName, o.toppere[0].tQuantity);
-                foreach (Order.topper tp in o.toppere.GetRange(1, o.toppere.Count - 1))
-                {
-                    rows.Add(null, tp.tName, tp.tQuantity);
-                }
-            }
-        }
+        //internal void ReadExcelTable(List<Order> orders, DataGridViewRowCollection rows)
+        //{
+        //    //    System.Data.DataTable dt = new System.Data.DataTable("Order Preview");
+        //    rows.Clear();
+        //    foreach (Order o in orders)
+        //    {
+        //        rows.Add(o.name, o.toppere[0].tName, o.toppere[0].tQuantity);
+        //        foreach (Order.topper tp in o.toppere.GetRange(1, o.toppere.Count - 1))
+        //        {
+        //            rows.Add(null, tp.tName, tp.tQuantity);
+        //        }
+        //    }
+        //}
 
 
 
@@ -549,10 +548,6 @@ namespace PDFiller
         /// <returns>The full file path of the merged PDF.</returns>
         /// <exception cref="ArgumentException">Selected files had incorrect names.</exception>
         /// <exception cref="FileNotFoundException">Selected files could not be found.</exception>
-
-
-
-
         public string WriteOnOrders(List<FileInfo> unzippedList, List<Order> orders, string saveDir, string saveName)
         {
             failed = total = 0;
