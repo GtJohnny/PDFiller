@@ -15,6 +15,7 @@ namespace PDFiller
         public string awb;
         public string name;
         public List<topper> toppere;
+        public string country;
 
         public struct topper
         {

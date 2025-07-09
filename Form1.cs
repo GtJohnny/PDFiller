@@ -218,47 +218,6 @@ namespace PDFiller
         {
 
 
-
-            //   HelpMeOut();
-            //Excel.Application app = new Excel.Application();
-            //string exPath = DebugPath + "orders_details_file_02-05-2025-22-46-41.xlsx";
-            //string exPath1 = DebugPath + "imagini.xlsx";
-            //Workbook book = app.Workbooks.Open(exPath1);
-
-            //if (book == null)
-            //{
-            //    throw new Exception("Excel workbook could not be opened.");
-            //}
-            //Worksheet sheet;
-            //try
-            //{
-            //    sheet = book.Worksheets[1];
-            //    MessageBox.Show(sheet.Cells[1, 1].Value2.ToString());
-            //    MessageBox.Show(sheet.Cells[1, 2].Value2.ToString());
-            //    MessageBox.Show(sheet.Cells[1, 3].Value2.ToString());
-            //    MessageBox.Show(sheet.Cells[2, 1].Value2.ToString());
-            //    MessageBox.Show(sheet.Cells[2, 2].Value2.ToString());
-            //    MessageBox.Show(sheet.Cells[2, 3].Value2.ToString());
-            //    MessageBox.Show(sheet.Cells[3, 1].Value2.ToString());
-            //    MessageBox.Show(sheet.Cells[3, 2].Value2.ToString());
-            //    MessageBox.Show(sheet.Cells[3, 3].Value2.ToString());
-
-
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw ex;
-            //}
-            //finally
-            //{
-            //    book.Close();
-            //    app.Quit();
-            //}
-            //return;
-
-
-
             if (autoFillCheck.Checked)
             {
                 AutoFill();
@@ -624,18 +583,21 @@ namespace PDFiller
                     //     chromiumWebBrowser1.LoadUrlAsync(mergedPath);
                     break;
                 case 1: //Excel Preview
-                    if (this.excel == null) return;
-                    if (this.previewExcel != null && this.excel == this.previewExcel) return;
-
-
-                    if (this.newExcel)
+                    //if (this.excel == null) return;
+                    if (this.newExcel || (this.excel != null && this.previewExcel != this.excel))
                     {
                         Builder menu = PDFiller.Builder.GetInstance();
                         this.orders = menu.ReadExcel(excel);
                         this.previewExcel = this.excel;
                         this.newExcel = false;
                     }
-                    var rows = excelGridView.Rows;
+                    else
+                    {
+                        return;
+                    }
+
+                        //if (this.previewExcel != null || this.excel == this.previewExcel) return;
+                        var rows = excelGridView.Rows;
                     foreach (Order o in orders)
                     {
                         rows.Add(o.name, o.toppere[0].tName, o.toppere[0].tQuantity);
@@ -648,7 +610,7 @@ namespace PDFiller
                 case 2://ExcelSummary
 
                     if (this.excel == null) return;
-                    if (this.summaryExcel != null && this.excel == this.summaryExcel) return;
+                    if (this.summaryExcel != null || this.excel == this.summaryExcel) return;
                     if (newExcel)
                     {
                         Builder menu = PDFiller.Builder.GetInstance();
@@ -659,30 +621,46 @@ namespace PDFiller
 
                     summaryGridView.Rows.Clear();
 
+                    //Dictionary<KeyValuePair<string,string>,int> dict = new Dictionary<KeyValuePair<string, string>, int>();
                     Dictionary<string, int> dict = new Dictionary<string, int>();
+
+
 
                     foreach (Order o in orders)
                     {
                         foreach (Order.topper tp in o.toppere)
                         {
-                            if (dict.ContainsKey(tp.tName))
-                            {
-                                dict[tp.tName] += tp.tQuantity;
+                            //KeyValuePair<string, string> key = new KeyValuePair<string, string>(tp.tName, tp.tId);
+                            string key = tp.tName;
 
+                            if (dict.ContainsKey(key))
+                            {
+                                dict[key] += tp.tQuantity;
                             }
                             else
                             {
-                                dict[tp.tName] = tp.tQuantity;
+                                dict[key] = tp.tQuantity;
                             }
                         }
                     }
                     foreach (var pair in dict)
                     {
+                        //Bitmap img = Bitmap.FromFile(Environment.CurrentDirectory + "\\images\\" + pair.Key.Value + ".png") as Bitmap;
+                        //DataGridViewRow row = new DataGridViewRow();
+                        //row.CreateCells(summaryGridView, pair.Value, pair.Key.Key, img);
+                        //row.SetValues(pair.Value, pair.Key.Key, img);                        //pair.Value, pair.Key.Key, img,
+                        //row.Height = 100;
                         summaryGridView.Rows.Add(pair.Value, pair.Key);
+
                     }
                     summaryGridView.Sort(summaryGridView.Columns[0], ListSortDirection.Descending);
 
                     break;
+                case 3://Imagini
+
+
+
+
                 default:
                     return;
             }
@@ -760,13 +738,6 @@ namespace PDFiller
 
         }
 
-        private void panel2_Paint(object sender, PaintEventArgs e)
-        {
-            Panel panel = (Panel)sender;
-            Graphics g = e.Graphics;
-            Rectangle rect = panel.ClientRectangle;
-            g.FillRectangle(new SolidBrush(Color.FromArgb(255, 255, 255)), rect);
-        }
 
         private void button2_Click_2(object sender, EventArgs e)
         {
@@ -783,6 +754,20 @@ namespace PDFiller
         private void button4_Click(object sender, EventArgs e)
         {
             Process.Start(Environment.CurrentDirectory);
+        }
+
+        private void imagePanel_Paint(object sender, PaintEventArgs e)
+        {
+
+            Graphics g = imagePanel.CreateGraphics();
+            int nr = 0;
+            FileInfo[] files = new DirectoryInfo(Environment.CurrentDirectory + "\\images\\").GetFiles("*.png");
+            foreach (FileInfo file in files)
+            {
+                Bitmap img = Bitmap.FromFile(file.FullName) as Bitmap;
+                g.DrawImage(img, new Rectangle((nr % 5) * 130, (nr / 5) * 130, 100, 100));
+                nr++;
+            }
         }
     }
 }

@@ -1,26 +1,29 @@
 ﻿using Microsoft.Office.Interop.Excel;
+using Newtonsoft.Json.Linq;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
+using PdfSharpCore.Pdf.IO;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Excel = Microsoft.Office.Interop.Excel;
-using System.IO.Compression;
-using PdfSharpCore.Pdf.IO;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Data;
-using System.Reflection;
-using System.Numerics;
-using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
-using System.Threading;
-using System.Text.RegularExpressions;
-using System.Web;
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
+using System.Globalization;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
 using System.Net;
+using System.Numerics;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web;
+using System.Windows.Forms;
+using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
+using Excel = Microsoft.Office.Interop.Excel;
 
 
 
@@ -29,14 +32,24 @@ namespace PDFiller
     internal class Builder
     {
         private static Builder menu = null;
-        
+
         private readonly FileInfo excel = null;
         private readonly Form1 form = null;
-        private readonly Regex regex = new Regex(@"4(EMG|ONB)\w{11}[0-9]{3}");
-        private readonly string imagesDir =Environment.CurrentDirectory + @"\images";
+        private KeyValuePair<Regex, string>[] regexes = new KeyValuePair<Regex, string>[]
+        {
+             new KeyValuePair<Regex,string>(new Regex(@"4(EMG|ONB)\w{11}[0-9]{3}"),"Romania"),
+             new KeyValuePair<Regex,string>(new Regex(@"[0-9]{3}(EMG|ONB)\w{10}[0-9]{3}"),"Bulgaria")
+
+            //new Regex(@"[0-9]{3}(EMG|ONB)\w{10}[0-9]{3}")
+
+        };
 
 
-        private readonly SortedDictionary<string, string> SpecialSwaps = new SortedDictionary<string, string>()
+
+        private readonly string imagesDir = Environment.CurrentDirectory + @"\images";
+
+
+        private readonly Dictionary<string, string> SpecialSwaps = new Dictionary<string, string>()
         {
             { "5941933302128", "Peppa Pig" },
             { "5941933302135", "Paw Patrol tip1" },
@@ -197,7 +210,7 @@ namespace PDFiller
         /// </summary>
         /// <param name="sheet">The worksheet with all the orders</param>
         /// <returns>A dictionary that has as key the header of each column, and the index of the column in a byte</returns>
-        private Dictionary<string,byte> GetExcelColumns(Worksheet sheet)
+        private Dictionary<string, byte> GetExcelColumns(Worksheet sheet)
         {
             Dictionary<string, byte> columns = new Dictionary<string, byte>();
             byte col = 1;
@@ -230,12 +243,21 @@ namespace PDFiller
                 Dictionary<string, byte> columns = GetExcelColumns(sheet);
 
                 byte row = 2;
-                byte IDCOL               = columns["Nr. comanda"];
-                byte AWBCOL              = columns["Numar AWB"];
-                byte TOPPER_NAME_COL     = columns["Nume produs"];
-                byte IDPRODUCT           = columns["Cod produs"];
+                byte IDCOL = columns["Nr. comanda"];
+                byte AWBCOL;
+                try
+                {
+                     AWBCOL = columns["Numar AWB"];
+
+                }catch (KeyNotFoundException)
+                {
+                    form.textBox1.AppendText("The excel file doesn't contain the 'Numar AWB' column. Trying 'AWB number'\r\n");
+                     AWBCOL = columns["AWB number"];
+                }
+                byte TOPPER_NAME_COL = columns["Nume produs"];
+                byte IDPRODUCT = columns["Cod produs"];
                 byte TOPPER_QUANTITY_COL = columns["Cantitate"];
-                byte CLIENT_NAME         = columns["Nume client"];
+                byte CLIENT_NAME = columns["Nume client"];
 
 
                 Order lastOrder = new Order();
@@ -254,6 +276,7 @@ namespace PDFiller
                         string idProduct = sheet.Cells[row, IDPRODUCT].Value2;
                         tName = ModifyName(idProduct, tName);
 
+                        //idProduct = "5941933307598"; //!!!!!!!!!!!!!!!!
 
                         // , KZE Prints, Photo Paper Glossy
                         //      tname = tname.Replace(", KZE Prints, Photo Paper Glossy", "");
@@ -273,6 +296,7 @@ namespace PDFiller
                             if (lastOrder.id != "")
                                 orders.Add(lastOrder);
                             lastOrder = new Order(id, awb, name, tName, qnt, idProduct);
+
 
                             //form.textBox1.Text += ++i + ". " + awb + ":\r\n" +
                             //    "-> " + qnt + ". " + name + "\r\n";
@@ -355,7 +379,8 @@ namespace PDFiller
         /// <exception cref="ArgumentNullException">Work directory doesn't exist.</exception>
         public FileInfo FindZipsUnzipped(DirectoryInfo workDir)
         {
-            if (workDir == null || !workDir.Exists) {
+            if (workDir == null || !workDir.Exists)
+            {
                 throw new ArgumentNullException("Work Directory no longer exists!\r\n");
             }
             FileInfo[] zips;
@@ -363,7 +388,7 @@ namespace PDFiller
             try
             {
                 zips = workDir.GetFiles().Where(x => x.Extension == ".zip").ToArray();
-                if(zips.Length == 0)
+                if (zips.Length == 0)
                 {
                     throw new FileNotFoundException("No zip files exist in the work directory.\r\n");
                 }
@@ -394,18 +419,50 @@ namespace PDFiller
             throw new FileNotFoundException("All zip files already extracted.\r\n");
         }
 
-
-        public bool ReadAwbId(UglyToad.PdfPig.Content.Page page, out string idAWB)
+        /// <summary>
+        /// Identifies the AWB number from the given page.
+        /// Aswell as the country of origin based on the AWB format.
+        /// </summary>
+        /// <param name="page">Page to read text from</param>
+        /// <param name="idAWB">AWB number</param>
+        /// <param name="country">Country of origin</param>
+        /// <returns>True if successfull, false if not</returns>
+        public bool ReadAwbId(UglyToad.PdfPig.Content.Page page, out string idAWB, out string country)
         {
             idAWB = "";
             string text = page.Text;
-            MatchCollection matches = regex.Matches(text);
-            if (matches.Count == 0)
+            for(int i=0;i<regexes.Length;i++)
             {
-                return false;
+                if (regexes[i].Key.IsMatch(text))
+                {
+                    idAWB = regexes[i].Key.Match(text).Value;
+                    if (idAWB != "")
+                    {
+                        idAWB = idAWB.Substring(0, idAWB.Length - 3);
+                        country = regexes[i].Value; //Default country
+                        return true;
+                    }
+                }
             }
-            idAWB = matches[0].Value.Substring(0, 15);
-            return true;
+            ////foreach (Regex regex in regexes)
+            //{
+            //    idAWB = regex.Match(text).Value;
+            //    if (idAWB != "")
+            //    {
+            //        idAWB = idAWB.Substring(0, idAWB.Length-3);
+
+            //        return true;
+            //    }
+
+            //}
+            //MatchCollection matches =
+            //if (matches.Count == 0)
+            //{
+            //    return false;
+            //}
+            //idAWB = matches[0].Value.Substring(0, 15);
+            country = "Romania"; //Default country
+            return false;
 
         }
 
@@ -420,6 +477,7 @@ namespace PDFiller
 
         /// <summary>
         /// Given a PDF file, reads the AWB number from it, and writes the order details on the page.
+        /// Also clears out the lower half and writes the country name in the middle.
         /// </summary>
         /// <param name="pdfMerge">The final document upon which we constantly attach pages on</param>
         /// <param name="file">The pdf file that we'll complete page by page</param>
@@ -435,7 +493,8 @@ namespace PDFiller
                 total += pdfWrite.PageCount;
                 for (int i = 0; i < pdfWrite.PageCount; i++)
                 {
-                    if (!ReadAwbId(pdfRead.GetPage(i + 1), out idAWB))
+                    string country = "Romania";
+                    if (!ReadAwbId(pdfRead.GetPage(i + 1), out idAWB, out country))
                     {
                         errorMessages.Add($"Couldn't find AWB number for page {i + 1} for:\r\n{file.Name}\r\n");
                         failed++;
@@ -448,8 +507,8 @@ namespace PDFiller
                     //as last resort only
                     if (o == null)
                     {
-                        string fileId = file.Name.Substring(0, 9);
-                        o = orders.Find(p => p.id == fileId && new Regex(@"\b[0-9]{9}").IsMatch(fileId));
+                        string fileId = file.Name.Split('_')[0];
+                        o = orders.Find(p => p.id == fileId);
 
                         if (o == null)
                         {
@@ -474,12 +533,30 @@ namespace PDFiller
                         //failed++;
                         //continue;
                     }
+                
+                    o.country = country;
+
 
                     pdfMerge.AddPage(pdfWrite.Pages[i]);
 
                     XGraphics gfx = XGraphics.FromPdfPage(pdfMerge.Pages[pdfMerge.PageCount - 1]);
                     XRect rect = new XRect(0, gfx.PageSize.Height / 2 - 15, gfx.PageSize.Width, gfx.PageSize.Height / 2 + 15);
+
+
+
+                    //byte[] bytes = tName.ToCharArray()
+                    //            .Select(c => (byte)c)
+                    //            .ToArray();
+                    //string decodedString = System.Text.Encoding.UTF8.GetString(bytes);
+
+                    //bool test = tName.Equals(decodedString);
+
+
+                    //lower half of the page
                     gfx.DrawRectangle(XBrushes.White, rect);
+                    //write the country in the middle
+                    gfx.DrawString(country, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, gfx.PageSize.Width / 2 , gfx.PageSize.Height / 2 + 18, XStringFormats.Center);
+
 
                     switch (form.drawComboBox.SelectedIndex)
                     {
@@ -515,7 +592,7 @@ namespace PDFiller
                                 continue;
                             }
                             break;
-                    
+
 
                     }
 
@@ -596,15 +673,19 @@ namespace PDFiller
         /// <param name="tId">The Product Number (PN) of the product</param>
         /// <param name="tName">The original name of said product</param>
         /// <returns></returns>
-        private string ModifyName(string tId,string tName)
+        private string ModifyName(string tId, string tName)
         {
-            if(SpecialSwaps.ContainsKey(tId))
+            //Sa vad ce naiba fac cu numele in bulgara, cum le editez 
+            if (SpecialSwaps.ContainsKey(tId))
             {
                 return tName = SpecialSwaps[tId];
             }
+            /*
+             омплект украса за торта KZE Prints Пес Патрул/ Paw Patrol, Гланцова хартия, Многоцветен, 17 бр
+             */
 
             string[] list = { "briose de ", "briose ", "tort ", };
-            foreach(string s in list)
+            foreach (string s in list)
             {
                 int index = tName.LastIndexOf(s);
                 if (index > 0)
@@ -613,32 +694,45 @@ namespace PDFiller
                 }
 
             }
-            return tName;
+
+            //byte[] bytes = tName.ToCharArray()
+            //   .Select(c => (byte)c)
+            //   .ToArray();
+            //string decodedString = System.Text.Encoding.UTF8.GetString(bytes);
             
+            //improvizatie pentru bulgaria  
+            if(tName.StartsWith("Комплект украса"))
+            {
+                return tName.Substring(tName.IndexOf('/'), tName.IndexOf(',') - tName.IndexOf('/')).Trim(',', '/', ' ', '\\');
+            }
+
+            return tName;
+
         }
 
 
 
         /// <summary>
-        /// For the given pdf page which represents a whole AWB, clears the lower half, 
-        /// then write the order contents: topper count, name and image (if exists).
+        /// For the given pdf page which represents a whole AWB,
+        /// write the order contents: topper count, name and image (if exists).
         /// </summary>
         /// <param name="gfx">AWB graphics to be written and/or drawn on</param>
         /// <param name="toppere">What to write on the page (qnt + name + image)</param>
         /// <returns>True if successfull, false if not</returns>
         private bool WriteOnPage(XGraphics gfx, List<Order.topper> toppere)
         {
-            if (gfx == null || toppere == null) {
+            if (gfx == null || toppere == null)
+            {
                 return true;
             }
             try
             {
-          //      XGraphics gfx = XGraphics.FromPdfPage(page);
+                //      XGraphics gfx = XGraphics.FromPdfPage(page);
 
                 XFont font = new XFont("Times New Roman", 14);
                 XSolidBrush brush = new XSolidBrush(XColor.FromKnownColor(XKnownColor.Black));
 
-  
+
                 int i = 0;
 
                 /*
@@ -661,7 +755,7 @@ namespace PDFiller
                     }
                     */
                     gfx.DrawString($"{topper.tQuantity} buc: {topper.tName}", font, brush, 25, gfx.PageSize.Height / 2 + 25 + 20 * i, XStringFormats.CenterLeft);
-                        // gfx.DrawImage(img, page.Width - 95 * (nrImagini / 4) + 95 * (j / 4), page.Height / 2 + 20 + 95 * (j % 4), 90, 90);
+                    // gfx.DrawImage(img, page.Width - 95 * (nrImagini / 4) + 95 * (j / 4), page.Height / 2 + 20 + 95 * (j % 4), 90, 90);
                     i++;
 
                     if (i == 20) break;
@@ -681,8 +775,8 @@ namespace PDFiller
 
         public void ZStartTest()
         {
-       //     var cli = new WebClient();
-       //     cli.DownloadFile("")
+            //     var cli = new WebClient();
+            //     cli.DownloadFile("")
 
 
             WebClient client = new WebClient();
@@ -704,7 +798,7 @@ namespace PDFiller
                     return XImage.FromFile($"{imagesDir}\\{tId}{ext}");
                 }
             }
-            return null; 
+            return null;
         }
 
 
@@ -712,9 +806,9 @@ namespace PDFiller
 
 
 
-        private void DrawOnPage(XGraphics gfx, List<Order.topper> toppere,int perPage)
+        private void DrawOnPage(XGraphics gfx, List<Order.topper> toppere, int perPage)
         {
-            Dictionary<string,XImage> images = new Dictionary<string, XImage>();
+            Dictionary<string, XImage> images = new Dictionary<string, XImage>();
             int i = 0;
             WebClient client = new WebClient();
             if (!Directory.Exists(imagesDir))
@@ -723,7 +817,7 @@ namespace PDFiller
             }
             foreach (Order.topper topper in toppere)
             {
-               
+
                 XImage img = null;
                 if (images.ContainsKey(topper.tId))
                 {
@@ -742,7 +836,8 @@ namespace PDFiller
                         {
                             client.DownloadFile($@"https://raw.githubusercontent.com/GtJohnny/PDFillerImages/main/{topper.tId}.png", $"{imagesDir}/{topper.tId}.png");
 
-                        }catch (WebException)
+                        }
+                        catch (WebException)
                         {
                             form.textBox1.Text += $"Couldn't download image for {topper.tId}.\r\n";
                         }
@@ -753,13 +848,13 @@ namespace PDFiller
 
                 //MATH =====>>       (scales with images/row)+ (pageH=90 +30 space)+no out of bounds  
                 if (img != null)
-                    gfx.DrawImage(img, (i % perPage) * (90 + perPage * 12) +20 + (perPage == 2 ? gfx.PageSize.Width / 2 : 20), (i / perPage) * 120 + gfx.PageSize.Height / 2 +25, 90, 90);
+                    gfx.DrawImage(img, (i % perPage) * (90 + perPage * 12) + 20 + (perPage == 2 ? gfx.PageSize.Width / 2 : 20), (i / perPage) * 120 + gfx.PageSize.Height / 2 + 25, 90, 90);
                 //MATH =====>>
                 //per pozition *  (pageH=90 +30 space + space with img/row) - (center text) + (even abscise per img/row (2= right column, 3=wide)
 
                 string temp_name = $"{topper.tQuantity}:{topper.tName}";
 
-                gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage*12) + 65 - 5.7f * (topper.tName.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2: 16  ), (i / perPage) * 120 + 100 + gfx.PageSize.Height / 2 + 35);
+                gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage * 12) + 65 - 5.7f * (topper.tName.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2 : 16), (i / perPage) * 120 + 100 + gfx.PageSize.Height / 2 + 35);
 
                 i++;
                 if (i == 3 * perPage)
