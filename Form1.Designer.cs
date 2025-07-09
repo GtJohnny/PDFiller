@@ -84,7 +84,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this.imagePanel = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             groupBox3 = new System.Windows.Forms.GroupBox();
             label3 = new System.Windows.Forms.Label();
@@ -649,14 +649,17 @@
             // 
             // qntColumn
             // 
-            this.qntColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.qntColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.qntColumn.FillWeight = 5F;
             this.qntColumn.HeaderText = "Quantity";
             this.qntColumn.Name = "qntColumn";
             this.qntColumn.ReadOnly = true;
+            this.qntColumn.Width = 80;
             // 
             // topperColumn
             // 
             this.topperColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.topperColumn.FillWeight = 30F;
             this.topperColumn.HeaderText = "Topper";
             this.topperColumn.Name = "topperColumn";
             this.topperColumn.ReadOnly = true;
@@ -777,7 +780,7 @@
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.panel2);
+            this.tabPage3.Controls.Add(this.imagePanel);
             this.tabPage3.Location = new System.Drawing.Point(4, 26);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
@@ -786,15 +789,15 @@
             this.tabPage3.Text = "Imagini";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // panel2
+            // imagePanel
             // 
-            this.panel2.AutoScroll = true;
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(3, 3);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(618, 493);
-            this.panel2.TabIndex = 0;
-            this.panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.panel2_Paint);
+            this.imagePanel.AutoScroll = true;
+            this.imagePanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.imagePanel.Location = new System.Drawing.Point(3, 3);
+            this.imagePanel.Name = "imagePanel";
+            this.imagePanel.Size = new System.Drawing.Size(618, 493);
+            this.imagePanel.TabIndex = 0;
+            this.imagePanel.Paint += new System.Windows.Forms.PaintEventHandler(this.imagePanel_Paint);
             // 
             // panel1
             // 
@@ -890,13 +893,13 @@
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel imagePanel;
         internal System.Windows.Forms.ComboBox drawComboBox;
         private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn qntColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn topperColumn;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn qntColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn topperColumn;
     }
 }
 
