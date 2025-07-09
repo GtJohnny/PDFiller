@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -418,7 +419,14 @@ namespace PDFiller
             throw new FileNotFoundException("All zip files already extracted.\r\n");
         }
 
-
+        /// <summary>
+        /// Identifies the AWB number from the given page.
+        /// Aswell as the country of origin based on the AWB format.
+        /// </summary>
+        /// <param name="page">Page to read text from</param>
+        /// <param name="idAWB">AWB number</param>
+        /// <param name="country">Country of origin</param>
+        /// <returns>True if successfull, false if not</returns>
         public bool ReadAwbId(UglyToad.PdfPig.Content.Page page, out string idAWB, out string country)
         {
             idAWB = "";
@@ -525,7 +533,9 @@ namespace PDFiller
                         //failed++;
                         //continue;
                     }
+                
                     o.country = country;
+
 
                     pdfMerge.AddPage(pdfWrite.Pages[i]);
 
@@ -542,17 +552,9 @@ namespace PDFiller
                     //bool test = tName.Equals(decodedString);
 
 
-
+                    //lower half of the page
                     gfx.DrawRectangle(XBrushes.White, rect);
-
-
-                    //byte[] bytes = o.toppere[0].tName.ToCharArray()
-                    //            .Select(c => (byte)c)
-                    //            .ToArray();
-                    //string decodedString = System.Text.Encoding.UTF8.GetString(bytes);
-
-                    
-                    
+                    //write the country in the middle
                     gfx.DrawString(country, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, gfx.PageSize.Width / 2 , gfx.PageSize.Height / 2 + 18, XStringFormats.Center);
 
 
@@ -673,7 +675,7 @@ namespace PDFiller
         /// <returns></returns>
         private string ModifyName(string tId, string tName)
         {
-
+            //Sa vad ce naiba fac cu numele in bulgara, cum le editez 
             if (SpecialSwaps.ContainsKey(tId))
             {
                 return tName = SpecialSwaps[tId];
@@ -692,6 +694,18 @@ namespace PDFiller
                 }
 
             }
+
+            //byte[] bytes = tName.ToCharArray()
+            //   .Select(c => (byte)c)
+            //   .ToArray();
+            //string decodedString = System.Text.Encoding.UTF8.GetString(bytes);
+            
+            //improvizatie pentru bulgaria  
+            if(tName.StartsWith("Комплект украса"))
+            {
+                return tName.Substring(tName.IndexOf('/'), tName.IndexOf(',') - tName.IndexOf('/')).Trim(',', '/', ' ', '\\');
+            }
+
             return tName;
 
         }
