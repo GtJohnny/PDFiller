@@ -29,6 +29,11 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace PDFiller
 {
+
+    /// <summary>
+    /// A singleton builder class that manages the reading of excel files and mapping of orders.
+    /// Returns a shipment object that contains all the orders and the bussiness logic.
+    /// </summary>
     internal class Builder
     {
         private static Builder menu = null;
@@ -41,7 +46,6 @@ namespace PDFiller
              new KeyValuePair<Regex,string>(new Regex(@"[0-9]{3}(EMG|ONB)\w{10}[0-9]{3}"),"Bulgaria")
 
             //new Regex(@"[0-9]{3}(EMG|ONB)\w{10}[0-9]{3}")
-
         };
 
 
