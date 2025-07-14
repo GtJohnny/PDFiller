@@ -672,7 +672,7 @@ namespace PDFiller
         /// </summary>
         /// <param name="tId">The Product Number (PN) of the product</param>
         /// <param name="tName">The original name of said product</param>
-        /// <returns></returns>
+        /// <returns>The name with </returns>
         private string ModifyName(string tId, string tName)
         {
             //Sa vad ce naiba fac cu numele in bulgara, cum le editez 
