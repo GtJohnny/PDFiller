@@ -15,18 +15,35 @@ namespace PDFiller
     internal class PreviewObserver:IObserver<Shipment>
     {
         private DataGridView _dataGridView;
-        List<Order> _orders;
+
+        public PreviewObserver(DataGridView dataGridView)
+        {
+            _dataGridView = dataGridView;
+            _dataGridView.Rows.Clear();
+        }
+
         public virtual void OnCompleted()
         {
-            //No need for our use
+            throw new NotImplementedException();
         }
         public virtual void OnNext(Shipment shipment)
         {
-            //List<Order> orders = shipment.GetOrders();
+            List<Order> orders = shipment.Orders;
+            var rows = _dataGridView.Rows;
+            rows.Clear();
+            foreach (Order o in orders)
+            {
+                rows.Add(o.name, o.toppers[0].name, o.toppers[0].quantity);
+                foreach (Order.topper tp in o.toppers.GetRange(1, o.toppers.Count - 1))
+                {
+                    rows.Add(null, tp.name, tp.quantity);
+                }
+            }
         }
         public virtual void OnError(Exception error)
         {
-            // Maybe log the error or handle it in some way
+            _dataGridView.Rows.Clear();
+            _dataGridView.Rows.Add(null,error.Message,null);
         }
     }
 }

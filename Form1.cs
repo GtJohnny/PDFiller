@@ -600,10 +600,10 @@ namespace PDFiller
                         var rows = excelGridView.Rows;
                     foreach (Order o in orders)
                     {
-                        rows.Add(o.name, o.toppere[0].tName, o.toppere[0].tQuantity);
-                        foreach (Order.topper tp in o.toppere.GetRange(1, o.toppere.Count - 1))
+                        rows.Add(o.name, o.toppers[0].name, o.toppers[0].quantity);
+                        foreach (Order.topper tp in o.toppers.GetRange(1, o.toppers.Count - 1))
                         {
-                            rows.Add(null, tp.tName, tp.tQuantity);
+                            rows.Add(null, tp.name, tp.quantity);
                         }
                     }
                     break;
@@ -628,18 +628,18 @@ namespace PDFiller
 
                     foreach (Order o in orders)
                     {
-                        foreach (Order.topper tp in o.toppere)
+                        foreach (Order.topper tp in o.toppers)
                         {
                             //KeyValuePair<string, string> key = new KeyValuePair<string, string>(tp.tName, tp.tId);
-                            string key = tp.tName;
+                            string key = tp.name;
 
                             if (dict.ContainsKey(key))
                             {
-                                dict[key] += tp.tQuantity;
+                                dict[key] += tp.quantity;
                             }
                             else
                             {
-                                dict[key] = tp.tQuantity;
+                                dict[key] = tp.quantity;
                             }
                         }
                     }
@@ -756,19 +756,19 @@ namespace PDFiller
             Process.Start(Environment.CurrentDirectory);
         }
 
-        private void imagePanel_Paint(object sender, PaintEventArgs e)
-        {
+        //private void imagePanel_Paint(object sender, PaintEventArgs e)
+        //{
 
-            Graphics g = imagePanel.CreateGraphics();
-            int nr = 0;
-            FileInfo[] files = new DirectoryInfo(Environment.CurrentDirectory + "\\images\\").GetFiles("*.png");
-            foreach (FileInfo file in files)
-            {
-                Bitmap img = Bitmap.FromFile(file.FullName) as Bitmap;
-                g.DrawImage(img, new Rectangle((nr % 5) * 130, (nr / 5) * 130, 100, 100));
-                nr++;
-            }
-        }
+        //    Graphics g = imagePanel.CreateGraphics();
+        //    int nr = 0;
+        //    FileInfo[] files = new DirectoryInfo(Environment.CurrentDirectory + "\\images\\").GetFiles("*.png");
+        //    foreach (FileInfo file in files)
+        //    {
+        //        Bitmap img = Bitmap.FromFile(file.FullName) as Bitmap;
+        //        g.DrawImage(img, new Rectangle((nr % 5) * 130, (nr / 5) * 130, 100, 100));
+        //        nr++;
+        //    }
+        //}
     }
 }
 

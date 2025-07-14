@@ -38,8 +38,10 @@ namespace PDFiller
     {
         private static Builder menu = null;
 
-        private readonly FileInfo excel = null;
-        private readonly Form1 form = null;
+        private List<FileInfo> unzippedList = null;
+        private FileInfo zipFile = null;
+        private FileInfo excel = null;
+        private Form1 form = null;
         private KeyValuePair<Regex, string>[] regexes = new KeyValuePair<Regex, string>[]
         {
              new KeyValuePair<Regex,string>(new Regex(@"4(EMG|ONB)\w{11}[0-9]{3}"),"Romania"),
@@ -292,7 +294,7 @@ namespace PDFiller
                         if (id == lastOrder.id)
                         {
                             Order.topper topper = new Order.topper(tName, qnt, idProduct);
-                            lastOrder.toppere.Add(topper);
+                            lastOrder.toppers.Add(topper);
 
                         }
                         else
@@ -566,7 +568,7 @@ namespace PDFiller
                     {
                         case 0:
 
-                            if (!WriteOnPage(gfx, o.toppere))
+                            if (!WriteOnPage(gfx, o.toppers))
                             {
                                 errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
                                 failed++;
@@ -576,20 +578,20 @@ namespace PDFiller
 
                             break;
                         case 1:
-                            if (!WriteOnPage(gfx, o.toppere))
+                            if (!WriteOnPage(gfx, o.toppers))
                             {
                                 errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
                                 failed++;
                                 continue;
                             }
-                            DrawOnPage(gfx, o.toppere, 2);
+                            DrawOnPage(gfx, o.toppers, 2);
                             break;
                         case 2:
-                            DrawOnPage(gfx, o.toppere, 4);
+                            DrawOnPage(gfx, o.toppers, 4);
                             break;
 
                         default:
-                            if (!WriteOnPage(gfx, o.toppere))
+                            if (!WriteOnPage(gfx, o.toppers))
                             {
                                 errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
                                 failed++;
@@ -758,7 +760,7 @@ namespace PDFiller
                      //   gfx.DrawImage(img, page.Width - 95 * (Math.Max(toppere.Count, 16) / 4) + 95 * (i / 4)+100, page.Height / 2 + 20 + 95 * (i % 4), 90, 90);
                     }
                     */
-                    gfx.DrawString($"{topper.tQuantity} buc: {topper.tName}", font, brush, 25, gfx.PageSize.Height / 2 + 25 + 20 * i, XStringFormats.CenterLeft);
+                    gfx.DrawString($"{topper.quantity} buc: {topper.name}", font, brush, 25, gfx.PageSize.Height / 2 + 25 + 20 * i, XStringFormats.CenterLeft);
                     // gfx.DrawImage(img, page.Width - 95 * (nrImagini / 4) + 95 * (j / 4), page.Height / 2 + 20 + 95 * (j % 4), 90, 90);
                     i++;
 
@@ -823,30 +825,30 @@ namespace PDFiller
             {
 
                 XImage img = null;
-                if (images.ContainsKey(topper.tId))
+                if (images.ContainsKey(topper.id))
                 {
-                    img = images[topper.tId];
+                    img = images[topper.id];
                 }
                 else
                 {
-                    img = TryFindImage(topper.tId);
+                    img = TryFindImage(topper.id);
                     if (img != null)
                     {
-                        images.Add(topper.tId, img);
+                        images.Add(topper.id, img);
                     }
                     else
                     {
                         try
                         {
-                            client.DownloadFile($@"https://raw.githubusercontent.com/GtJohnny/PDFillerImages/main/{topper.tId}.png", $"{imagesDir}/{topper.tId}.png");
+                            client.DownloadFile($@"https://raw.githubusercontent.com/GtJohnny/PDFillerImages/main/{topper.id}.png", $"{imagesDir}/{topper.id}.png");
 
                         }
                         catch (WebException)
                         {
-                            form.textBox1.Text += $"Couldn't download image for {topper.tId}.\r\n";
+                            form.textBox1.Text += $"Couldn't download image for {topper.id}.\r\n";
                         }
 
-                        img = TryFindImage(topper.tId);
+                        img = TryFindImage(topper.id);
                     }
                 }
 
@@ -856,9 +858,9 @@ namespace PDFiller
                 //MATH =====>>
                 //per pozition *  (pageH=90 +30 space + space with img/row) - (center text) + (even abscise per img/row (2= right column, 3=wide)
 
-                string temp_name = $"{topper.tQuantity}:{topper.tName}";
+                string temp_name = $"{topper.quantity}:{topper.name}";
 
-                gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage * 12) + 65 - 5.7f * (topper.tName.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2 : 16), (i / perPage) * 120 + 100 + gfx.PageSize.Height / 2 + 35);
+                gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage * 12) + 65 - 5.7f * (topper.name.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2 : 16), (i / perPage) * 120 + 100 + gfx.PageSize.Height / 2 + 35);
 
                 i++;
                 if (i == 3 * perPage)

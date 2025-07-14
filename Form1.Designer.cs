@@ -797,7 +797,6 @@
             this.imagePanel.Name = "imagePanel";
             this.imagePanel.Size = new System.Drawing.Size(618, 493);
             this.imagePanel.TabIndex = 0;
-            this.imagePanel.Paint += new System.Windows.Forms.PaintEventHandler(this.imagePanel_Paint);
             // 
             // panel1
             // 
