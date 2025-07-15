@@ -739,15 +739,14 @@ namespace PDFiller
         }
 
 
-        private void button2_Click_2(object sender, EventArgs e)
-        {
-        }
-
-        private void button2_Click_3(object sender, EventArgs e)
+        private void TestButtonClick(object sender, EventArgs e)
         {
             Builder builder = Builder.GetInstance();
-
-            builder.ZStartTest();
+            string path = "C:\\Users\\ionut\\Desktop\\AWB\\09.07.2025 ro\\orders_details_file_10-07-2025-00-44-34.xlsx";
+            List<Order> orders = builder.ReadExcel(new FileInfo(path));
+            Shipment shipment = new Shipment(orders, null, null);
+            shipment.Subscribe(new ImagesObserver(imagePanel));
+            shipment.Notify();
 
         }
 

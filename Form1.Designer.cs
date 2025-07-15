@@ -42,6 +42,7 @@
             System.Windows.Forms.Label label12;
             System.Windows.Forms.Label label13;
             System.Windows.Forms.Label label14;
+            System.Windows.Forms.Panel panel1;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.openPdfCheck = new System.Windows.Forms.CheckBox();
             this.drawComboBox = new System.Windows.Forms.ComboBox();
@@ -49,6 +50,7 @@
             this.autoFillBtn = new System.Windows.Forms.Button();
             this.tabControlMenu = new System.Windows.Forms.TabControl();
             this.AutoFillPage = new System.Windows.Forms.TabPage();
+            this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.filePage = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
@@ -80,12 +82,10 @@
             this.nameCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.qntCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.button2 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.imagePanel = new System.Windows.Forms.Panel();
-            this.panel1 = new System.Windows.Forms.Panel();
             groupBox3 = new System.Windows.Forms.GroupBox();
             label3 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
@@ -100,6 +100,7 @@
             label12 = new System.Windows.Forms.Label();
             label13 = new System.Windows.Forms.Label();
             label14 = new System.Windows.Forms.Label();
+            panel1 = new System.Windows.Forms.Panel();
             groupBox3.SuspendLayout();
             this.tabControlMenu.SuspendLayout();
             this.AutoFillPage.SuspendLayout();
@@ -115,7 +116,7 @@
             this.tabPage1.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage3.SuspendLayout();
-            this.panel1.SuspendLayout();
+            panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox3
@@ -335,6 +336,7 @@
             // 
             // AutoFillPage
             // 
+            this.AutoFillPage.Controls.Add(this.button2);
             this.AutoFillPage.Controls.Add(label13);
             this.AutoFillPage.Controls.Add(this.button3);
             this.AutoFillPage.Controls.Add(label5);
@@ -346,6 +348,16 @@
             this.AutoFillPage.TabIndex = 2;
             this.AutoFillPage.Text = "Autofill";
             this.AutoFillPage.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(35, 37);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 1;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.TestButtonClick);
             // 
             // button3
             // 
@@ -731,7 +743,6 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.button2);
             this.tabPage1.Controls.Add(this.textBox1);
             this.tabPage1.Location = new System.Drawing.Point(4, 26);
             this.tabPage1.Name = "tabPage1";
@@ -740,17 +751,6 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "WorkflowStatus";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(524, 6);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Visible = false;
-            this.button2.Click += new System.EventHandler(this.button2_Click_3);
             // 
             // textBox1
             // 
@@ -793,6 +793,7 @@
             // 
             this.imagePanel.AutoScroll = true;
             this.imagePanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.imagePanel.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.imagePanel.Location = new System.Drawing.Point(3, 3);
             this.imagePanel.Name = "imagePanel";
             this.imagePanel.Size = new System.Drawing.Size(618, 493);
@@ -800,14 +801,14 @@
             // 
             // panel1
             // 
-            this.panel1.BackColor = System.Drawing.Color.White;
-            this.panel1.Controls.Add(groupBox3);
-            this.panel1.Controls.Add(this.tabControlMenu);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel1.Location = new System.Drawing.Point(631, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(211, 532);
-            this.panel1.TabIndex = 3;
+            panel1.BackColor = System.Drawing.Color.White;
+            panel1.Controls.Add(groupBox3);
+            panel1.Controls.Add(this.tabControlMenu);
+            panel1.Dock = System.Windows.Forms.DockStyle.Right;
+            panel1.Location = new System.Drawing.Point(631, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new System.Drawing.Size(211, 532);
+            panel1.TabIndex = 3;
             // 
             // Form1
             // 
@@ -815,7 +816,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.ClientSize = new System.Drawing.Size(842, 683);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(panel1);
             this.Controls.Add(this.groupBox8);
             this.Controls.Add(this.tabControl2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
@@ -850,7 +851,7 @@
             this.tabPage1.PerformLayout();
             this.tabControl2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
+            panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -888,7 +889,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn numeCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn nameCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn qntCol;
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TabPage tabPage3;
