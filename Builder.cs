@@ -32,16 +32,27 @@ namespace PDFiller
 
     /// <summary>
     /// A singleton builder class that manages the reading of excel files and mapping of orders.
-    /// Returns a shipment object that contains all the orders and the bussiness logic.
+    /// Returns a Shipment object that contains all the orders and the bussiness logic.
     /// </summary>
     internal class Builder
     {
+        /// <summary>
+        /// Singleton instance of the Builder class.
+        /// </summary>
         private static Builder menu = null;
+
+        /// <summary>
+        /// The shipment object that contains all the orders and the bussiness logic.
+        /// </summary>
+        private Shipment shipment = null;
+
 
         private List<FileInfo> unzippedList = null;
         private FileInfo zipFile = null;
         private FileInfo excel = null;
         private Form1 form = null;
+
+        //TODO need to improve on this.
         private KeyValuePair<Regex, string>[] regexes = new KeyValuePair<Regex, string>[]
         {
              new KeyValuePair<Regex,string>(new Regex(@"4(EMG|ONB)\w{11}[0-9]{3}"),"Romania"),
@@ -54,7 +65,7 @@ namespace PDFiller
 
         private readonly string imagesDir = Environment.CurrentDirectory + @"\images";
 
-
+        //TODO move this to a file and that's it. 
         private readonly Dictionary<string, string> SpecialSwaps = new Dictionary<string, string>()
         {
             { "5941933302128", "Peppa Pig" },

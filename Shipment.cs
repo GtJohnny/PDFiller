@@ -23,6 +23,12 @@ namespace PDFiller
         private FileInfo mergedPDF;
         private List<IObserver<Shipment>> _observers=  new List<IObserver<Shipment>>();
 
+        public Shipment()
+        {
+            this.orders = new List<Order>();
+            this.unzippedList = new List<FileInfo>();
+            this.mergedPDF = null;
+        }
         public Shipment(List<Order> orders, List<FileInfo> unzippedList, FileInfo mergedPDF)
         {
             this.orders = orders;
@@ -54,23 +60,16 @@ namespace PDFiller
         /// <summary>
         /// Notify all subscribers based on current state.
         /// </summary>
-        public void Notify()
+       
+        public void Notify()//Maybe use aspects too later?
         {
-            if (mergedPDF == null)
-            {
-                NotifyError(new Exception("Merged PDF is null!")); 
-                return;
-            }
+           
             if (orders == null || orders.Count == 0)
             {
                 NotifyError(new Exception("Orders list is empty!"));
                 return;
             }
-            if (unzippedList == null || unzippedList.Count == 0)
-            {
-                NotifyError(new Exception("Unzipped list is empty!"));
-                return;
-            }
+          
             foreach (var observer in _observers)
             {
                 observer.OnNext(this);
@@ -81,7 +80,7 @@ namespace PDFiller
         /// Notify all observers with an Exception.
         /// </summary>
         /// <param name="error"></param>
-        private void NotifyError(Exception error)
+        public void NotifyError(Exception error)
         {
             foreach (var observer in _observers)
             {
