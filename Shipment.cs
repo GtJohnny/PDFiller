@@ -10,6 +10,7 @@ namespace PDFiller
     /// <summary>
     /// Object representing the entire shipment of the day, as in 
     /// the orders with their corespinding AWB's and shipment information from the excel spreadsheet.
+    /// 
     /// </summary>
     internal class Shipment:IObservable<Shipment>
     {
@@ -28,11 +29,20 @@ namespace PDFiller
             this.unzippedList = unzippedList;
             this.mergedPDF = mergedPDF;
         }
+
+        public void Update(List<Order> orders, List<FileInfo> unzippedList, FileInfo mergedPDF)
+        {
+            this.orders = orders;
+            this.unzippedList = unzippedList;
+            this.mergedPDF = mergedPDF;
+            Notify();
+        }
+
         /// <summary>
         /// Add candidate to observers list.
         /// </summary>
         /// <param name="observer">IObserver to subscribe</param>
-        /// <returns>An IDisposable refference if we want to unsubscribe the user later.</returns>
+        /// <returns>An IDisposable refference if we want to unsubscribe the object later.</returns>
         public IDisposable Subscribe(IObserver<Shipment> observer)
         {
             if (!_observers.Contains(observer))
@@ -46,6 +56,21 @@ namespace PDFiller
         /// </summary>
         public void Notify()
         {
+            if (mergedPDF == null)
+            {
+                NotifyError(new Exception("Merged PDF is null!")); 
+                return;
+            }
+            if (orders == null || orders.Count == 0)
+            {
+                NotifyError(new Exception("Orders list is empty!"));
+                return;
+            }
+            if (unzippedList == null || unzippedList.Count == 0)
+            {
+                NotifyError(new Exception("Unzipped list is empty!"));
+                return;
+            }
             foreach (var observer in _observers)
             {
                 observer.OnNext(this);

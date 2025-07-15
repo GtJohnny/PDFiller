@@ -8,63 +8,58 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static PDFiller.Order;
 
 namespace PDFiller
 {
     
     internal class ImagesObserver : IObserver<Shipment>
     {
-        //private struct TopperData
-        //{
-        //    public string name;
-        //    public Bitmap bmp;
-        //    public TopperData(string name, Bitmap bmp)
-        //    {
-        //        this.name = name;
-        //        this.bmp = bmp;
-        //    }
-        //}
-        private Hashtable _toppers = new Hashtable();
+        private struct TopperData
+        {
+            public string name;
+            public Bitmap bmp;
+            public TopperData(string name, Bitmap bmp)
+            {
+                this.name = name;
+                this.bmp = bmp;
+            }
+        }
         private Panel _panel;
         Graphics g;
-        List<Order> orders;
-        //Dictionary<string, TopperData> data = new Dictionary<string, TopperData>();
-        string path = Environment.CurrentDirectory + @"/Images";
+        List<Order> _orders;
+        Dictionary<string, TopperData> _toppers = new Dictionary<string, TopperData>();
+        string path = Environment.CurrentDirectory + @"\Images";
 
 
-        private void DrawTopper(Order.topper topper,int i)
+        private void LoadBMPs()
         {
-            string key = topper.id;
-            if (_toppers.ContainsKey(key))
+            foreach (var order in _orders)
             {
-
-                return;
-            }
-            else
-            {
-                string file_path = $@"{path}/ {key}.png";
-                if (File.Exists(path))
+                foreach (var topper in order.toppers)
                 {
-                    Bitmap bmp = Bitmap.FromFile(file_path) as Bitmap;
-                    //data[key] = new TopperData(topper.name, bmp);
-                    g.DrawImage(bmp, new Rectangle((i % 4) * 130 + 10, (i / 4) * 130 + 10, 100, 100));
-                    g.DrawString($"{topper.quantity}.{topper.name}", _panel.Font, new SolidBrush(Color.Black), (i % 4) * 130 + 55, (i / 4) * 130 + 110);
+                    string key = topper.id;
+                    string file_path = $@"{path}\{key}.png";
+
+                    if (!_toppers.ContainsKey(key) && File.Exists(file_path)){ 
+                        
+                        Bitmap bmp = Bitmap.FromFile(file_path) as Bitmap;
+                        _toppers[key] = new TopperData(topper.name, bmp);
+                    }
                 }
             }
         }
         private void Paint()
         {
             g.Clear(Color.White);
-            if (orders == null) return;
-
+            if (_orders == null) return;
+            if (_toppers.Count == 0) LoadBMPs();
             int i = 0;
-
-            foreach (Order order in orders)
+            foreach(var data in _toppers)
             {
-                foreach (Order.topper topper in order.toppers)
-                {
-                    DrawTopper(topper,i++);
-                }
+                g.DrawImage(data.Value.bmp, new Rectangle((i % 4) * 150 + 25, (i / 4) * 130 + 10, 100, 100));
+                g.DrawString($"{data.Value.name}", new Font("Times New Roman", 14f), new SolidBrush(Color.Black), (i % 4) * 150 + 70 - 4.5f * data.Value.name.Length, (i / 4) * 130 + 110);
+                i++;
             }
 
         }
@@ -72,8 +67,9 @@ namespace PDFiller
         {
             this._panel = panel;
             this.g = panel.CreateGraphics();
-            panel.Invalidate();
             panel.Paint += (sender, e) => this.Paint();
+            panel.Invalidate();
+
         }
 
 
@@ -86,13 +82,14 @@ namespace PDFiller
 
         public void OnError(Exception error)
         {
-            orders = null;
+            _orders = null;
+            _toppers.Clear();
             _panel.Invalidate();
         }
 
         public void OnNext(Shipment shipment)
         {
-            this.orders = shipment.Orders;
+            this._orders = shipment.Orders;
             _toppers.Clear();
             _panel.Invalidate();
         }

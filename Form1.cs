@@ -289,7 +289,7 @@ namespace PDFiller
 
                     this.excel = new FileInfo(ofd.FileName);
                     textBox1.AppendText( $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nFound.xlsx order summary at:\r\n" + excel.FullName + "\r\n");
-                    excelGridView.Rows.Clear();
+                    previewGridView.Rows.Clear();
                     summaryGridView.Rows.Clear();
                     this.newExcel = true;
                     updateTabIndex();
@@ -422,7 +422,7 @@ namespace PDFiller
                         excel = menu.FindExcel(workDir);
                         excelPathBox.Text = excel.FullName;
 
-                        excelGridView.Rows.Clear();
+                        previewGridView.Rows.Clear();
                         summaryGridView.Rows.Clear();
                         this.newExcel = true; 
                         updateTabIndex();
@@ -515,7 +515,7 @@ namespace PDFiller
                 textBox1.AppendText( $"Found {unzippedList.Count} orders.\r\n");
 
                 excel = menu.FindExcel(workDir);
-                excelGridView.Rows.Clear();
+                previewGridView.Rows.Clear();
                 summaryGridView.Rows.Clear();
 
 
@@ -597,7 +597,7 @@ namespace PDFiller
                     }
 
                         //if (this.previewExcel != null || this.excel == this.previewExcel) return;
-                        var rows = excelGridView.Rows;
+                        var rows = previewGridView.Rows;
                     foreach (Order o in orders)
                     {
                         rows.Add(o.name, o.toppers[0].name, o.toppers[0].quantity);
@@ -746,6 +746,8 @@ namespace PDFiller
             List<Order> orders = builder.ReadExcel(new FileInfo(path));
             Shipment shipment = new Shipment(orders, null, null);
             shipment.Subscribe(new ImagesObserver(imagePanel));
+            shipment.Subscribe(new SummaryObserver(summaryGridView));
+            shipment.Subscribe(new PreviewObserver(previewGridView));
             shipment.Notify();
 
         }
