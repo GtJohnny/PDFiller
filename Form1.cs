@@ -21,6 +21,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Data.Odbc;
 using System.Threading;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 
 
@@ -43,14 +44,11 @@ namespace PDFiller
         private FileInfo zip = null;
         private FileInfo excel = null;
         private List<FileInfo> unzippedList = null;
-        private List<Order> orders = null;
-        internal string mergedPath = null;
-        private FileInfo summaryExcel = null;
-        private FileInfo previewExcel = null;
-        private bool newExcel = false;
+        private Shipment shipment = new Shipment();
 
 
-        
+
+
 
 
 
@@ -137,6 +135,11 @@ namespace PDFiller
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.shipment.Subscribe(new SummaryObserver(summaryGridView));
+            this.shipment.Subscribe(new PreviewObserver(previewGridView));
+            this.shipment.Subscribe(new ImagesObserver(imagePanel));
+
+
             if (File.Exists("options.ini"))
             {
                 readOptions();
@@ -165,8 +168,7 @@ namespace PDFiller
             unzippedList = new List<FileInfo>() { new FileInfo(DebugPath + "417264331_Sameday_4EMG24107789758001.pdf") };
             excel = builder.FindExcel(workDir);
             var orders = builder.ReadExcel(excel);
-            this.newExcel = false;
-            string resPath = builder.WriteOnOrders(unzippedList, orders, workDir.FullName, "ROBLOX_IMAGE_TEST");
+            string resPath = builder.WriteOnOrders(unzippedList, orders, workDir.FullName, "ROBLOX_IMAGE_TEST").MergedPDF;
             Process.Start(resPath);
 
         }
@@ -245,7 +247,7 @@ namespace PDFiller
                 case DialogResult.OK:
                     //manualSelect = false;
                     zipPathBox.Text = ofd.FileName;
-                    zip = new FileInfo(ofd.FileName);
+                    this.zip = new FileInfo(ofd.FileName);
                     unzippedList = null;
                     textBox1.AppendText( $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nFound zip archive at:\r\n {zip.FullName} \r\n");
                     zipLabel.Font = new System.Drawing.Font(zipLabel.Font, FontStyle.Regular);
@@ -257,14 +259,18 @@ namespace PDFiller
 
         private void zipPathBox_DoubleClick(object sender, EventArgs e)
         {
-            tabControlMenu.SelectedTab = filePage;
-            zipButton.PerformClick();
+            if(this.zip != null && this.zip.Exists)
+            {
+                Process.Start(this.zip.DirectoryName);
+            }
         }
 
         private void excelPathBox_DoubleClick(object sender, EventArgs e)
         {
-            tabControlMenu.SelectedTab = filePage;
-            excelButton.PerformClick();
+            if(this.excel != null && this.excel.Exists)
+            {
+                Process.Start(this.excel.FullName);
+            }
         }
         //   internal bool newExcel = false;
         private void excelButton_Click(object sender, EventArgs e)
@@ -289,10 +295,9 @@ namespace PDFiller
 
                     this.excel = new FileInfo(ofd.FileName);
                     textBox1.AppendText( $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nFound.xlsx order summary at:\r\n" + excel.FullName + "\r\n");
-                    excelGridView.Rows.Clear();
+                    previewGridView.Rows.Clear();
                     summaryGridView.Rows.Clear();
-                    this.newExcel = true;
-                    updateTabIndex();
+                    //updateTabIndex();
                     break;
                 default:
                     break;
@@ -422,10 +427,9 @@ namespace PDFiller
                         excel = menu.FindExcel(workDir);
                         excelPathBox.Text = excel.FullName;
 
-                        excelGridView.Rows.Clear();
+                        previewGridView.Rows.Clear();
                         summaryGridView.Rows.Clear();
-                        this.newExcel = true; 
-                        updateTabIndex();
+                        //updateTabIndex();
 
 
                         zip = menu.FindZipsUnzipped(workDir);
@@ -461,19 +465,19 @@ namespace PDFiller
                     {
                         throw new FileNotFoundException("Zip archive could not be found.");
                     }
-                    unzippedList = menu.UnzipArchive(zip, ref saveDir);
+                    unzippedList = menu.UnzipArchive(zip, out saveDir);
                     textBox1.AppendText($"Extracted archive: {zip.Name}\r\n");
                     textBox1.AppendText($"Extracted {unzippedList.Count} orders.\r\n");
                 }
                 textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nReading the excel file.\r\n");
 
                 
-                orders = menu.ReadExcel(excel);
-                this.newExcel = false; //reset the new excel flag, so we don't read it again next time
+                List<Order> orders = menu.ReadExcel(excel);
                 saveDir = unzippedList.First().DirectoryName;
 
                 //    int failed = 0;
-                string path = mergedPath = menu.WriteOnOrders(unzippedList, orders, saveDir, "CustomPDF");
+                this.shipment.Update(menu.WriteOnOrders(unzippedList, orders, saveDir, "CustomPDF"));
+
                 //if (failed > 0)
                 //{
                 //    textBox1.AppendText( $"{failed} files failed being filled.\r\n";
@@ -482,13 +486,13 @@ namespace PDFiller
                 //{
                 //    textBox1.AppendText( "All were filled succesfully.\r\n";
                 //}
-                textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nMerged order PDF was saved at location:\r\n{ path }\r\n");
-                if (tabControl2.SelectedIndex == 1) updateTabIndex();
+                textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nMerged order PDF was saved at location:\r\n{ this.shipment.MergedPDF }\r\n");
+                //if (tabControl2.SelectedIndex == 1) updateTabIndex();
 
                 if (openPdfCheck.Checked)
                 {
                     textBox1.AppendText( "The pdf should open about now:\r\n");
-                    Process.Start(path);
+                    Process.Start(this.shipment.MergedPDF);
                 }
             }
             catch (Exception ex)
@@ -503,7 +507,6 @@ namespace PDFiller
         {
             try
             {
-                //   manualSelect = false;
                 Builder menu = PDFiller.Builder.GetInstance(this);
                 workDir = menu.FindWorkDir(rootDir);
                 textBox1.AppendText( $"Found work directory at:\r\n{workDir.FullName}\r\n");
@@ -511,23 +514,26 @@ namespace PDFiller
                 textBox1.AppendText( $"Found zip archive at:\r\n{zip.FullName}\r\n");
                 zipPathBox.Text = zip.FullName;
                 string extractedDir = null;
-                unzippedList = menu.UnzipArchive(zip, ref extractedDir);
+                unzippedList = menu.UnzipArchive(zip, out extractedDir);
                 textBox1.AppendText( $"Found {unzippedList.Count} orders.\r\n");
 
                 excel = menu.FindExcel(workDir);
-                excelGridView.Rows.Clear();
+                previewGridView.Rows.Clear();
                 summaryGridView.Rows.Clear();
 
 
                 textBox1.AppendText( $"Found excel file at:\r\n{ excel.FullName }\r\n");
                 excelPathBox.Text = excel.FullName;
-                orders = menu.ReadExcel(excel);
-                this.newExcel = false;
-                updateTabIndex();
+                List<Order> orders = menu.ReadExcel(excel);
+                //updateTabIndex();
 
 
                 //   int failed = 0;
-                string path = mergedPath = menu.WriteOnOrders(unzippedList, orders, extractedDir, "Merged&Filled");
+                this.shipment.Update(menu.WriteOnOrders(unzippedList, orders, extractedDir, "Merged&Filled"));
+                //Shipment shipment = new Shipment(orders, unzippedList, extractedDir + "\\Merged&Filled");
+
+                string mergedPath = shipment.MergedPDF;
+                //string path = mergedPath = menu.WriteOnOrders(unzippedList, orders, extractedDir, "Merged&Filled");
                 //if (failed > 0)
                 //{
                 //    textBox1.AppendText( failed + " files failed being filled, please check them.\r\n";
@@ -536,11 +542,11 @@ namespace PDFiller
                 //{
                 //    textBox1.AppendText( "All pdfs completed and merged with success.\r\n";
                 //}
-                textBox1.AppendText( $"Merged pdf was saved at \r\n{path}\r\n");
+                textBox1.AppendText( $"Merged pdf was saved at \r\n{mergedPath}\r\n");
                 if (openPdfCheck.Checked)
                 {
                     textBox1.AppendText( "It should open about now.\r\n");
-                    Process.Start(path);
+                    Process.Start(mergedPath);
                 }
             }
             catch (Exception ex)
@@ -574,104 +580,99 @@ namespace PDFiller
         }
 
 
-        private void updateTabIndex()
-        {
-            switch (tabControl2.SelectedIndex)
-            {
-                case 0:
-                    //       if (mergedPath == null || (chromiumWebBrowser1.Address!= null && mergedPath != chromiumWebBrowser1.Address)) return;
-                    //     chromiumWebBrowser1.LoadUrlAsync(mergedPath);
-                    break;
-                case 1: //Excel Preview
-                    //if (this.excel == null) return;
-                    if (this.newExcel || (this.excel != null && this.previewExcel != this.excel))
-                    {
-                        Builder menu = PDFiller.Builder.GetInstance();
-                        this.orders = menu.ReadExcel(excel);
-                        this.previewExcel = this.excel;
-                        this.newExcel = false;
-                    }
-                    else
-                    {
-                        return;
-                    }
+        //private void updateTabIndex()
+        //{
+        //    switch (tabControl2.SelectedIndex)
+        //    {
+        //        case 0:
+        //            //       if (mergedPath == null || (chromiumWebBrowser1.Address!= null && mergedPath != chromiumWebBrowser1.Address)) return;
+        //            //     chromiumWebBrowser1.LoadUrlAsync(mergedPath);
+        //            break;
+        //        case 1: //Excel Preview
+        //            //if (this.excel == null) return;
+        //            if (this.newExcel || (this.excel != null && this.previewExcel != this.excel))
+        //            {
+        //                Builder menu = PDFiller.Builder.GetInstance();
+        //                this.orders = menu.ReadExcel(excel);
+        //                this.previewExcel = this.excel;
+        //                this.newExcel = false;
+        //            }
+        //            else
+        //            {
+        //                return;
+        //            }
 
-                        //if (this.previewExcel != null || this.excel == this.previewExcel) return;
-                        var rows = excelGridView.Rows;
-                    foreach (Order o in orders)
-                    {
-                        rows.Add(o.name, o.toppere[0].tName, o.toppere[0].tQuantity);
-                        foreach (Order.topper tp in o.toppere.GetRange(1, o.toppere.Count - 1))
-                        {
-                            rows.Add(null, tp.tName, tp.tQuantity);
-                        }
-                    }
-                    break;
-                case 2://ExcelSummary
+        //                //if (this.previewExcel != null || this.excel == this.previewExcel) return;
+        //                var rows = previewGridView.Rows;
+        //            foreach (Order o in orders)
+        //            {
+        //                rows.Add(o.name, o.toppers[0].name, o.toppers[0].quantity);
+        //                foreach (Order.topper tp in o.toppers.GetRange(1, o.toppers.Count - 1))
+        //                {
+        //                    rows.Add(null, tp.name, tp.quantity);
+        //                }
+        //            }
+        //            break;
+        //        case 2://ExcelSummary
 
-                    if (this.excel == null) return;
-                    if (this.summaryExcel != null || this.excel == this.summaryExcel) return;
-                    if (newExcel)
-                    {
-                        Builder menu = PDFiller.Builder.GetInstance();
-                        this.orders = menu.ReadExcel(excel);
-                        this.newExcel = false;
-                        this.summaryExcel = this.excel;
-                    }
+        //            if (this.excel == null) return;
+        //            if (this.summaryExcel != null || this.excel == this.summaryExcel) return;
+        //            if (newExcel)
+        //            {
+        //                Builder menu = PDFiller.Builder.GetInstance();
+        //                this.orders = menu.ReadExcel(excel);
+        //                this.newExcel = false;
+        //                this.summaryExcel = this.excel;
+        //            }
 
-                    summaryGridView.Rows.Clear();
+        //            summaryGridView.Rows.Clear();
 
-                    //Dictionary<KeyValuePair<string,string>,int> dict = new Dictionary<KeyValuePair<string, string>, int>();
-                    Dictionary<string, int> dict = new Dictionary<string, int>();
-
-
-
-                    foreach (Order o in orders)
-                    {
-                        foreach (Order.topper tp in o.toppere)
-                        {
-                            //KeyValuePair<string, string> key = new KeyValuePair<string, string>(tp.tName, tp.tId);
-                            string key = tp.tName;
-
-                            if (dict.ContainsKey(key))
-                            {
-                                dict[key] += tp.tQuantity;
-                            }
-                            else
-                            {
-                                dict[key] = tp.tQuantity;
-                            }
-                        }
-                    }
-                    foreach (var pair in dict)
-                    {
-                        //Bitmap img = Bitmap.FromFile(Environment.CurrentDirectory + "\\images\\" + pair.Key.Value + ".png") as Bitmap;
-                        //DataGridViewRow row = new DataGridViewRow();
-                        //row.CreateCells(summaryGridView, pair.Value, pair.Key.Key, img);
-                        //row.SetValues(pair.Value, pair.Key.Key, img);                        //pair.Value, pair.Key.Key, img,
-                        //row.Height = 100;
-                        summaryGridView.Rows.Add(pair.Value, pair.Key);
-
-                    }
-                    summaryGridView.Sort(summaryGridView.Columns[0], ListSortDirection.Descending);
-
-                    break;
-                case 3://Imagini
+        //            //Dictionary<KeyValuePair<string,string>,int> dict = new Dictionary<KeyValuePair<string, string>, int>();
+        //            Dictionary<string, int> dict = new Dictionary<string, int>();
 
 
 
+        //            foreach (Order o in orders)
+        //            {
+        //                foreach (Order.topper tp in o.toppers)
+        //                {
+        //                    //KeyValuePair<string, string> key = new KeyValuePair<string, string>(tp.tName, tp.tId);
+        //                    string key = tp.name;
 
-                default:
-                    return;
-            }
-        }
+        //                    if (dict.ContainsKey(key))
+        //                    {
+        //                        dict[key] += tp.quantity;
+        //                    }
+        //                    else
+        //                    {
+        //                        dict[key] = tp.quantity;
+        //                    }
+        //                }
+        //            }
+        //            foreach (var pair in dict)
+        //            {
+        //                //Bitmap img = Bitmap.FromFile(Environment.CurrentDirectory + "\\images\\" + pair.Key.Value + ".png") as Bitmap;
+        //                //DataGridViewRow row = new DataGridViewRow();
+        //                //row.CreateCells(summaryGridView, pair.Value, pair.Key.Key, img);
+        //                //row.SetValues(pair.Value, pair.Key.Key, img);                        //pair.Value, pair.Key.Key, img,
+        //                //row.Height = 100;
+        //                summaryGridView.Rows.Add(pair.Value, pair.Key);
+
+        //            }
+        //            summaryGridView.Sort(summaryGridView.Columns[0], ListSortDirection.Descending);
+
+        //            break;
+        //        case 3://Imagini
 
 
-        private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
-        {
 
-            updateTabIndex();
-        }
+
+        //        default:
+        //            return;
+        //    }
+        //}
+
+
 
         private void excelTab_Click(object sender, EventArgs e)
         {
@@ -729,7 +730,9 @@ namespace PDFiller
 
         private void button3_Click(object sender, EventArgs e)
         {
-            if(mergedPath != null && File.Exists(mergedPath))
+            if (this.shipment == null) return;
+            string mergedPath = this.shipment.MergedPDF;    
+            if (mergedPath != null && File.Exists(mergedPath))
                 Process.Start(mergedPath);
         }
 
@@ -739,15 +742,15 @@ namespace PDFiller
         }
 
 
-        private void button2_Click_2(object sender, EventArgs e)
+        private void TestButtonClick(object sender, EventArgs e)
         {
-        }
+            RegionInfo reg = new RegionInfo(CultureInfo.CurrentCulture.Name);
 
-        private void button2_Click_3(object sender, EventArgs e)
-        {
-            Builder builder = Builder.GetInstance();
-
-            builder.ZStartTest();
+            MessageBox.Show($"Current region: {reg.EnglishName}\r\n" +
+                $"Currency symbol: {reg.CurrencySymbol}\r\n" +
+                $"ISO currency symbol: {reg.ISOCurrencySymbol}\r\n" +
+                $"Currency English name: {reg.CurrencyEnglishName}\r\n" +
+                $"Currency native name: {reg.CurrencyNativeName}");
 
         }
 
@@ -756,19 +759,24 @@ namespace PDFiller
             Process.Start(Environment.CurrentDirectory);
         }
 
-        private void imagePanel_Paint(object sender, PaintEventArgs e)
+        private void zipPathBox_TextChanged(object sender, EventArgs e)
         {
 
-            Graphics g = imagePanel.CreateGraphics();
-            int nr = 0;
-            FileInfo[] files = new DirectoryInfo(Environment.CurrentDirectory + "\\images\\").GetFiles("*.png");
-            foreach (FileInfo file in files)
-            {
-                Bitmap img = Bitmap.FromFile(file.FullName) as Bitmap;
-                g.DrawImage(img, new Rectangle((nr % 5) * 130, (nr / 5) * 130, 100, 100));
-                nr++;
-            }
         }
+
+        //private void imagePanel_Paint(object sender, PaintEventArgs e)
+        //{
+
+        //    Graphics g = imagePanel.CreateGraphics();
+        //    int nr = 0;
+        //    FileInfo[] files = new DirectoryInfo(Environment.CurrentDirectory + "\\images\\").GetFiles("*.png");
+        //    foreach (FileInfo file in files)
+        //    {
+        //        Bitmap img = Bitmap.FromFile(file.FullName) as Bitmap;
+        //        g.DrawImage(img, new Rectangle((nr % 5) * 130, (nr / 5) * 130, 100, 100));
+        //        nr++;
+        //    }
+        //}
     }
 }
 

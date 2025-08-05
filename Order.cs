@@ -14,19 +14,19 @@ namespace PDFiller
         public string id;
         public string awb;
         public string name;
-        public List<topper> toppere;
+        public List<topper> toppers;
         public string country;
 
         public struct topper
         {
-            public string tName;
-            public int tQuantity;
-            public string tId;
+            public string name;
+            public int quantity;
+            public string id;
             public topper(string tName, int tQuantity,string tId)
             {
-                this.tName = tName;
-                this.tQuantity = tQuantity;
-                this.tId = tId;
+                this.name = tName;
+                this.quantity = tQuantity;
+                this.id = tId;
             }
 
         };
@@ -38,8 +38,24 @@ namespace PDFiller
         public Order()
         {
             this.id = "";
+            this.name = "";
             this.awb = "";
-            this.toppere = new List<topper>();
+            this.country = "";
+            this.toppers = new List<topper>();
+        }
+
+
+        /// <summary>
+        /// Copy all contents from another Order object
+        /// </summary>
+        /// <param name="order"></param>
+        public Order(Order order)
+        {
+            this.country = order.country;
+            this.id = order.id;
+            this.awb = order.awb;
+            this.name = order.name;
+            this.toppers = new List<topper>(order.toppers);
         }
 
         /// <summary>
@@ -51,13 +67,14 @@ namespace PDFiller
         /// <param name="tName">The name of the first topper</param>
         /// <param name="tQuantity">The bought quantity of the first topper.</param>
         /// <param name="idProduct">The ID of the first topper product.</param>
-        public Order(string id, string awb,string name, string tName, int tQuantity, string idProduct)
+        public Order(string id, string awb,string name, string tName, int tQuantity, string idProduct, string country)
         {
             this.id = id;
             this.awb = awb;
             this.name = name;
-            this.toppere = new List<topper>();
-            toppere.Add(new topper(tName, tQuantity, idProduct));
+            this.toppers = new List<topper>();
+            this.country = country;
+            toppers.Add(new topper(tName, tQuantity, idProduct));
         }
     }
 }

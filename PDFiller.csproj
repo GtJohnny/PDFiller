@@ -261,9 +261,15 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Builder.cs" />
+    <Compile Include="ImagesObserver.cs" />
+    <Compile Include="OptionsReader.cs" />
     <Compile Include="Order.cs" />
+    <Compile Include="PreviewObserver.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shipment.cs" />
+    <Compile Include="SummaryObserver.cs" />
+    <Compile Include="Unsubscriber.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
