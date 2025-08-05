@@ -20,7 +20,7 @@ namespace PDFiller
         /// </summary>
         private List<Order> orders;
         private List<FileInfo> unzippedList;
-        private FileInfo mergedPDF;
+        private string mergedPDF;
         private List<IObserver<Shipment>> _observers=  new List<IObserver<Shipment>>();
 
         public Shipment()
@@ -29,14 +29,27 @@ namespace PDFiller
             this.unzippedList = new List<FileInfo>();
             this.mergedPDF = null;
         }
-        public Shipment(List<Order> orders, List<FileInfo> unzippedList, FileInfo mergedPDF)
+        public Shipment(List<Order> orders, List<FileInfo> unzippedList, string mergedPDF)
         {
             this.orders = orders;
             this.unzippedList = unzippedList;
             this.mergedPDF = mergedPDF;
         }
 
-        public void Update(List<Order> orders, List<FileInfo> unzippedList, FileInfo mergedPDF)
+        /// <summary>
+        /// Update the Shipment object with new data.
+        /// And automatically notifies subscribers.
+        /// </summary>
+        /// <param name="shipment">New Shipment object</param>
+        public void Update(Shipment shipment)
+        {
+            this.orders = shipment.orders;
+            this.unzippedList = shipment.unzippedList;
+            this.mergedPDF = shipment.mergedPDF;
+            Notify();
+        }
+
+        public void Update(List<Order> orders, List<FileInfo> unzippedList, string mergedPDF)
         {
             this.orders = orders;
             this.unzippedList = unzippedList;
@@ -107,7 +120,7 @@ namespace PDFiller
         /// <summary>
         /// Gets the merged PDF file.
         /// </summary>
-        public FileInfo MergedPDF
+        public string MergedPDF
         {
             get { return mergedPDF; }
         }

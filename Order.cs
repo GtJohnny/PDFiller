@@ -44,6 +44,20 @@ namespace PDFiller
             this.toppers = new List<topper>();
         }
 
+
+        /// <summary>
+        /// Copy all contents from another Order object
+        /// </summary>
+        /// <param name="order"></param>
+        public Order(Order order)
+        {
+            this.country = order.country;
+            this.id = order.id;
+            this.awb = order.awb;
+            this.name = order.name;
+            this.toppers = new List<topper>(order.toppers);
+        }
+
         /// <summary>
         /// Correctly instantiates an Order object
         /// </summary>

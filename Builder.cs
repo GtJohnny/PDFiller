@@ -41,15 +41,7 @@ namespace PDFiller
         /// </summary>
         private static Builder menu = null;
 
-        /// <summary>
-        /// The shipment object that contains all the orders and the bussiness logic.
-        /// </summary>
-        private Shipment shipment = null;
 
-
-        private List<FileInfo> unzippedList = null;
-        private FileInfo zipFile = null;
-        private FileInfo excel = null;
         private Form1 form = null;
 
 
@@ -277,7 +269,6 @@ namespace PDFiller
 
 
                 Order lastOrder = new Order();
-                Builder builder = new Builder();
                 while (true)
                 {
 
@@ -294,6 +285,7 @@ namespace PDFiller
                         tName = ModifyName(idProduct, tName);
 
 
+
                         int qnt = (int)sheet.Cells[row, TOPPER_QUANTITY_COL].Value2;
                         string country = shippingAddress.Split(',').Last().Trim();
                         country = new RegionInfo(country).EnglishName;
@@ -308,7 +300,22 @@ namespace PDFiller
                         else
                         {
                             if (lastOrder.id != "")
-                                orders.Add(lastOrder);
+                            {
+                                string[] awbs = awb.Split(',');
+                                if (awbs.Length > 1)
+                                {
+                                    foreach (string a in awbs)
+                                    {
+                                        lastOrder.awb = a.Trim();
+                                        orders.Add(new Order(lastOrder));
+                                    }
+                                }
+                                else
+                                {
+                                    orders.Add(lastOrder);
+                                }
+
+                            }
                             lastOrder = new Order(id, awb, name, tName, qnt, idProduct, country);
 
 
@@ -320,7 +327,19 @@ namespace PDFiller
                     }
                     else
                     {
-                        orders.Add(lastOrder);
+                        string[] awbs = lastOrder.awb.Split(',');
+                        if (awbs.Length > 1)
+                        {
+                            foreach (string a in awbs)
+                            {
+                                lastOrder.awb = a.Trim();
+                                orders.Add(new Order(lastOrder));
+                            }
+                        }
+                        else
+                        {
+                            orders.Add(lastOrder);
+                        }
                         break;
                     }
                     row++;
@@ -368,10 +387,10 @@ namespace PDFiller
         /// Extracts the archive per se.
         /// </summary>
         /// <param name="zip">The zip file</param>
-        /// <param name="extractedZip">A refference to the folder that was extracted, for convenience</param>
+        /// <param name="extractedZip">The fullpath to the folder that was extracted, for convenience</param>
         /// <returns>A list containing all the pdf files extracted.</returns>
         /// <exception cref="Exception"></exception>
-        public List<FileInfo> UnzipArchive(FileInfo zip, ref string extractedZip)
+        public List<FileInfo> UnzipArchive(FileInfo zip, out string extractedZip)
         {
             if (zip == null || !zip.Exists) throw new ArgumentNullException("Zip Archive doesn't exist");
             extractedZip = zip.FullName.Replace(".zip", "");
@@ -525,10 +544,10 @@ namespace PDFiller
                     }
                 
 
-                    for(int index = 0; index < 15; index++)
-                    {
-                        o.toppers.Add(o.toppers[0]);
-                    }
+                    //for(int index = 0; index < 15; index++)
+                    //{
+                    //    o.toppers.Add(o.toppers[0]);
+                    //}
 
 
                     pdfMerge.AddPage(pdfWrite.Pages[i]);
@@ -537,71 +556,23 @@ namespace PDFiller
                     XRect rect = new XRect(0, gfx.PageSize.Height / 2 - 15, gfx.PageSize.Width, gfx.PageSize.Height / 2 + 15);
 
 
-
-                    //byte[] bytes = tName.ToCharArray()
-                    //            .Select(c => (byte)c)
-                    //            .ToArray();
-                    //string decodedString = System.Text.Encoding.UTF8.GetString(bytes);
-
-                    //bool test = tName.Equals(decodedString);
+                    //for(int index = 0;index < 30; index++)
+                    //{
+                    //    o.toppers.Add(o.toppers[0]);
+                    //}
 
 
                     //lower half of the page
                     gfx.DrawRectangle(XBrushes.White, rect);
                     //Write the country in the middle
-                    gfx.DrawString(o.country, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, gfx.PageSize.Width *0.5f , gfx.PageSize.Height * 0.5f+60, XStringFormats.Center);
+                    gfx.DrawString(o.country, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, gfx.PageSize.Width *0.5f , gfx.PageSize.Height * 0.5f+65, XStringFormats.Center);
 
-
-                    switch (form.drawComboBox.SelectedIndex)
+                    if (!WriteOnPage(gfx, o.toppers))
                     {
-                        case 0:
-
-                            if (!WriteOnPage(gfx, o.toppers))
-                            {
-                                errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
-                                failed++;
-                                continue;
-                            }
-
-
-                            break;
-                        case 1:
-                            if (!WriteOnPage(gfx, o.toppers))
-                            {
-                                errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
-                                failed++;
-                                continue;
-                            }
-                            DrawOnPage(gfx, o.toppers, 2);
-                            break;
-                        case 2:
-                            DrawOnPage(gfx, o.toppers, 4);
-                            break;
-
-                        default:
-                            if (!WriteOnPage(gfx, o.toppers))
-                            {
-                                errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
-                                failed++;
-                                continue;
-                            }
-                            break;
-
-
+                        errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
+                        failed++;
+                        continue;
                     }
-
-
-
-                    //if (!WriteOnPage(gfx, o.toppere))
-                    //{
-                    //    errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
-                    //    failed++;
-                    //    continue;
-                    //}
-
-                    //DrawOnPage(gfx, o.toppere);
-
-
                 }
             }
             return errorMessages;
@@ -616,10 +587,10 @@ namespace PDFiller
         /// <param name="orders">All orders read from the Order Summary .xlsx file.</param>
         /// <param name="saveDir">The directory path where we want to save the resulting pdf.</param>
         /// <param name="saveName">The file name for the resulting PDF.</param>
-        /// <returns>The full file path of the merged PDF.</returns>
+        /// <returns>A Shipment object representing the completed ordeal.</returns>
         /// <exception cref="ArgumentException">Selected files had incorrect names.</exception>
         /// <exception cref="FileNotFoundException">Selected files could not be found.</exception>
-        public string WriteOnOrders(List<FileInfo> unzippedList, List<Order> orders, string saveDir, string saveName)
+        public Shipment WriteOnOrders(List<FileInfo> unzippedList, List<Order> orders, string saveDir, string saveName)
         {
             failed = total = 0;
             PdfSharpCore.Pdf.PdfDocument pdfMerge = new PdfSharpCore.Pdf.PdfDocument();
@@ -656,7 +627,7 @@ namespace PDFiller
             }
             pdfMerge.Save(returnPath);
             pdfMerge.Close();
-            return returnPath;
+            return new Shipment(orders,unzippedList,returnPath);
         }
 
 
@@ -715,55 +686,125 @@ namespace PDFiller
         /// <returns>True if successfull, false if not</returns>
         private bool WriteOnPage(XGraphics gfx, List<Order.topper> toppere)
         {
-            if (gfx == null || toppere == null)
+
+            Dictionary<string, XImage> images = new Dictionary<string, XImage>();
+            int i = 0;
+            WebClient client = new WebClient();
+            if (!Directory.Exists(imagesDir))
             {
-                return true;
+                Directory.CreateDirectory(imagesDir);
             }
-            try
+
+            int perPage = form.drawComboBox.SelectedIndex * 2;
+
+            foreach (Order.topper topper in toppere)
             {
-                //      XGraphics gfx = XGraphics.FromPdfPage(page);
-
-                XFont font = new XFont("Times New Roman", 14);
-                XSolidBrush brush = new XSolidBrush(XColor.FromKnownColor(XKnownColor.Black));
-
-
-                int i = 0;
-
-                /*
-                ///This WILL dissappear from here.
-                DirectoryInfo imagesDir = new DirectoryInfo("C:\\Users\\KZE PC\\Desktop\\VIsual studio projects\\PDFiller\\bin\\Debug\\images\\");
-                FileInfo[] images  = imagesDir.GetFiles("*.jpg");
-                Random rng = new Random(i);
-                */
-
-
-
-                foreach (var topper in toppere)
+                if (perPage > 0)
                 {
-                    /*
-                    if (i < 16)
+                    XImage img = null;
+                    if (images.ContainsKey(topper.id))
                     {
-                        //    img = XImage.FromFile($"{imagesPath}\\{topper.tId}.jpg");
-                     //   XImage img = XImage.FromFile(images[rng.Next(8)].FullName);
-                     //   gfx.DrawImage(img, page.Width - 95 * (Math.Max(toppere.Count, 16) / 4) + 95 * (i / 4)+100, page.Height / 2 + 20 + 95 * (i % 4), 90, 90);
+                        img = images[topper.id];
                     }
-                    */
-                    gfx.DrawString($"{topper.quantity} buc: {topper.name}", font, brush, 25, gfx.PageSize.Height / 2 + 25 + 20 * i, XStringFormats.CenterLeft);
-                    // gfx.DrawImage(img, page.Width - 95 * (nrImagini / 4) + 95 * (j / 4), page.Height / 2 + 20 + 95 * (j % 4), 90, 90);
-                    i++;
+                    else
+                    {
+                        img = TryFindImage(topper.id);
+                        if (img != null)
+                        {
+                            images.Add(topper.id, img);
+                        }
+                        else
+                        {
+                            try
+                            {
+                                client.DownloadFile($@"https://raw.githubusercontent.com/GtJohnny/PDFillerImages/main/{topper.id}.png", $"{imagesDir}/{topper.id}.png");
 
-                    if (i == 20) break;
+                            }
+                            catch (WebException)
+                            {
+                                form.textBox1.Text += $"Couldn't download image for {topper.id}.\r\n";
+                            }
+
+                            img = TryFindImage(topper.id);
+                        }
+                    }
+
+                    //MATH =====>>       (scales with images/row)+ (pageH=90 +30 space)+no out of bounds  
+                    if (img != null && perPage >= 2 && i < 3 * perPage)
+                        gfx.DrawImage(img, (i % perPage) * (90 + perPage * 12) + 20 + (perPage == 2 ? gfx.PageSize.Width / 2 : 20), (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75, 90, 90);
                 }
 
+                string temp_name = $"{topper.quantity}:{topper.name}";
+                if (perPage == 4)
+                {
+                    //MATH =====>>
+                    //per position *  (pageH=90 +30 space + space with img/row) - (center text) + (even abscise per img/row (2= right column, 3=wide)
+                    gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage * 12) + 65 - 5.7f * (topper.name.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2 : 16), (perPage == 2 ? 250 : 100) + (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75);
+                    if(i == 3 * perPage)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, 50, gfx.PageSize.Height * 0.60f + 15 * i);
+                    if(i == 20)
+                    {
+                        return true;
+                    }
+                }
+                i++;
 
-
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
             }
             return true;
+
+
+
+
+
+
+            //if (gfx == null || toppere == null)
+            //{
+            //    return true;
+            //}
+            //try
+            //{
+            //    //      XGraphics gfx = XGraphics.FromPdfPage(page);
+
+            //    XFont font = new XFont("Times New Roman", 14);
+            //    XSolidBrush brush = new XSolidBrush(XColor.FromKnownColor(XKnownColor.Black));
+
+
+            //    int i = 0;
+
+            //    /*
+            //    ///This WILL dissappear from here.
+            //    DirectoryInfo imagesDir = new DirectoryInfo("C:\\Users\\KZE PC\\Desktop\\VIsual studio projects\\PDFiller\\bin\\Debug\\images\\");
+            //    FileInfo[] images  = imagesDir.GetFiles("*.jpg");
+            //    Random rng = new Random(i);
+            //    */
+
+
+
+            //    foreach (var topper in toppere)
+            //    {
+
+            //        gfx.DrawString($"{topper.quantity} buc: {topper.name}", font, brush, 25, gfx.PageSize.Height / 2 + 25 + 20 * i, XStringFormats.CenterLeft);
+            //        // gfx.DrawImage(img, page.Width - 95 * (nrImagini / 4) + 95 * (j / 4), page.Height / 2 + 20 + 95 * (j % 4), 90, 90);
+            //        i++;
+
+            //        if (i == 20) break;
+            //    }
+
+
+
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw ex;
+            //}
+            //return true;
         }
 
 
@@ -795,69 +836,6 @@ namespace PDFiller
             return null;
         }
 
-
-
-
-
-
-        private void DrawOnPage(XGraphics gfx, List<Order.topper> toppere, int perPage)
-        {
-            Dictionary<string, XImage> images = new Dictionary<string, XImage>();
-            int i = 0;
-            WebClient client = new WebClient();
-            if (!Directory.Exists(imagesDir))
-            {
-                Directory.CreateDirectory(imagesDir);
-            }
-            foreach (Order.topper topper in toppere)
-            {
-
-                XImage img = null;
-                if (images.ContainsKey(topper.id))
-                {
-                    img = images[topper.id];
-                }
-                else
-                {
-                    img = TryFindImage(topper.id);
-                    if (img != null)
-                    {
-                        images.Add(topper.id, img);
-                    }
-                    else
-                    {
-                        try
-                        {
-                            client.DownloadFile($@"https://raw.githubusercontent.com/GtJohnny/PDFillerImages/main/{topper.id}.png", $"{imagesDir}/{topper.id}.png");
-
-                        }
-                        catch (WebException)
-                        {
-                            form.textBox1.Text += $"Couldn't download image for {topper.id}.\r\n";
-                        }
-
-                        img = TryFindImage(topper.id);
-                    }
-                }
-
-                //MATH =====>>       (scales with images/row)+ (pageH=90 +30 space)+no out of bounds  
-                if (img != null)
-                    gfx.DrawImage(img, (i % perPage) * (90 + perPage * 12) + 20 + (perPage == 2 ? gfx.PageSize.Width / 2 : 20), (i / perPage) * 120 + gfx.PageSize.Height / 2 + 65, 90, 90);
-                //MATH =====>>
-                //per pozition *  (pageH=90 +30 space + space with img/row) - (center text) + (even abscise per img/row (2= right column, 3=wide)
-
-                string temp_name = $"{topper.quantity}:{topper.name}%%%";
-
-                gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage * 12) + 65 - 5.7f * (topper.name.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2 : 16), (perPage == 2 ? 250 : 100 )+ (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75);
-
-                i++;
-                if (i == 3 * perPage)
-                {
-                    return;
-                }
-            }
-
-        }
 
 
     }
