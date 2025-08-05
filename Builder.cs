@@ -52,14 +52,7 @@ namespace PDFiller
         private FileInfo excel = null;
         private Form1 form = null;
 
-        //TODO need to improve on this.
-        private KeyValuePair<Regex, string>[] regexes = new KeyValuePair<Regex, string>[]
-        {
-             new KeyValuePair<Regex,string>(new Regex(@"4(EMG|ONB)\w{11}[0-9]{3}"),"Romania"),
-             new KeyValuePair<Regex,string>(new Regex(@"[0-9]{3}(EMG|ONB)\w{10}[0-9]{3}"),"Bulgaria")
 
-            //new Regex(@"[0-9]{3}(EMG|ONB)\w{10}[0-9]{3}")
-        };
 
 
 
@@ -242,6 +235,10 @@ namespace PDFiller
         }
 
 
+
+
+
+
         /// <summary>
         /// Read the excel file, and return a list of orders.
         /// </summary>
@@ -275,6 +272,8 @@ namespace PDFiller
                 byte IDPRODUCT = columns["Cod produs"];
                 byte TOPPER_QUANTITY_COL = columns["Cantitate"];
                 byte CLIENT_NAME = columns["Nume client"];
+                byte SHIPPING_ADDRESS = columns["Adresa de livrare"];
+
 
 
                 Order lastOrder = new Order();
@@ -291,15 +290,13 @@ namespace PDFiller
                         string name = sheet.Cells[row, CLIENT_NAME].Value2;
                         string tName = sheet.Cells[row, TOPPER_NAME_COL].Value2;
                         string idProduct = sheet.Cells[row, IDPRODUCT].Value2;
+                        string shippingAddress = sheet.Cells[row, SHIPPING_ADDRESS].Value2;
                         tName = ModifyName(idProduct, tName);
 
-                        //idProduct = "5941933307598"; //!!!!!!!!!!!!!!!!
-
-                        // , KZE Prints, Photo Paper Glossy
-                        //      tname = tname.Replace(", KZE Prints, Photo Paper Glossy", "");
-                        //      tname = tname.Remove(tname.Length - 32);
 
                         int qnt = (int)sheet.Cells[row, TOPPER_QUANTITY_COL].Value2;
+                        string country = shippingAddress.Split(',').Last().Trim();
+                        country = new RegionInfo(country).EnglishName;
 
 
                         if (id == lastOrder.id)
@@ -312,7 +309,7 @@ namespace PDFiller
                         {
                             if (lastOrder.id != "")
                                 orders.Add(lastOrder);
-                            lastOrder = new Order(id, awb, name, tName, qnt, idProduct);
+                            lastOrder = new Order(id, awb, name, tName, qnt, idProduct, country);
 
 
                             //form.textBox1.Text += ++i + ". " + awb + ":\r\n" +
@@ -444,41 +441,18 @@ namespace PDFiller
         /// <param name="idAWB">AWB number</param>
         /// <param name="country">Country of origin</param>
         /// <returns>True if successfull, false if not</returns>
-        public bool ReadAwbId(UglyToad.PdfPig.Content.Page page, out string idAWB, out string country)
+        public bool ReadAwbId(UglyToad.PdfPig.Content.Page page, List<Order> orders, out string awb)
         {
-            idAWB = "";
+            awb = "";
             string text = page.Text;
-            for(int i=0;i<regexes.Length;i++)
+            foreach(Order o in orders)
             {
-                if (regexes[i].Key.IsMatch(text))
+                if(text.Contains(o.awb))
                 {
-                    idAWB = regexes[i].Key.Match(text).Value;
-                    if (idAWB != "")
-                    {
-                        idAWB = idAWB.Substring(0, idAWB.Length - 3);
-                        country = regexes[i].Value; //Default country
-                        return true;
-                    }
+                    awb = o.awb;
+                    return true;
                 }
             }
-            ////foreach (Regex regex in regexes)
-            //{
-            //    idAWB = regex.Match(text).Value;
-            //    if (idAWB != "")
-            //    {
-            //        idAWB = idAWB.Substring(0, idAWB.Length-3);
-
-            //        return true;
-            //    }
-
-            //}
-            //MatchCollection matches =
-            //if (matches.Count == 0)
-            //{
-            //    return false;
-            //}
-            //idAWB = matches[0].Value.Substring(0, 15);
-            country = "Romania"; //Default country
             return false;
 
         }
@@ -503,22 +477,21 @@ namespace PDFiller
         private List<string> WriteOnFile(PdfSharpCore.Pdf.PdfDocument pdfMerge, FileInfo file, List<Order> orders)
         {
             List<string> errorMessages = new List<string>();
-            string idAWB;
             PdfSharpCore.Pdf.PdfDocument pdfWrite = PdfReader.Open(file.FullName, PdfDocumentOpenMode.Import);
             using (var pdfRead = UglyToad.PdfPig.PdfDocument.Open(file.FullName))
             {
                 total += pdfWrite.PageCount;
                 for (int i = 0; i < pdfWrite.PageCount; i++)
                 {
-                    string country = "Romania";
-                    if (!ReadAwbId(pdfRead.GetPage(i + 1), out idAWB, out country))
+                    string awb = "";
+                    if (!ReadAwbId(pdfRead.GetPage(i + 1), orders, out awb))
                     {
                         errorMessages.Add($"Couldn't find AWB number for page {i + 1} for:\r\n{file.Name}\r\n");
                         failed++;
                         continue;
                     }
 
-                    Order o = orders.Find(p => p.awb == idAWB);
+                    Order o = orders.Find(p => p.awb == awb);
                     //Sometimes the excel file may NOT have the AWB id that we need
                     //but we may still be able to match the order with the file name and order id.
                     //as last resort only
@@ -551,7 +524,11 @@ namespace PDFiller
                         //continue;
                     }
                 
-                    o.country = country;
+
+                    for(int index = 0; index < 15; index++)
+                    {
+                        o.toppers.Add(o.toppers[0]);
+                    }
 
 
                     pdfMerge.AddPage(pdfWrite.Pages[i]);
@@ -571,8 +548,8 @@ namespace PDFiller
 
                     //lower half of the page
                     gfx.DrawRectangle(XBrushes.White, rect);
-                    //write the country in the middle
-                    gfx.DrawString(country, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, gfx.PageSize.Width / 2 , gfx.PageSize.Height / 2 + 18, XStringFormats.Center);
+                    //Write the country in the middle
+                    gfx.DrawString(o.country, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, gfx.PageSize.Width *0.5f , gfx.PageSize.Height * 0.5f+60, XStringFormats.Center);
 
 
                     switch (form.drawComboBox.SelectedIndex)
@@ -865,13 +842,13 @@ namespace PDFiller
 
                 //MATH =====>>       (scales with images/row)+ (pageH=90 +30 space)+no out of bounds  
                 if (img != null)
-                    gfx.DrawImage(img, (i % perPage) * (90 + perPage * 12) + 20 + (perPage == 2 ? gfx.PageSize.Width / 2 : 20), (i / perPage) * 120 + gfx.PageSize.Height / 2 + 25, 90, 90);
+                    gfx.DrawImage(img, (i % perPage) * (90 + perPage * 12) + 20 + (perPage == 2 ? gfx.PageSize.Width / 2 : 20), (i / perPage) * 120 + gfx.PageSize.Height / 2 + 65, 90, 90);
                 //MATH =====>>
                 //per pozition *  (pageH=90 +30 space + space with img/row) - (center text) + (even abscise per img/row (2= right column, 3=wide)
 
-                string temp_name = $"{topper.quantity}:{topper.name}";
+                string temp_name = $"{topper.quantity}:{topper.name}%%%";
 
-                gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage * 12) + 65 - 5.7f * (topper.name.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2 : 16), (i / perPage) * 120 + 100 + gfx.PageSize.Height / 2 + 35);
+                gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage * 12) + 65 - 5.7f * (topper.name.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2 : 16), (perPage == 2 ? 250 : 100 )+ (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75);
 
                 i++;
                 if (i == 3 * perPage)

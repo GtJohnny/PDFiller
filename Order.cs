@@ -38,7 +38,9 @@ namespace PDFiller
         public Order()
         {
             this.id = "";
+            this.name = "";
             this.awb = "";
+            this.country = "";
             this.toppers = new List<topper>();
         }
 
@@ -51,12 +53,13 @@ namespace PDFiller
         /// <param name="tName">The name of the first topper</param>
         /// <param name="tQuantity">The bought quantity of the first topper.</param>
         /// <param name="idProduct">The ID of the first topper product.</param>
-        public Order(string id, string awb,string name, string tName, int tQuantity, string idProduct)
+        public Order(string id, string awb,string name, string tName, int tQuantity, string idProduct, string country)
         {
             this.id = id;
             this.awb = awb;
             this.name = name;
             this.toppers = new List<topper>();
+            this.country = country;
             toppers.Add(new topper(tName, tQuantity, idProduct));
         }
     }

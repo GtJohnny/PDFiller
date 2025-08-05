@@ -21,6 +21,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Data.Odbc;
 using System.Threading;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 
 
@@ -741,14 +742,13 @@ namespace PDFiller
 
         private void TestButtonClick(object sender, EventArgs e)
         {
-            Builder builder = Builder.GetInstance();
-            string path = "C:\\Users\\ionut\\Desktop\\AWB\\09.07.2025 ro\\orders_details_file_10-07-2025-00-44-34.xlsx";
-            List<Order> orders = builder.ReadExcel(new FileInfo(path));
-            Shipment shipment = new Shipment(orders, null, null);
-            shipment.Subscribe(new ImagesObserver(imagePanel));
-            shipment.Subscribe(new SummaryObserver(summaryGridView));
-            shipment.Subscribe(new PreviewObserver(previewGridView));
-            shipment.Notify();
+            RegionInfo reg = new RegionInfo(CultureInfo.CurrentCulture.Name);
+
+            MessageBox.Show($"Current region: {reg.EnglishName}\r\n" +
+                $"Currency symbol: {reg.CurrencySymbol}\r\n" +
+                $"ISO currency symbol: {reg.ISOCurrencySymbol}\r\n" +
+                $"Currency English name: {reg.CurrencyEnglishName}\r\n" +
+                $"Currency native name: {reg.CurrencyNativeName}");
 
         }
 
