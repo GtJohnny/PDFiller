@@ -251,6 +251,7 @@ namespace PDFiller
                     unzippedList = null;
                     textBox1.AppendText( $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nFound zip archive at:\r\n {zip.FullName} \r\n");
                     zipLabel.Font = new System.Drawing.Font(zipLabel.Font, FontStyle.Regular);
+                    zipLabel.Text = "Zip File:";
                     break;
                 default:
                     break;
@@ -275,6 +276,7 @@ namespace PDFiller
         //   internal bool newExcel = false;
         private void excelButton_Click(object sender, EventArgs e)
         {
+
             Builder menu = PDFiller.Builder.GetInstance();
 
             OpenFileDialog ofd = new OpenFileDialog()
@@ -294,10 +296,21 @@ namespace PDFiller
 
 
                     this.excel = new FileInfo(ofd.FileName);
-                    textBox1.AppendText( $"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nFound.xlsx order summary at:\r\n" + excel.FullName + "\r\n");
-                    previewGridView.Rows.Clear();
-                    summaryGridView.Rows.Clear();
-                    //updateTabIndex();
+                    textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nFound.xlsx order summary at:\r\n" + excel.FullName + "\r\n");
+                    if (this.tabControl2.SelectedIndex == 0)
+                    {
+                        this.shipment.NotifyCompleted();
+
+
+                    }
+                    else
+                    {
+                        this.shipment.Update(new Shipment(menu.ReadExcel(excel), unzippedList, this.shipment.MergedPDF));
+                    }
+
+
+                    //this.shipment.Update(new Shipment(menu.ReadExcel(excel), unzippedList, this.shipment.MergedPDF));
+
                     break;
                 default:
                     break;
@@ -453,6 +466,7 @@ namespace PDFiller
         {
             try
             {
+                Cursor.Current = Cursors.WaitCursor;
                 if (excel == null || !excel.Exists)
                 {
                     throw new FileNotFoundException("Excel could not be found.");
@@ -472,12 +486,16 @@ namespace PDFiller
                 textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nReading the excel file.\r\n");
 
                 
-                List<Order> orders = menu.ReadExcel(excel);
                 saveDir = unzippedList.First().DirectoryName;
+                if (shipment.Orders == null || shipment.Orders.Count == 0)
+                {
+                    this.shipment.Update(menu.WriteOnOrders(unzippedList, menu.ReadExcel(excel), saveDir, "CustomPDF"));
+                }
+                else
+                {
+                    this.shipment.Update(menu.WriteOnOrders(unzippedList, shipment.Orders, saveDir, "CustomPDF"));
 
-                //    int failed = 0;
-                this.shipment.Update(menu.WriteOnOrders(unzippedList, orders, saveDir, "CustomPDF"));
-
+                }
                 //if (failed > 0)
                 //{
                 //    textBox1.AppendText( $"{failed} files failed being filled.\r\n";
@@ -486,7 +504,7 @@ namespace PDFiller
                 //{
                 //    textBox1.AppendText( "All were filled succesfully.\r\n";
                 //}
-                textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nMerged order PDF was saved at location:\r\n{ this.shipment.MergedPDF }\r\n");
+                textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nMerged order PDF was saved at location:\r\n{this.shipment.MergedPDF}\r\n");
                 //if (tabControl2.SelectedIndex == 1) updateTabIndex();
 
                 if (openPdfCheck.Checked)
@@ -500,6 +518,13 @@ namespace PDFiller
                 textBox1.AppendText( ex.Message + "\r\n");
                 return;
             }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
+            
+
+            
 
         }
 
@@ -507,6 +532,7 @@ namespace PDFiller
         {
             try
             {
+                Cursor.Current = Cursors.WaitCursor;
                 Builder menu = PDFiller.Builder.GetInstance(this);
                 workDir = menu.FindWorkDir(rootDir);
                 textBox1.AppendText( $"Found work directory at:\r\n{workDir.FullName}\r\n");
@@ -517,9 +543,19 @@ namespace PDFiller
                 unzippedList = menu.UnzipArchive(zip, out extractedDir);
                 textBox1.AppendText( $"Found {unzippedList.Count} orders.\r\n");
 
+
+
                 excel = menu.FindExcel(workDir);
-                previewGridView.Rows.Clear();
-                summaryGridView.Rows.Clear();
+
+                if (this.tabControl2.SelectedIndex == 0)
+                {
+                    this.shipment.NotifyCompleted();
+
+                }
+                else
+                {
+                    this.shipment.Update(new Shipment(menu.ReadExcel(excel), unzippedList, this.shipment.MergedPDF));
+                }
 
 
                 textBox1.AppendText( $"Found excel file at:\r\n{ excel.FullName }\r\n");
@@ -552,6 +588,10 @@ namespace PDFiller
             catch (Exception ex)
             {
                 textBox1.AppendText( ex.Message);
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
             }
         }
 
@@ -754,6 +794,58 @@ namespace PDFiller
 
         }
 
+        private void UpdateTabIndex()
+        {
+
+            switch (tabControl2.SelectedIndex)
+            {
+                case 0:
+                    return;
+                case 1:
+                    if (previewGridView.Rows.Count == 0)
+                    {
+                        if (this.excel == null)
+                        {
+                            previewGridView.Rows.Add(1,"No orders to preview.");
+                        }
+                        else
+                        {
+                            Builder builder = Builder.GetInstance();
+                            List<Order> orders = builder.ReadExcel(this.excel);
+                            this.shipment.Update(new Shipment(orders, unzippedList, this.shipment.MergedPDF));
+                        }
+                    }
+                    break;
+
+                case 2:
+                    if (summaryGridView.Rows.Count == 0)
+                    {
+                        if (this.excel == null)
+                        {
+                            summaryGridView.Rows.Add(1,"No orders to summarize.");
+                        }
+                        else
+                        {
+                            Builder builder = Builder.GetInstance();
+                            List<Order> orders = builder.ReadExcel(this.excel);
+                            this.shipment.Update(new Shipment(orders, unzippedList, this.shipment.MergedPDF));
+                        }
+                    }
+                    break;
+
+            }
+
+            //if (tabControl2.SelectedIndex == 0) return;
+            //if (this.shipment == null) return;
+            //if (this.excel == null) return;
+            //if (this.shipment.Orders == null) return;
+
+            //Builder builder = Builder.GetInstance();
+            //List<Order> orders = builder.ReadExcel(this.excel);
+            //this.shipment.Update(new Shipment(orders, unzippedList, this.shipment.MergedPDF));
+
+        }
+
         private void button4_Click(object sender, EventArgs e)
         {
             Process.Start(Environment.CurrentDirectory);
@@ -762,6 +854,16 @@ namespace PDFiller
         private void zipPathBox_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void Form1_DragOver(object sender, DragEventArgs e)
+        {
+           
+        }
+
+        private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateTabIndex();
         }
 
         //private void imagePanel_Paint(object sender, PaintEventArgs e)

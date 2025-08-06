@@ -102,6 +102,18 @@ namespace PDFiller
         }
 
         /// <summary>
+        /// Will clear all observers for the current shipment status.
+        /// </summary>
+        public void NotifyCompleted()
+        {
+            this.Orders.Clear();
+            foreach (var observer in _observers)
+            {
+                observer.OnCompleted();
+            }
+        }
+
+        /// <summary>
         /// Gets the list of orders.
         /// </summary>
         public List<Order> Orders

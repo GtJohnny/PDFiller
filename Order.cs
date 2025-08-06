@@ -16,7 +16,7 @@ namespace PDFiller
         public string name;
         public List<topper> toppers;
         public string country;
-
+        public string note;
         public struct topper
         {
             public string name;
@@ -42,6 +42,7 @@ namespace PDFiller
             this.awb = "";
             this.country = "";
             this.toppers = new List<topper>();
+            this.note = "";
         }
 
 
@@ -56,6 +57,7 @@ namespace PDFiller
             this.awb = order.awb;
             this.name = order.name;
             this.toppers = new List<topper>(order.toppers);
+            this.note = order.note;
         }
 
         /// <summary>
@@ -74,6 +76,7 @@ namespace PDFiller
             this.name = name;
             this.toppers = new List<topper>();
             this.country = country;
+            this.note = "";
             toppers.Add(new topper(tName, tQuantity, idProduct));
         }
     }

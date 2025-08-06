@@ -76,7 +76,9 @@ namespace PDFiller
 
         public void OnCompleted()
         {
-            throw new NotImplementedException();
+            _orders = null;
+            _toppers.Clear();
+            _panel.Invalidate();
         }
 
 

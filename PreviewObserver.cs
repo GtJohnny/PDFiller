@@ -24,7 +24,7 @@ namespace PDFiller
 
         public virtual void OnCompleted()
         {
-            throw new NotImplementedException();
+            _dataGridView.Rows.Clear();
         }
         public virtual void OnNext(Shipment shipment)
         {

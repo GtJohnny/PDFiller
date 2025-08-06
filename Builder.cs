@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
+using PdfSharpCore.Pdf.Content.Objects;
 using PdfSharpCore.Pdf.IO;
 using System;
 using System.Collections.Generic;
@@ -228,132 +229,134 @@ namespace PDFiller
 
 
 
+        /// <summary>
+        /// Adds an order to the specified list of orders. 
+        /// Also handles multiple generated AWBs for one order.
+        /// </summary>
+        /// <remarks>If the order contains multiple AWB numbers, a new order is created for each AWB,  and
+        /// all such orders are added to the list. The original order remains unchanged.</remarks>
+        /// <param name="orders">The list of orders to which the order will be added.</param>
+        /// <param name="order">The order to add. If the order's AWB contains multiple values separated by commas,  each AWB will be treated
+        /// as a separate order and added individually.</param>
+        private void AddOrderToList(List<Order> orders, Order order)
+        {
+            string[] awbs = order.awb.Split(',');
+            if (awbs.Length > 1)
+            {
+                form.textBox1.AppendText("One order in the Excel file had more than one AWB generated:\r\n");
+                foreach (string a in awbs)
+                {
+                    form.textBox1.AppendText($"-> {a}\r\n");
 
-
+                    order.awb = a.Trim();
+                    order.note = awbs.Count()+"awbs";
+                    orders.Add(new Order(order));
+                }
+            }
+            else
+            {
+                orders.Add(order);
+            }
+           
+        }
 
         /// <summary>
         /// Read the excel file, and return a list of orders.
+        /// Note that if the excel column headers change, this code will also be changed.
+        /// Also if an order has more than one AWB, then the order will be duplicated on purpose.
         /// </summary>
         /// <param name="excel">The excel file to be read</param>
         /// <returns>A list of `Order` objects</returns>
         public List<Order> ReadExcel(FileInfo excel)
         {
+            Cursor.Current = Cursors.WaitCursor;
+
             Excel.Application app = new Excel.Application();
             List<Order> orders = new List<Order>();
             Workbook book = app.Workbooks.Open(excel.FullName);
             Worksheet sheet;
             try
             {
-
                 sheet = book.Worksheets[1];
                 Dictionary<string, byte> columns = GetExcelColumns(sheet);
 
-                byte row = 2;
                 byte IDCOL = columns["Nr. comanda"];
                 byte AWBCOL;
                 try
                 {
-                     AWBCOL = columns["Numar AWB"];
+                    AWBCOL = columns["Numar AWB"];
 
-                }catch (KeyNotFoundException)
+                }
+                catch (KeyNotFoundException)
                 {
                     form.textBox1.AppendText("The excel file doesn't contain the 'Numar AWB' column. Trying 'AWB number'\r\n");
-                     AWBCOL = columns["AWB number"];
+                    AWBCOL = columns["AWB number"];
                 }
                 byte TOPPER_NAME_COL = columns["Nume produs"];
                 byte IDPRODUCT = columns["Cod produs"];
                 byte TOPPER_QUANTITY_COL = columns["Cantitate"];
                 byte CLIENT_NAME = columns["Nume client"];
                 byte SHIPPING_ADDRESS = columns["Adresa de livrare"];
+                Order order = new Order();
+                string id = "first value";
 
-
-
-                Order lastOrder = new Order();
-                while (true)
+                for(int row = 2;row <= sheet.Rows.Count;row++)
                 {
-
-                    string id = sheet.Cells[row, IDCOL].Value2;
-
-
-                    if (id != null)
+                    id = sheet.Cells[row, IDCOL].Value2;
+                    if(id == null)
                     {
-                        string awb = sheet.Cells[row, AWBCOL].Value2;
-                        string name = sheet.Cells[row, CLIENT_NAME].Value2;
-                        string tName = sheet.Cells[row, TOPPER_NAME_COL].Value2;
-                        string idProduct = sheet.Cells[row, IDPRODUCT].Value2;
-                        string shippingAddress = sheet.Cells[row, SHIPPING_ADDRESS].Value2;
-                        tName = ModifyName(idProduct, tName);
+                        break;
+                    }
 
 
+                    string awb = sheet.Cells[row, AWBCOL].Value2;
+                    string name = sheet.Cells[row, CLIENT_NAME].Value2;
+                    string tName = sheet.Cells[row, TOPPER_NAME_COL].Value2;
+                    string idProduct = sheet.Cells[row, IDPRODUCT].Value2;
+                    string shippingAddress = sheet.Cells[row, SHIPPING_ADDRESS].Value2;
+                    int qnt = (int)sheet.Cells[row, TOPPER_QUANTITY_COL].Value2;
+                    tName = ModifyName(idProduct, tName);
 
-                        int qnt = (int)sheet.Cells[row, TOPPER_QUANTITY_COL].Value2;
-                        string country = shippingAddress.Split(',').Last().Trim();
-                        country = new RegionInfo(country).EnglishName;
+                    string country = shippingAddress.Split(',').Last().Trim();
+                    country = new RegionInfo(country).EnglishName;
 
-
-                        if (id == lastOrder.id)
-                        {
-                            Order.topper topper = new Order.topper(tName, qnt, idProduct);
-                            lastOrder.toppers.Add(topper);
-
-                        }
-                        else
-                        {
-                            if (lastOrder.id != "")
-                            {
-                                string[] awbs = awb.Split(',');
-                                if (awbs.Length > 1)
-                                {
-                                    foreach (string a in awbs)
-                                    {
-                                        lastOrder.awb = a.Trim();
-                                        orders.Add(new Order(lastOrder));
-                                    }
-                                }
-                                else
-                                {
-                                    orders.Add(lastOrder);
-                                }
-
-                            }
-                            lastOrder = new Order(id, awb, name, tName, qnt, idProduct, country);
-
-
-                            //form.textBox1.Text += ++i + ". " + awb + ":\r\n" +
-                            //    "-> " + qnt + ". " + name + "\r\n";
-
-
-                        }
+                    if (id == order.id)
+                    {
+                        order.toppers.Add(new Order.topper(tName, qnt, idProduct));
                     }
                     else
                     {
-                        string[] awbs = lastOrder.awb.Split(',');
-                        if (awbs.Length > 1)
+                        if (order.id != "")
                         {
-                            foreach (string a in awbs)
-                            {
-                                lastOrder.awb = a.Trim();
-                                orders.Add(new Order(lastOrder));
-                            }
+
+                            AddOrderToList(orders, order);
+
                         }
-                        else
-                        {
-                            orders.Add(lastOrder);
-                        }
-                        break;
+                        order = new Order(id, awb, name, tName, qnt, idProduct, country);
                     }
-                    row++;
+
                 }
+                AddOrderToList(orders, order);
+
+
                 book.Close();
                 app.Quit();
+
                 return orders;
             }
             catch (Exception ex)
             {
-                form.textBox1.Text += ex.Message;
+
+                form.textBox1.AppendText(ex.Message);
                 book.Close();
+                app.Workbooks.Close();
                 app.Quit();
-                throw ex;
+                return new List<Order>();
+            }
+            finally
+            {
+                Marshal.ReleaseComObject(book);
+                Marshal.ReleaseComObject(app);
             }
         }
 
@@ -565,7 +568,7 @@ namespace PDFiller
                     //lower half of the page
                     gfx.DrawRectangle(XBrushes.White, rect);
                     //Write the country in the middle
-                    gfx.DrawString(o.country, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, gfx.PageSize.Width *0.5f , gfx.PageSize.Height * 0.5f+65, XStringFormats.Center);
+                    gfx.DrawString(o.country+o.note, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, gfx.PageSize.Width *0.5f , gfx.PageSize.Height * 0.5f+65, XStringFormats.Center);
 
                     if (!WriteOnPage(gfx, o.toppers))
                     {

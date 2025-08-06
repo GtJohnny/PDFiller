@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Office.Interop.Excel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace PDFiller
 
         public void OnCompleted()
         {
-            throw new NotImplementedException();
+            _dataGridView.Rows.Clear();
         }
 
         public void OnError(Exception error)

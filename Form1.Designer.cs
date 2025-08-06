@@ -422,7 +422,7 @@
             this.excelButton.Name = "excelButton";
             this.excelButton.Size = new System.Drawing.Size(156, 45);
             this.excelButton.TabIndex = 5;
-            this.excelButton.Text = "Select Excel File";
+            this.excelButton.Text = "Select Excel";
             this.excelButton.UseVisualStyleBackColor = false;
             this.excelButton.Click += new System.EventHandler(this.excelButton_Click);
             // 
@@ -787,6 +787,7 @@
             this.tabControl2.SelectedIndex = 0;
             this.tabControl2.Size = new System.Drawing.Size(632, 529);
             this.tabControl2.TabIndex = 4;
+            this.tabControl2.SelectedIndexChanged += new System.EventHandler(this.tabControl2_SelectedIndexChanged);
             // 
             // tabPage3
             // 
@@ -828,6 +829,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Shown += new System.EventHandler(this.Form1_Shown);
+            this.DragOver += new System.Windows.Forms.DragEventHandler(this.Form1_DragOver);
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
             panel1.ResumeLayout(false);
