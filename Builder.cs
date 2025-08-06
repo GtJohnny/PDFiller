@@ -274,7 +274,7 @@ namespace PDFiller
             Excel.Application app = new Excel.Application();
             List<Order> orders = new List<Order>();
             Workbook book = app.Workbooks.Open(excel.FullName);
-            Worksheet sheet;
+            Worksheet sheet = null;
             try
             {
                 sheet = book.Worksheets[1];
@@ -338,7 +338,6 @@ namespace PDFiller
                 }
                 AddOrderToList(orders, order);
 
-
                 book.Close();
                 app.Quit();
 
@@ -355,8 +354,10 @@ namespace PDFiller
             }
             finally
             {
+                Marshal.ReleaseComObject(sheet);
                 Marshal.ReleaseComObject(book);
                 Marshal.ReleaseComObject(app);
+                GC.Collect();
             }
         }
 

@@ -69,6 +69,7 @@ namespace PDFiller
         /// <param name="tName">The name of the first topper</param>
         /// <param name="tQuantity">The bought quantity of the first topper.</param>
         /// <param name="idProduct">The ID of the first topper product.</param>
+        /// <param name="country"> The country of the customer.</param>
         public Order(string id, string awb,string name, string tName, int tQuantity, string idProduct, string country)
         {
             this.id = id;
