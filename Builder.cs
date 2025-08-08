@@ -211,18 +211,14 @@ namespace PDFiller
         /// We just take all columns from the first row,
         /// Regardless of their order.
         /// </summary>
-        /// <param name="sheet">The worksheet with all the orders</param>
+        /// <param name="data">A string matrix containing the data read from the excel sheet</param>
+        /// <param name="nrCol">Number of columns</param>
         /// <returns>A dictionary that has as key the header of each column, and the index of the column in a byte</returns>
-        private Dictionary<string, byte> GetExcelColumns(Worksheet sheet)
+        private Dictionary<string, byte> GetExcelColumns(string[,] data,int nrCol)
         {
             Dictionary<string, byte> columns = new Dictionary<string, byte>();
-            byte col = 1;
-            while (true)
-            {
-                string value = sheet.Cells[1, col].Value2;
-                if (value == null) break;
-                columns.Add(value, col);
-                col++;
+            for(byte col = 1; col <= nrCol; col++){
+                columns.Add(data[1, col], col);
             }
             return columns;
         }
@@ -278,7 +274,34 @@ namespace PDFiller
             try
             {
                 sheet = book.Worksheets[1];
-                Dictionary<string, byte> columns = GetExcelColumns(sheet);
+            }
+            catch(COMException ex)
+            {
+                form.textBox1.AppendText("The excel file is empty or doesn't contain any worksheets.\r\n");
+                form.textBox1.AppendText(ex.Message);
+                book.Close(0);
+                app.Quit();
+                return null;
+            }
+            Range range = sheet.UsedRange;
+            int x=range.Rows.Count;
+            int y=range.Columns.Count;
+            string[,] data = new string[x+1, y+1];
+            for (int i = 1; i <= x; i++)
+            {
+                for (int j = 1; j <= y; j++)
+                {
+                    data[i, j] = sheet.Cells[i, j].Value2?.ToString();
+                }
+            }
+            book.Close(0);
+            app.Quit();
+            Marshal.ReleaseComObject(book);
+            Marshal.ReleaseComObject(app);
+            GC.Collect();
+            try
+            {
+                Dictionary<string, byte> columns = GetExcelColumns(data,y);
 
                 byte IDCOL = columns["Nr. comanda"];
                 byte AWBCOL;
@@ -300,21 +323,20 @@ namespace PDFiller
                 Order order = new Order();
                 string id = "first value";
 
-                for(int row = 2;row <= sheet.Rows.Count;row++)
+                for(int row = 2;row <= x;row++)
                 {
-                    id = sheet.Cells[row, IDCOL].Value2;
+                    id = data[row,IDCOL];
                     if(id == null)
                     {
                         break;
                     }
 
-
-                    string awb = sheet.Cells[row, AWBCOL].Value2;
-                    string name = sheet.Cells[row, CLIENT_NAME].Value2;
-                    string tName = sheet.Cells[row, TOPPER_NAME_COL].Value2;
-                    string idProduct = sheet.Cells[row, IDPRODUCT].Value2;
-                    string shippingAddress = sheet.Cells[row, SHIPPING_ADDRESS].Value2;
-                    int qnt = (int)sheet.Cells[row, TOPPER_QUANTITY_COL].Value2;
+                    string awb = data[row, AWBCOL];
+                    string name = data[row, CLIENT_NAME];
+                    string tName = data[row, TOPPER_NAME_COL];
+                    string idProduct = data[row, IDPRODUCT];
+                    string shippingAddress = data[row, SHIPPING_ADDRESS];
+                    int qnt = int.Parse(data[row, TOPPER_QUANTITY_COL]);
                     tName = ModifyName(idProduct, tName);
 
                     string country = shippingAddress.Split(',').Last().Trim();
@@ -337,28 +359,15 @@ namespace PDFiller
 
                 }
                 AddOrderToList(orders, order);
-
-                book.Close();
-                app.Quit();
-
                 return orders;
             }
             catch (Exception ex)
             {
 
                 form.textBox1.AppendText(ex.Message);
-                book.Close();
-                app.Workbooks.Close();
-                app.Quit();
                 return new List<Order>();
             }
-            finally
-            {
-                Marshal.ReleaseComObject(sheet);
-                Marshal.ReleaseComObject(book);
-                Marshal.ReleaseComObject(app);
-                GC.Collect();
-            }
+           
         }
 
 
@@ -461,8 +470,8 @@ namespace PDFiller
         /// Aswell as the country of origin based on the AWB format.
         /// </summary>
         /// <param name="page">Page to read text from</param>
-        /// <param name="idAWB">AWB number</param>
-        /// <param name="country">Country of origin</param>
+        /// <param name="orders">Orders from which one should have a matching AWB code</param>
+        /// <param name="awb">The AWB code in question</param>
         /// <returns>True if successfull, false if not</returns>
         public bool ReadAwbId(UglyToad.PdfPig.Content.Page page, List<Order> orders, out string awb)
         {

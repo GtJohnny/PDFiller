@@ -355,6 +355,7 @@
             this.button2.TabIndex = 1;
             this.button2.Text = "button2";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Visible = false;
             this.button2.Click += new System.EventHandler(this.TestButtonClick);
             // 
             // button3
@@ -803,6 +804,8 @@
             // imagePanel
             // 
             this.imagePanel.AutoScroll = true;
+            this.imagePanel.AutoScrollMinSize = new System.Drawing.Size(50, 50);
+            this.imagePanel.AutoSize = true;
             this.imagePanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.imagePanel.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.imagePanel.Location = new System.Drawing.Point(3, 3);
@@ -853,6 +856,7 @@
             this.tabPage1.PerformLayout();
             this.tabControl2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
 
         }

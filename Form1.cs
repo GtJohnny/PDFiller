@@ -467,10 +467,7 @@ namespace PDFiller
             try
             {
                 Cursor.Current = Cursors.WaitCursor;
-                if (excel == null || !excel.Exists)
-                {
-                    throw new FileNotFoundException("Excel could not be found.");
-                }
+              
                 string saveDir = null;
                 Builder menu = PDFiller.Builder.GetInstance();
                 if (zip != null && unzippedList == null)
@@ -483,18 +480,29 @@ namespace PDFiller
                     textBox1.AppendText($"Extracted archive: {zip.Name}\r\n");
                     textBox1.AppendText($"Extracted {unzippedList.Count} orders.\r\n");
                 }
-                textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nReading the excel file.\r\n");
 
-                
-                saveDir = unzippedList.First().DirectoryName;
+                if(unzippedList != null)
+                {
+                    saveDir = unzippedList.First().DirectoryName;
+                }
+                else
+                {
+                    throw new Exception ("No zip archive or pdf files were selected. Nothing to fill.");
+                }
+
+                if (excel == null || !excel.Exists)
+                {
+                    throw new FileNotFoundException("Excel could not be found.");
+                }
+
                 if (shipment.Orders == null || shipment.Orders.Count == 0)
                 {
+                    textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nReading the excel file.\r\n");
                     this.shipment.Update(menu.WriteOnOrders(unzippedList, menu.ReadExcel(excel), saveDir, "CustomPDF"));
                 }
                 else
                 {
                     this.shipment.Update(menu.WriteOnOrders(unzippedList, shipment.Orders, saveDir, "CustomPDF"));
-
                 }
                 //if (failed > 0)
                 //{
