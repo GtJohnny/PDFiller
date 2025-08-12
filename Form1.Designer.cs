@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.GroupBox groupBox3;
             System.Windows.Forms.Label label3;
             System.Windows.Forms.Label label6;
@@ -43,6 +44,7 @@
             System.Windows.Forms.Label label13;
             System.Windows.Forms.Label label14;
             System.Windows.Forms.Panel panel1;
+            System.Windows.Forms.ToolTip toolTip1;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.openPdfCheck = new System.Windows.Forms.CheckBox();
             this.drawComboBox = new System.Windows.Forms.ComboBox();
@@ -66,11 +68,11 @@
             this.emagBtn = new System.Windows.Forms.Button();
             this.SamedayBtn = new System.Windows.Forms.Button();
             this.CelBtn = new System.Windows.Forms.Button();
-            this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.rootTextBox = new System.Windows.Forms.TextBox();
             this.excelPathBox = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
             this.zipPathBox = new System.Windows.Forms.TextBox();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.zipLabel = new System.Windows.Forms.Label();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.summaryGridView = new System.Windows.Forms.DataGridView();
@@ -78,10 +80,12 @@
             this.topperColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.excelTab = new System.Windows.Forms.TabPage();
             this.previewGridView = new System.Windows.Forms.DataGridView();
+            this.CountryColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.numeCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.nameCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.qntCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -101,6 +105,7 @@
             label13 = new System.Windows.Forms.Label();
             label14 = new System.Windows.Forms.Label();
             panel1 = new System.Windows.Forms.Panel();
+            toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             groupBox3.SuspendLayout();
             panel1.SuspendLayout();
             this.tabControlMenu.SuspendLayout();
@@ -355,7 +360,6 @@
             this.button2.TabIndex = 1;
             this.button2.Text = "button2";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Visible = false;
             this.button2.Click += new System.EventHandler(this.TestButtonClick);
             // 
             // button3
@@ -368,6 +372,7 @@
             this.button3.Size = new System.Drawing.Size(151, 39);
             this.button3.TabIndex = 16;
             this.button3.Text = "Open PDF";
+            toolTip1.SetToolTip(this.button3, "Open the merged AWB if you closed it.");
             this.button3.UseVisualStyleBackColor = false;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
@@ -381,6 +386,7 @@
             this.autoFillBtn.Size = new System.Drawing.Size(151, 39);
             this.autoFillBtn.TabIndex = 8;
             this.autoFillBtn.Text = "AutoFill";
+            toolTip1.SetToolTip(this.autoFillBtn, "Automatically finds your .zip and .xlsx files and does the magic!");
             this.autoFillBtn.UseVisualStyleBackColor = false;
             this.autoFillBtn.Click += new System.EventHandler(this.autoFillBtn_Click);
             // 
@@ -411,6 +417,7 @@
             this.button1.Size = new System.Drawing.Size(156, 45);
             this.button1.TabIndex = 7;
             this.button1.Text = "Select Unzipped";
+            toolTip1.SetToolTip(this.button1, "Manually select your AWB files.");
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.unzippedButton_Click);
             // 
@@ -424,6 +431,7 @@
             this.excelButton.Size = new System.Drawing.Size(156, 45);
             this.excelButton.TabIndex = 5;
             this.excelButton.Text = "Select Excel";
+            toolTip1.SetToolTip(this.excelButton, "Manually select your excel file.");
             this.excelButton.UseVisualStyleBackColor = false;
             this.excelButton.Click += new System.EventHandler(this.excelButton_Click);
             // 
@@ -437,6 +445,7 @@
             this.zipButton.Size = new System.Drawing.Size(156, 45);
             this.zipButton.TabIndex = 4;
             this.zipButton.Text = "Select Zip Archive";
+            toolTip1.SetToolTip(this.zipButton, "Manually select your zip file.");
             this.zipButton.UseVisualStyleBackColor = false;
             this.zipButton.Click += new System.EventHandler(this.zipButton_Click);
             // 
@@ -450,6 +459,7 @@
             this.mergeFillButton.Size = new System.Drawing.Size(156, 45);
             this.mergeFillButton.TabIndex = 6;
             this.mergeFillButton.Text = "Merge&&Fill";
+            toolTip1.SetToolTip(this.mergeFillButton, "Click!");
             this.mergeFillButton.UseVisualStyleBackColor = false;
             this.mergeFillButton.Click += new System.EventHandler(this.mergeFillButton_Click);
             // 
@@ -479,6 +489,7 @@
             this.button4.Size = new System.Drawing.Size(135, 52);
             this.button4.TabIndex = 14;
             this.button4.Text = "Open Local Files";
+            toolTip1.SetToolTip(this.button4, "Open application files.");
             this.button4.UseVisualStyleBackColor = false;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
@@ -492,6 +503,7 @@
             this.workButton.Size = new System.Drawing.Size(135, 52);
             this.workButton.TabIndex = 6;
             this.workButton.Text = "Select Work Directory";
+            toolTip1.SetToolTip(this.workButton, "Use if zip and excel are in the same place but not under root directory.");
             this.workButton.UseVisualStyleBackColor = false;
             this.workButton.Click += new System.EventHandler(this.workButton_Click);
             // 
@@ -504,7 +516,8 @@
             this.rootButton.Name = "rootButton";
             this.rootButton.Size = new System.Drawing.Size(135, 52);
             this.rootButton.TabIndex = 3;
-            this.rootButton.Text = "Select Root Directory";
+            this.rootButton.Text = "Change Root Directory";
+            toolTip1.SetToolTip(this.rootButton, "C:\\Users\\you\\Desktop\\AWB by default.");
             this.rootButton.UseVisualStyleBackColor = false;
             this.rootButton.Click += new System.EventHandler(this.rootButton_Click);
             // 
@@ -574,6 +587,45 @@
             this.CelBtn.UseVisualStyleBackColor = false;
             this.CelBtn.Click += new System.EventHandler(this.CelBtn_Click);
             // 
+            // toolTip1
+            // 
+            toolTip1.AutomaticDelay = 150;
+            toolTip1.Tag = "";
+            // 
+            // rootTextBox
+            // 
+            this.rootTextBox.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rootTextBox.Location = new System.Drawing.Point(110, 117);
+            this.rootTextBox.Name = "rootTextBox";
+            this.rootTextBox.ReadOnly = true;
+            this.rootTextBox.Size = new System.Drawing.Size(725, 25);
+            this.rootTextBox.TabIndex = 6;
+            toolTip1.SetToolTip(this.rootTextBox, "Double Click to open AWB folder.");
+            this.rootTextBox.TextChanged += new System.EventHandler(this.rootTextBox_TextChanged);
+            this.rootTextBox.DoubleClick += new System.EventHandler(this.rootTextBox_DoubleClick);
+            // 
+            // excelPathBox
+            // 
+            this.excelPathBox.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.excelPathBox.Location = new System.Drawing.Point(110, 70);
+            this.excelPathBox.Name = "excelPathBox";
+            this.excelPathBox.ReadOnly = true;
+            this.excelPathBox.Size = new System.Drawing.Size(725, 25);
+            this.excelPathBox.TabIndex = 3;
+            toolTip1.SetToolTip(this.excelPathBox, "Double Click to open excel file.");
+            this.excelPathBox.DoubleClick += new System.EventHandler(this.excelPathBox_DoubleClick);
+            // 
+            // zipPathBox
+            // 
+            this.zipPathBox.Font = new System.Drawing.Font("Times New Roman", 11.25F);
+            this.zipPathBox.Location = new System.Drawing.Point(110, 21);
+            this.zipPathBox.Name = "zipPathBox";
+            this.zipPathBox.ReadOnly = true;
+            this.zipPathBox.Size = new System.Drawing.Size(725, 25);
+            this.zipPathBox.TabIndex = 1;
+            toolTip1.SetToolTip(this.zipPathBox, "Double Click to open zip file directory.");
+            this.zipPathBox.DoubleClick += new System.EventHandler(this.zipPathBox_DoubleClick);
+            // 
             // groupBox8
             // 
             this.groupBox8.BackColor = System.Drawing.SystemColors.Window;
@@ -593,27 +645,6 @@
             this.groupBox8.Text = "Paths";
             this.groupBox8.Enter += new System.EventHandler(this.groupBox8_Enter);
             // 
-            // rootTextBox
-            // 
-            this.rootTextBox.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rootTextBox.Location = new System.Drawing.Point(110, 117);
-            this.rootTextBox.Name = "rootTextBox";
-            this.rootTextBox.ReadOnly = true;
-            this.rootTextBox.Size = new System.Drawing.Size(725, 25);
-            this.rootTextBox.TabIndex = 6;
-            this.rootTextBox.TextChanged += new System.EventHandler(this.rootTextBox_TextChanged);
-            this.rootTextBox.DoubleClick += new System.EventHandler(this.rootTextBox_DoubleClick);
-            // 
-            // excelPathBox
-            // 
-            this.excelPathBox.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.excelPathBox.Location = new System.Drawing.Point(110, 70);
-            this.excelPathBox.Name = "excelPathBox";
-            this.excelPathBox.ReadOnly = true;
-            this.excelPathBox.Size = new System.Drawing.Size(725, 25);
-            this.excelPathBox.TabIndex = 3;
-            this.excelPathBox.DoubleClick += new System.EventHandler(this.excelPathBox_DoubleClick);
-            // 
             // label7
             // 
             this.label7.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -622,16 +653,6 @@
             this.label7.Size = new System.Drawing.Size(97, 23);
             this.label7.TabIndex = 2;
             this.label7.Text = "Excel File:";
-            // 
-            // zipPathBox
-            // 
-            this.zipPathBox.Font = new System.Drawing.Font("Times New Roman", 11.25F);
-            this.zipPathBox.Location = new System.Drawing.Point(110, 21);
-            this.zipPathBox.Name = "zipPathBox";
-            this.zipPathBox.ReadOnly = true;
-            this.zipPathBox.Size = new System.Drawing.Size(725, 25);
-            this.zipPathBox.TabIndex = 1;
-            this.zipPathBox.DoubleClick += new System.EventHandler(this.zipPathBox_DoubleClick);
             // 
             // zipLabel
             // 
@@ -710,6 +731,7 @@
             this.previewGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.previewGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.previewGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.CountryColumn,
             this.numeCol,
             this.nameCol,
             this.qntCol});
@@ -722,6 +744,14 @@
             this.previewGridView.ShowCellErrors = false;
             this.previewGridView.Size = new System.Drawing.Size(618, 493);
             this.previewGridView.TabIndex = 8;
+            // 
+            // CountryColumn
+            // 
+            this.CountryColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.CountryColumn.HeaderText = "Country";
+            this.CountryColumn.Name = "CountryColumn";
+            this.CountryColumn.ReadOnly = true;
+            this.CountryColumn.Width = 77;
             // 
             // numeCol
             // 
@@ -755,6 +785,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.panel2);
             this.tabPage1.Controls.Add(this.textBox1);
             this.tabPage1.Location = new System.Drawing.Point(4, 26);
             this.tabPage1.Name = "tabPage1";
@@ -763,6 +794,13 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "WorkflowStatus";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // panel2
+            // 
+            this.panel2.Location = new System.Drawing.Point(308, 256);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(275, 140);
+            this.panel2.TabIndex = 1;
             // 
             // textBox1
             // 
@@ -778,6 +816,7 @@
             // 
             // tabControl2
             // 
+            this.tabControl2.AllowDrop = true;
             this.tabControl2.Controls.Add(this.tabPage1);
             this.tabControl2.Controls.Add(this.excelTab);
             this.tabControl2.Controls.Add(this.tabPage5);
@@ -789,6 +828,10 @@
             this.tabControl2.Size = new System.Drawing.Size(632, 529);
             this.tabControl2.TabIndex = 4;
             this.tabControl2.SelectedIndexChanged += new System.EventHandler(this.tabControl2_SelectedIndexChanged);
+            this.tabControl2.DragDrop += new System.Windows.Forms.DragEventHandler(this.tabControl2_DragDrop);
+            this.tabControl2.DragEnter += new System.Windows.Forms.DragEventHandler(this.tabControl2_DragEnter);
+            this.tabControl2.DragOver += new System.Windows.Forms.DragEventHandler(this.tabControl2_DragOver);
+            this.tabControl2.DragLeave += new System.EventHandler(this.tabControl2_DragLeave);
             // 
             // tabPage3
             // 
@@ -815,6 +858,7 @@
             // 
             // Form1
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonFace;
@@ -832,6 +876,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Shown += new System.EventHandler(this.Form1_Shown);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
             this.DragOver += new System.Windows.Forms.DragEventHandler(this.Form1_DragOver);
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
@@ -891,9 +936,6 @@
         internal System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.DataGridView summaryGridView;
         private System.Windows.Forms.DataGridView previewGridView;
-        private System.Windows.Forms.DataGridViewTextBoxColumn numeCol;
-        private System.Windows.Forms.DataGridViewTextBoxColumn nameCol;
-        private System.Windows.Forms.DataGridViewTextBoxColumn qntCol;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TabPage tabPage3;
@@ -904,6 +946,11 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.DataGridViewTextBoxColumn qntColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn topperColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CountryColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn numeCol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn nameCol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn qntCol;
+        private System.Windows.Forms.Panel panel2;
     }
 }
 

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -256,6 +257,22 @@ namespace PDFiller
            
         }
 
+        private byte GetHeader(Dictionary<string, byte> columns, string[] headers)
+        {
+            foreach (string header in headers)
+            {
+                if (columns.ContainsKey(header))
+                {
+                    return columns[header];
+                }
+            }
+            throw new KeyNotFoundException($"The excel file doesn't contain any the required column headers: {string.Join(", ", headers)}");
+        }
+
+
+
+
+
         /// <summary>
         /// Read the excel file, and return a list of orders.
         /// Note that if the excel column headers change, this code will also be changed.
@@ -275,7 +292,7 @@ namespace PDFiller
             {
                 sheet = book.Worksheets[1];
             }
-            catch(COMException ex)
+            catch (COMException ex)
             {
                 form.textBox1.AppendText("The excel file is empty or doesn't contain any worksheets.\r\n");
                 form.textBox1.AppendText(ex.Message);
@@ -284,9 +301,9 @@ namespace PDFiller
                 return null;
             }
             Range range = sheet.UsedRange;
-            int x=range.Rows.Count;
-            int y=range.Columns.Count;
-            string[,] data = new string[x+1, y+1];
+            int x = range.Rows.Count;
+            int y = range.Columns.Count;
+            string[,] data = new string[x + 1, y + 1];
             for (int i = 1; i <= x; i++)
             {
                 for (int j = 1; j <= y; j++)
@@ -301,32 +318,33 @@ namespace PDFiller
             GC.Collect();
             try
             {
-                Dictionary<string, byte> columns = GetExcelColumns(data,y);
+                Dictionary<string, byte> columns = GetExcelColumns(data, y);
+                byte IDCOL, AWBCOL, TOPPER_NAME_COL, IDPRODUCT, TOPPER_QUANTITY_COL, CLIENT_NAME, SHIPPING_ADDRESS;
 
-                byte IDCOL = columns["Nr. comanda"];
-                byte AWBCOL;
                 try
                 {
-                    AWBCOL = columns["Numar AWB"];
-
+                    IDCOL = GetHeader(columns, new string[] { "Nr. comanda", "Order number" });
+                    AWBCOL = GetHeader(columns, new string[] { "Numar AWB", "AWB number" });
+                    TOPPER_NAME_COL = GetHeader(columns, new string[] { "Nume produs", "Product name" });
+                    IDPRODUCT = GetHeader(columns, new string[] { "Cod produs", "Product code" });
+                    TOPPER_QUANTITY_COL = GetHeader(columns, new string[] { "Cantitate", "Quantity" });
+                    CLIENT_NAME = GetHeader(columns, new string[] { "Nume client", "Shipping name" });
+                    SHIPPING_ADDRESS = GetHeader(columns, new string[] { "Adresa de livrare", "Shipping address" });
                 }
-                catch (KeyNotFoundException)
+                catch (KeyNotFoundException ex)
                 {
-                    form.textBox1.AppendText("The excel file doesn't contain the 'Numar AWB' column. Trying 'AWB number'\r\n");
-                    AWBCOL = columns["AWB number"];
+                    form.textBox1.AppendText("The excel file doesn't contain all the required column headers.\r\n");
+                    form.textBox1.AppendText(ex.Message);
+                    return new List<Order>();
                 }
-                byte TOPPER_NAME_COL = columns["Nume produs"];
-                byte IDPRODUCT = columns["Cod produs"];
-                byte TOPPER_QUANTITY_COL = columns["Cantitate"];
-                byte CLIENT_NAME = columns["Nume client"];
-                byte SHIPPING_ADDRESS = columns["Adresa de livrare"];
+
                 Order order = new Order();
-                string id = "first value";
+                string id = "";
 
-                for(int row = 2;row <= x;row++)
+                for (int row = 2; row <= x; row++)
                 {
-                    id = data[row,IDCOL];
-                    if(id == null)
+                    id = data[row, IDCOL];
+                    if (id == null)
                     {
                         break;
                     }
@@ -340,8 +358,14 @@ namespace PDFiller
                     tName = ModifyName(idProduct, tName);
 
                     string country = shippingAddress.Split(',').Last().Trim();
-                    country = new RegionInfo(country).EnglishName;
-
+                    try
+                    {
+                        country = new RegionInfo(country).EnglishName;
+                    }catch(ArgumentException)
+                    {
+                        form.textBox1.AppendText($"Couldn't find country name for:{id}\r\n");
+                        country = "";
+                    }
                     if (id == order.id)
                     {
                         order.toppers.Add(new Order.topper(tName, qnt, idProduct));
@@ -367,27 +391,8 @@ namespace PDFiller
                 form.textBox1.AppendText(ex.Message);
                 return new List<Order>();
             }
-           
+
         }
-
-
-
-
-
-
-        //internal void ReadExcelTable(List<Order> orders, DataGridViewRowCollection rows)
-        //{
-        //    //    System.Data.DataTable dt = new System.Data.DataTable("Order Preview");
-        //    rows.Clear();
-        //    foreach (Order o in orders)
-        //    {
-        //        rows.Add(o.name, o.toppere[0].tName, o.toppere[0].tQuantity);
-        //        foreach (Order.topper tp in o.toppere.GetRange(1, o.toppere.Count - 1))
-        //        {
-        //            rows.Add(null, tp.tName, tp.tQuantity);
-        //        }
-        //    }
-        //}
 
 
 
@@ -673,15 +678,28 @@ namespace PDFiller
 
             }
 
-            //byte[] bytes = tName.ToCharArray()
-            //   .Select(c => (byte)c)
-            //   .ToArray();
-            //string decodedString = System.Text.Encoding.UTF8.GetString(bytes);
-            
             //improvizatie pentru bulgaria  
-            if(tName.StartsWith("Комплект украса"))
+
+            if(tName.StartsWith("Комплект украса за торта "))
             {
-                return tName.Substring(tName.IndexOf('/'), tName.IndexOf(',') - tName.IndexOf('/')).Trim(',', '/', ' ', '\\');
+                try
+                {
+                    tName = tName.Replace("Комплект украса за торта ", "");
+                    if (tName.Contains("/") && tName.IndexOf("/") < tName.Length)
+                    {
+                        tName = tName.Substring(tName.IndexOf("/") + 1).Trim();
+                    }
+
+                    if (tName.Contains(","))
+                    {
+                        tName = tName.Substring(0, tName.IndexOf(","));
+                    }
+                    return tName;
+                }catch(Exception)
+                {
+
+                    return tName;
+                }
             }
 
             return tName;
