@@ -158,70 +158,21 @@ namespace PDFiller
             }
         }
 
-        private void HelpMeOut()
-        {
-            //Builder builder = Builder.GetInstance();
-            //// manualSelect = true;
-            //workDir = new DirectoryInfo(DebugPath);
-            //unzippedList = new List<FileInfo>() { new FileInfo(DebugPath + "417264331_Sameday_4EMG24107789758001.pdf") };
-            //excel = builder.FindExcel(workDir);
-            //var orders = builder.ReadExcel(excel);
-            //string resPath = builder.WriteOnOrders(unzippedList, orders, workDir.FullName, "ROBLOX_IMAGE_TEST").MergedPDF;
-            //Process.Start(resPath);
 
-        }
-
-
-        public void TestAsync()
-        {
-            Excel.Application app = new Excel.Application();
-            Excel.Workbook book = app.Workbooks.Open(DebugPath + "imagini.xlsx");
-
-            if (book == null)
-            {
-                throw new Exception("Excel workbook could not be opened.");
-            }
-            Excel.Worksheet sheet;
-            try
-            {
-                sheet = book.Worksheets[1];
-                MessageBox.Show(sheet.Cells[1, 1].Value2.ToString());
-                MessageBox.Show(sheet.Cells[1, 2].Value2.ToString());
-                MessageBox.Show(sheet.Cells[1, 3].Value2.ToString());
-                MessageBox.Show(sheet.Cells[2, 1].Value2.ToString());
-                MessageBox.Show(sheet.Cells[2, 2].Value2.ToString());
-                MessageBox.Show(sheet.Cells[2, 3].Value2.ToString());
-                MessageBox.Show(sheet.Cells[3, 1].Value2.ToString());
-                MessageBox.Show(sheet.Cells[3, 2].Value2.ToString());
-                MessageBox.Show(sheet.Cells[3, 3].Value2.ToString());
-
-
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                book.Close();
-                app.Quit();
-            }
-        }
-
-
-        public async void HelpMeOutAsync()
-        {
-            await Task.Run(() => TestAsync());
-        }
         private void Form1_Shown(object sender, EventArgs e)
         {
-
+            textBox1.AppendText("Please select a zip archive, an excel file," +
+               " or a handful of awbs to begin!\r\n" +
+               "You can select them automatically, manually, Drag & Drop " +
+               "or Copy & Paste them directly into this textbox!\r\n");
 
             if (autoFillCheck.Checked)
             {
+
                 AutoFill();
             }
+           
+
         }
 
 
@@ -248,7 +199,6 @@ namespace PDFiller
                     this.zip = new FileInfo(ofd.FileName);
                     unzippedList = null;
                     textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nFound zip archive at:\r\n {zip.FullName} \r\n");
-                    zipLabel.Font = new System.Drawing.Font(zipLabel.Font, FontStyle.Regular);
                     zipLabel.Text = "Zip File:";
                     break;
                 default:
@@ -298,8 +248,6 @@ namespace PDFiller
                     if (this.tabControl2.SelectedIndex == 0)
                     {
                         this.shipment.NotifyCompleted();
-
-
                     }
                     else
                     {
@@ -353,7 +301,6 @@ namespace PDFiller
                     {
                         zipPathBox.AppendText($" + {unzippedList.Count - 1} others");
                         zipLabel.Text += "s";
-
                     }
                     break;
                 default:
@@ -538,6 +485,8 @@ namespace PDFiller
         {
             try
             {
+                textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]" +
+                    "Autofilling...\r\n");
                 Cursor.Current = Cursors.WaitCursor;
                 Builder menu = PDFiller.Builder.GetInstance(this);
                 workDir = menu.FindWorkDir(rootDir);
@@ -792,8 +741,10 @@ namespace PDFiller
         private void TestButtonClick(object sender, EventArgs e)
         {
             Icon icon = Icon.ExtractAssociatedIcon(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Balatro.url");
-            Graphics g = this.CreateGraphics();
+            Graphics g = textBox1.CreateGraphics();
+            textBox1.Invalidate();
             g.DrawIcon(icon, new Rectangle(Cursor.Position.X, Cursor.Position.Y, 32, 32));
+            g.Save();
 
         }
 
@@ -854,10 +805,6 @@ namespace PDFiller
             Process.Start(Environment.CurrentDirectory);
         }
 
-        private void zipPathBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
 
 
         private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
@@ -867,76 +814,180 @@ namespace PDFiller
 
 
 
-        private void tabControl2_DragEnter(object sender, DragEventArgs e)
+        private void tabControl2_DragLeave(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.Default;
+            textBox1.BackColor = SystemColors.Window;
+        }
+
+
+
+     
+        private void textBox1_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
-                //Cursor = Cursors.Hand;
-
-                //Icon icon = Icon.ExtractAssociatedIcon(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Balatro.url");
-                //Graphics g = panel2.CreateGraphics();
-                //g.DrawIcon(icon, new Rectangle(0, 0, 32, 32));
-                //this.Cursor = new Cursor(icon.Handle);
+                textBox1.BackColor = Color.LightGreen;
             }
             else
+            {
                 e.Effect = DragDropEffects.None;
+            }
         }
 
-        private void tabControl2_DragLeave(object sender, EventArgs e)
+        private void textBox1_DragLeave(object sender, EventArgs e)
         {
-            Cursor.Current = Cursors.Default;
-        }
-
-        private void tabControl2_DragDrop(object sender, DragEventArgs e)
-        {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            textBox1.AppendText("Drag&Drop successfull!\r\n");
-            textBox1.AppendText(string.Join("\r\n", files));
-            textBox1.AppendText("\r\n");
+            textBox1.BackColor = SystemColors.Window;
+            Cursor = Cursors.Default;
 
         }
 
-        private void tabControl2_GiveFeedback(object sender, GiveFeedbackEventArgs e)
+        /// <summary>
+        /// Given a list of file paths, reads them and sets the zip, excel and unzippedList variables accordingly.
+        /// Used as alternative to autofill or file dialogs.
+        /// </summary>
+        /// <param name="paths">Paths to all the input files given</param>
+        private void ReadGivenFiles(string[] paths)
         {
+            bool foundExcel = false;
+            bool foundZip = false;
+            bool foundPDF = false;
+
+            byte failed = 0;
+            textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\n");
 
 
-            //if (e.Effect == DragDropEffects.Copy)
-            //{
-            //    e.UseDefaultCursors = false;
-            //}
-            //else
-            //{
-            //    e.UseDefaultCursors = true;
-            //}
+            foreach (string path in paths)
+            {
+                FileInfo file = new FileInfo(path);
+
+                if (file.Exists)
+                {
+                    switch (file.Extension)
+                    {
+                        case ".zip":
+                            if (foundZip) //We will only process one zip file.
+                            {
+                                textBox1.AppendText($"Multiple zip files found, only the first will be used.\r\n");
+                                continue;
+                            }
+                            zip = file;
+                            zipLabel.Text = "Zip File:";
+                            zipPathBox.Text = zip.FullName;
+                            textBox1.AppendText($"Zip archive set to:\"{zip.Name}\"\r\n");
+                            foundZip = true;
+                            this.unzippedList = null;
+
+                            break;
+                        case ".xlsx":
+                            if (foundExcel) //Same as zip file, only one
+                            {
+                                textBox1.AppendText($"Multiple excel files found, only the first will be used.\r\n");
+                                continue;
+                            }
+                            this.excel = file;
+                            excelPathBox.Text = excel.FullName;
+                            textBox1.AppendText($"Excel file set to:\"{excel.Name}\"\r\n");
+                            ///Remember to update statistics tabs if needed.
+                            if (this.tabControl2.SelectedIndex == 0)
+                            {
+                                this.shipment.NotifyCompleted();
+                            }
+                            else
+                            {
+                                this.shipment.Update(new Shipment(Builder.GetInstance().ReadExcel(excel), unzippedList, this.shipment.MergedPDF));
+                            }
+                            foundExcel = true;
+                            break;
+                        case ".pdf":
+
+                            if (foundZip)
+                            {
+                                foundPDF = true; //We cannot have both zip files and pdf files.
+                                failed++;
+                                continue; //We either have a zip file or pdf files, not both.
+                            }
+
+                            if (!foundPDF) //We can have plenty of those, but only if we don't have a zip file.
+                            {
+                                this.unzippedList = new List<FileInfo>();
+                                foundPDF = true;
+                            }
+
+                            this.unzippedList.Add(file);
+                            textBox1.AppendText($"AWB Loaded: \"{file.Name}\"\r\n");
+                            break;
+
+                        default:
+                            textBox1.AppendText($"File \"{file.Name}\" is not a valid file.\r\n");
+                            failed++;
+                            break;
+                    }
+                }
+                else
+                {
+                    textBox1.AppendText($"File \"{file.Name}\" is either a directory or it doesn't exist.\r\n");
+                    failed++;
+                }
+
+            }
+
+            if (foundPDF)
+            {
+                if (!foundZip)
+                {
+                    zipLabel.Text = unzippedList.Count + " file" + (unzippedList.Count > 1 ? "s" : "");
+                    zipPathBox.Text = unzippedList[0].Name + (unzippedList.Count > 1 ? $" + {unzippedList.Count - 1} others" : "");
+                }
+                else
+                {
+                    textBox1.AppendText($"Both zip files and pdf files were selected, all pdfs were discarded in favor of the zip archive.\r\n");
+                }
+            }
+
+            textBox1.AppendText($"Processed {paths.Length - failed} out of {paths.Length} files.\r\n");
+            if (failed == paths.Length)
+            {
+                textBox1.AppendText($"No valid files were selected.\r\n" +
+                    $"Please select either a zip file, excel file, or some pdf files.");
+            }
         }
 
-
-
-        private void tabControl2_DragOver(object sender, DragEventArgs e)
+        private void textBox1_DragDrop(object sender, DragEventArgs e)
         {
-            Icon icon = Icon.ExtractAssociatedIcon(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Balatro.url");
-            Cursor = new Cursor(icon.Handle);
+            string[] paths = (string[])e.Data.GetData(DataFormats.FileDrop);
+            textBox1.BackColor = SystemColors.Window;
 
-        }
+            ReadGivenFiles(paths);
 
-        private void Form1_DragOver(object sender, DragEventArgs e)
-        {
-            //Graphics g = this.CreateGraphics(); 
-            //Icon icon = Icon.ExtractAssociatedIcon(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Balatro.url");
-            //textBox1.Cursor = new Cursor(icon.Handle);
-            //this.Invalidate();
-            //g.DrawIcon(icon, new Rectangle(Cursor.Position.X, Cursor.Position.Y, 32, 32));
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
         {
 
-            Graphics g = this.CreateGraphics();
-            Icon icon = Icon.ExtractAssociatedIcon(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Balatro.url");
-            textBox1.Cursor = new Cursor(icon.Handle);
-            this.Invalidate();
-            g.DrawIcon(icon, new Rectangle(Cursor.Position.X, Cursor.Position.Y, 32, 32));
+            tabControl2.SelectedIndex = 0;
+            textBox1.BackColor = Color.LightPink;
+        }
+
+
+        private void Form1_DragLeave(object sender, EventArgs e)
+        {
+            textBox1.BackColor = SystemColors.Window;
+
+        }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+
+            if(e.Control && e.KeyCode == Keys.V)
+            {
+                string[] paths = Clipboard.GetFileDropList().Cast<string>().ToArray();
+                if (paths.Length>0)
+                {
+                    ReadGivenFiles(paths);
+                }
+            }
         }
     }
 }
