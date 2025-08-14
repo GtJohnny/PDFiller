@@ -22,7 +22,7 @@ using System.Data.Odbc;
 using System.Threading;
 using System.Text.RegularExpressions;
 using System.Globalization;
-
+using System.Data.SqlClient;
 
 
 
@@ -135,6 +135,8 @@ namespace PDFiller
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.versionLabel.Text = "v1.4.2";
+
             this.shipment.Subscribe(new SummaryObserver(summaryGridView));
             this.shipment.Subscribe(new PreviewObserver(previewGridView));
             this.shipment.Subscribe(new ImagesObserver(imagePanel));
@@ -156,6 +158,9 @@ namespace PDFiller
                 writeOptions();
                 return;
             }
+
+
+
         }
 
 
@@ -742,12 +747,33 @@ namespace PDFiller
 
         private void TestButtonClick(object sender, EventArgs e)
         {
-            Icon icon = Icon.ExtractAssociatedIcon(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Balatro.url");
-            Graphics g = textBox1.CreateGraphics();
-            textBox1.Invalidate();
-            g.DrawIcon(icon, new Rectangle(Cursor.Position.X, Cursor.Position.Y, 32, 32));
-            g.Save();
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\PDFillerImages - Copy";
+            DirectoryInfo directoryInfo = new DirectoryInfo(path);
+            SqlConnection conn = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\ionut\\source\\repos\\PDFiller\\Database1.mdf;Integrated Security=True");
+            conn.Open();
 
+            foreach (FileInfo file in directoryInfo.GetFiles())
+            {
+                if (file.Extension != ".png") continue;
+                string query = "INSERT INTO TOPPERS (ID, IMAGE, NAME) VALUES (@id, @image, 'XXXX');";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@id", file.Name.Remove(13));
+                cmd.Parameters.AddWithValue("@image", File.ReadAllBytes(file.FullName));
+
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                    textBox1.AppendText($"Inserted {file.Name} into database.\r\n");
+                }
+                catch (Exception ex)
+                {
+                    textBox1.AppendText($"Failed to insert {file.Name} into database: {ex.Message}\r\n");
+                }
+
+            }
+
+
+            conn.Close();
         }
 
         private void UpdateTabIndex()

@@ -305,6 +305,13 @@
     <Content Include="bin\Debug\debugTests\Set 13 figurine tortbriose Roblox, KZE Prints, Photo Paper Glossy.jpg" />
     <Content Include="bin\Debug\PDFiller.exe" />
     <Content Include="bin\Debug\PDFiller.pdb" />
+    <Content Include="Database1.mdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database1_log.ldf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <DependentUpon>Database1.mdf</DependentUpon>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\Debug\images\" />
