@@ -745,34 +745,57 @@ namespace PDFiller
         }
 
 
+
+
         private void TestButtonClick(object sender, EventArgs e)
         {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\PDFillerImages - Copy";
-            DirectoryInfo directoryInfo = new DirectoryInfo(path);
+
+
+
+            //Builder menu = PDFiller.Builder.GetInstance();
+            //List<Order> orders = menu.ReadExcel(this.excel);
+            //Dictionary<string, string> dict = new Dictionary<string, string>();
+
+
+
             SqlConnection conn = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\ionut\\source\\repos\\PDFiller\\Database1.mdf;Integrated Security=True");
             conn.Open();
+            SqlCommand cmd = new SqlCommand("UPDATE TOPPERS SET NAME = @NAME WHERE ID = @ID;", conn);
 
-            foreach (FileInfo file in directoryInfo.GetFiles())
+
+            //cmd.CommandText = "UPDATE TOPPERS SET NAME = 'test' WHERE ID = '5941933302128';";
+            //cmd.ExecuteNonQuery();
+
+            Builder builder = Builder.GetInstance();
+
+            Dictionary<string, string> dict = builder.GetDictionary();
+
+            SqlParameter nameParam = new SqlParameter("NAME", SqlDbType.VarChar);
+            SqlParameter idParam = new SqlParameter("ID", SqlDbType.Char);
+
+            foreach (var pair in dict)
             {
-                if (file.Extension != ".png") continue;
-                string query = "INSERT INTO TOPPERS (ID, IMAGE, NAME) VALUES (@id, @image, 'XXXX');";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@id", file.Name.Remove(13));
-                cmd.Parameters.AddWithValue("@image", File.ReadAllBytes(file.FullName));
+                string key = pair.Key;
+                string val = pair.Value;
 
+
+                nameParam.Value = val;
+                idParam.Value = key;
+                cmd.Parameters.Add(nameParam);
+                cmd.Parameters.Add(idParam);
                 try
                 {
                     cmd.ExecuteNonQuery();
-                    textBox1.AppendText($"Inserted {file.Name} into database.\r\n");
+                    cmd.Parameters.Clear();
+                    textBox1.AppendText(key + " -> " + val);
                 }
                 catch (Exception ex)
                 {
-                    textBox1.AppendText($"Failed to insert {file.Name} into database: {ex.Message}\r\n");
+                    textBox1.AppendText(ex.Message);
+                    conn.Close();
+                    return;
                 }
-
             }
-
-
             conn.Close();
         }
 

@@ -59,6 +59,7 @@
             this.zipButton = new System.Windows.Forms.Button();
             this.mergeFillButton = new System.Windows.Forms.Button();
             this.ConfigPage = new System.Windows.Forms.TabPage();
+            this.versionLabel = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
             this.workButton = new System.Windows.Forms.Button();
             this.rootButton = new System.Windows.Forms.Button();
@@ -96,7 +97,9 @@
             this.button5 = new System.Windows.Forms.Button();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.versionLabel = new System.Windows.Forms.Label();
+            this.IdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
+            this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             groupBox3 = new System.Windows.Forms.GroupBox();
             label3 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
@@ -487,6 +490,16 @@
             this.ConfigPage.TabIndex = 1;
             this.ConfigPage.Text = "Config";
             this.ConfigPage.UseVisualStyleBackColor = true;
+            // 
+            // versionLabel
+            // 
+            this.versionLabel.AutoSize = true;
+            this.versionLabel.Font = new System.Drawing.Font("Monotype Corsiva", 11.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.versionLabel.Location = new System.Drawing.Point(157, 331);
+            this.versionLabel.Name = "versionLabel";
+            this.versionLabel.Size = new System.Drawing.Size(43, 17);
+            this.versionLabel.TabIndex = 19;
+            this.versionLabel.Text = "v1.X.Y";
             // 
             // button4
             // 
@@ -923,21 +936,35 @@
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.IdColumn,
+            this.ImageColumn,
+            this.NameColumn});
             this.dataGridView1.Location = new System.Drawing.Point(4, 36);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.Size = new System.Drawing.Size(506, 463);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick_1);
             // 
-            // versionLabel
+            // IdColumn
             // 
-            this.versionLabel.AutoSize = true;
-            this.versionLabel.Font = new System.Drawing.Font("Monotype Corsiva", 11.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.versionLabel.Location = new System.Drawing.Point(157, 331);
-            this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(43, 17);
-            this.versionLabel.TabIndex = 19;
-            this.versionLabel.Text = "v1.X.Y";
+            this.IdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            this.IdColumn.HeaderText = "PN";
+            this.IdColumn.Name = "IdColumn";
+            this.IdColumn.Width = 21;
+            // 
+            // ImageColumn
+            // 
+            this.ImageColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.ImageColumn.HeaderText = "Image";
+            this.ImageColumn.Name = "ImageColumn";
+            this.ImageColumn.Width = 47;
+            // 
+            // NameColumn
+            // 
+            this.NameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.NameColumn.HeaderText = "Name";
+            this.NameColumn.Name = "NameColumn";
             // 
             // Form1
             // 
@@ -1045,6 +1072,9 @@
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Label versionLabel;
+        private System.Windows.Forms.DataGridViewTextBoxColumn IdColumn;
+        private System.Windows.Forms.DataGridViewImageColumn ImageColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
     }
 }
 

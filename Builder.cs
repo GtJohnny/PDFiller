@@ -47,7 +47,10 @@ namespace PDFiller
         private Form1 form = null;
 
 
-
+        public Dictionary<string,string> GetDictionary()
+        {
+            return this.SpecialSwaps;
+        }
 
 
         private readonly string imagesDir = Environment.CurrentDirectory + @"\images";
