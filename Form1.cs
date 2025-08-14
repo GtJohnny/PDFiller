@@ -245,14 +245,17 @@ namespace PDFiller
 
                     this.excel = new FileInfo(ofd.FileName);
                     textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nFound.xlsx order summary at:\r\n" + excel.FullName + "\r\n");
-                    if (this.tabControl2.SelectedIndex == 0)
-                    {
-                        this.shipment.NotifyCompleted();
-                    }
-                    else
+                    if (this.tabControl2.SelectedIndex > 0 && this.tabControl2.SelectedIndex < 4)
                     {
                         this.shipment.Update(new Shipment(menu.ReadExcel(excel), unzippedList, this.shipment.MergedPDF));
                     }
+                    else
+                    {
+                        this.shipment.NotifyCompleted();
+                    }
+
+
+
 
 
                     //this.shipment.Update(new Shipment(menu.ReadExcel(excel), unzippedList, this.shipment.MergedPDF));
@@ -502,14 +505,13 @@ namespace PDFiller
 
                 excel = menu.FindExcel(workDir);
 
-                if (this.tabControl2.SelectedIndex == 0)
+                if (this.tabControl2.SelectedIndex > 0 && this.tabControl2.SelectedIndex < 4)
                 {
-                    this.shipment.NotifyCompleted();
-
+                    this.shipment.Update(new Shipment(menu.ReadExcel(excel), unzippedList, this.shipment.MergedPDF));
                 }
                 else
                 {
-                    this.shipment.Update(new Shipment(menu.ReadExcel(excel), unzippedList, this.shipment.MergedPDF));
+                    this.shipment.NotifyCompleted();
                 }
 
 
@@ -890,15 +892,16 @@ namespace PDFiller
                             excelPathBox.Text = excel.FullName;
                             textBox1.AppendText($"Excel file set to:\"{excel.Name}\"\r\n");
                             ///Remember to update statistics tabs if needed.
-                            if (this.tabControl2.SelectedIndex == 0)
-                            {
-                                this.shipment.NotifyCompleted();
-                            }
-                            else
+                            if (this.tabControl2.SelectedIndex > 0 && this.tabControl2.SelectedIndex < 4)
                             {
                                 this.shipment.Update(new Shipment(Builder.GetInstance().ReadExcel(excel), unzippedList, this.shipment.MergedPDF));
                             }
-                            foundExcel = true;
+                            else
+                            {
+                                this.shipment.NotifyCompleted();
+                            }
+                            
+                                foundExcel = true;
                             break;
                         case ".pdf":
 
@@ -988,6 +991,11 @@ namespace PDFiller
                     ReadGivenFiles(paths);
                 }
             }
+        }
+
+        private void dataGridView1_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }
