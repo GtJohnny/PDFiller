@@ -33,17 +33,17 @@ namespace PDFiller
             rows.Clear();
             foreach (Order o in orders)
             {
-                rows.Add(o.name, o.toppers[0].name, o.toppers[0].quantity);
+                rows.Add(o.country, o.name, o.toppers[0].name, o.toppers[0].quantity);
                 foreach (Order.topper tp in o.toppers.GetRange(1, o.toppers.Count - 1))
                 {
-                    rows.Add(null, tp.name, tp.quantity);
+                    rows.Add(null,null, tp.name, tp.quantity);
                 }
             }
         }
         public virtual void OnError(Exception error)
         {
             _dataGridView.Rows.Clear();
-            _dataGridView.Rows.Add(null,error.Message,null);
+            _dataGridView.Rows.Add(null ,null,error.Message,null);
         }
     }
 }

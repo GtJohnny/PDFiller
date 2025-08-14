@@ -25,7 +25,10 @@ namespace PDFiller
                 this.bmp = bmp;
             }
         }
+
+
         private Panel _panel;
+
         Graphics g;
         List<Order> _orders;
         Dictionary<string, TopperData> _toppers = new Dictionary<string, TopperData>();
@@ -51,6 +54,8 @@ namespace PDFiller
         }
         private void Paint()
         {
+
+
             g.Clear(Color.White);
             if (_orders == null) return;
             if (_toppers.Count == 0) LoadBMPs();

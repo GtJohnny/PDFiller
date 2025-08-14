@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.GroupBox groupBox3;
             System.Windows.Forms.Label label3;
             System.Windows.Forms.Label label6;
@@ -66,26 +67,35 @@
             this.emagBtn = new System.Windows.Forms.Button();
             this.SamedayBtn = new System.Windows.Forms.Button();
             this.CelBtn = new System.Windows.Forms.Button();
-            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.rootTextBox = new System.Windows.Forms.TextBox();
             this.excelPathBox = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
             this.zipPathBox = new System.Windows.Forms.TextBox();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.zipLabel = new System.Windows.Forms.Label();
+            this.tabControl2 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.excelTab = new System.Windows.Forms.TabPage();
+            this.previewGridView = new System.Windows.Forms.DataGridView();
+            this.CountryColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.numeCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.nameCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.qntCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.summaryGridView = new System.Windows.Forms.DataGridView();
             this.qntColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.topperColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.excelTab = new System.Windows.Forms.TabPage();
-            this.previewGridView = new System.Windows.Forms.DataGridView();
-            this.numeCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.nameCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.qntCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.imagePanel = new System.Windows.Forms.Panel();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.button5 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
+            this.button7 = new System.Windows.Forms.Button();
+            this.button8 = new System.Windows.Forms.Button();
             groupBox3 = new System.Windows.Forms.GroupBox();
             label3 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
@@ -110,13 +120,15 @@
             this.tabPage2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox8.SuspendLayout();
-            this.tabPage5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.summaryGridView)).BeginInit();
+            this.tabControl2.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             this.excelTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.previewGridView)).BeginInit();
-            this.tabPage1.SuspendLayout();
-            this.tabControl2.SuspendLayout();
+            this.tabPage5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.summaryGridView)).BeginInit();
             this.tabPage3.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox3
@@ -355,6 +367,7 @@
             this.button2.TabIndex = 1;
             this.button2.Text = "button2";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Visible = false;
             this.button2.Click += new System.EventHandler(this.TestButtonClick);
             // 
             // button3
@@ -367,6 +380,7 @@
             this.button3.Size = new System.Drawing.Size(151, 39);
             this.button3.TabIndex = 16;
             this.button3.Text = "Open PDF";
+            this.toolTip1.SetToolTip(this.button3, "Open the merged AWB if you closed it.");
             this.button3.UseVisualStyleBackColor = false;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
@@ -380,6 +394,7 @@
             this.autoFillBtn.Size = new System.Drawing.Size(151, 39);
             this.autoFillBtn.TabIndex = 8;
             this.autoFillBtn.Text = "AutoFill";
+            this.toolTip1.SetToolTip(this.autoFillBtn, "Automatically finds your .zip and .xlsx files and does the magic!");
             this.autoFillBtn.UseVisualStyleBackColor = false;
             this.autoFillBtn.Click += new System.EventHandler(this.autoFillBtn_Click);
             // 
@@ -410,6 +425,7 @@
             this.button1.Size = new System.Drawing.Size(156, 45);
             this.button1.TabIndex = 7;
             this.button1.Text = "Select Unzipped";
+            this.toolTip1.SetToolTip(this.button1, "Manually select your AWB files.");
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.unzippedButton_Click);
             // 
@@ -423,6 +439,7 @@
             this.excelButton.Size = new System.Drawing.Size(156, 45);
             this.excelButton.TabIndex = 5;
             this.excelButton.Text = "Select Excel";
+            this.toolTip1.SetToolTip(this.excelButton, "Manually select your excel file.");
             this.excelButton.UseVisualStyleBackColor = false;
             this.excelButton.Click += new System.EventHandler(this.excelButton_Click);
             // 
@@ -436,6 +453,7 @@
             this.zipButton.Size = new System.Drawing.Size(156, 45);
             this.zipButton.TabIndex = 4;
             this.zipButton.Text = "Select Zip Archive";
+            this.toolTip1.SetToolTip(this.zipButton, "Manually select your zip file.");
             this.zipButton.UseVisualStyleBackColor = false;
             this.zipButton.Click += new System.EventHandler(this.zipButton_Click);
             // 
@@ -449,6 +467,7 @@
             this.mergeFillButton.Size = new System.Drawing.Size(156, 45);
             this.mergeFillButton.TabIndex = 6;
             this.mergeFillButton.Text = "Merge&&Fill";
+            this.toolTip1.SetToolTip(this.mergeFillButton, "Click!");
             this.mergeFillButton.UseVisualStyleBackColor = false;
             this.mergeFillButton.Click += new System.EventHandler(this.mergeFillButton_Click);
             // 
@@ -478,6 +497,7 @@
             this.button4.Size = new System.Drawing.Size(135, 52);
             this.button4.TabIndex = 14;
             this.button4.Text = "Open Local Files";
+            this.toolTip1.SetToolTip(this.button4, "Open application files.");
             this.button4.UseVisualStyleBackColor = false;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
@@ -491,6 +511,7 @@
             this.workButton.Size = new System.Drawing.Size(135, 52);
             this.workButton.TabIndex = 6;
             this.workButton.Text = "Select Work Directory";
+            this.toolTip1.SetToolTip(this.workButton, "Use if zip and excel are in the same place but not under root directory.");
             this.workButton.UseVisualStyleBackColor = false;
             this.workButton.Click += new System.EventHandler(this.workButton_Click);
             // 
@@ -503,7 +524,8 @@
             this.rootButton.Name = "rootButton";
             this.rootButton.Size = new System.Drawing.Size(135, 52);
             this.rootButton.TabIndex = 3;
-            this.rootButton.Text = "Select Root Directory";
+            this.rootButton.Text = "Change Root Directory";
+            this.toolTip1.SetToolTip(this.rootButton, "C:\\Users\\you\\Desktop\\AWB by default.");
             this.rootButton.UseVisualStyleBackColor = false;
             this.rootButton.Click += new System.EventHandler(this.rootButton_Click);
             // 
@@ -573,6 +595,48 @@
             this.CelBtn.UseVisualStyleBackColor = false;
             this.CelBtn.Click += new System.EventHandler(this.CelBtn_Click);
             // 
+            // toolTip1
+            // 
+            this.toolTip1.AutomaticDelay = 150;
+            this.toolTip1.AutoPopDelay = 5000;
+            this.toolTip1.InitialDelay = 150;
+            this.toolTip1.ReshowDelay = 30;
+            this.toolTip1.Tag = "";
+            // 
+            // rootTextBox
+            // 
+            this.rootTextBox.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rootTextBox.Location = new System.Drawing.Point(110, 117);
+            this.rootTextBox.Name = "rootTextBox";
+            this.rootTextBox.ReadOnly = true;
+            this.rootTextBox.Size = new System.Drawing.Size(725, 25);
+            this.rootTextBox.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.rootTextBox, "Double Click to open AWB folder.");
+            this.rootTextBox.TextChanged += new System.EventHandler(this.rootTextBox_TextChanged);
+            this.rootTextBox.DoubleClick += new System.EventHandler(this.rootTextBox_DoubleClick);
+            // 
+            // excelPathBox
+            // 
+            this.excelPathBox.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.excelPathBox.Location = new System.Drawing.Point(110, 70);
+            this.excelPathBox.Name = "excelPathBox";
+            this.excelPathBox.ReadOnly = true;
+            this.excelPathBox.Size = new System.Drawing.Size(725, 25);
+            this.excelPathBox.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.excelPathBox, "Double Click to open excel file.");
+            this.excelPathBox.DoubleClick += new System.EventHandler(this.excelPathBox_DoubleClick);
+            // 
+            // zipPathBox
+            // 
+            this.zipPathBox.Font = new System.Drawing.Font("Times New Roman", 11.25F);
+            this.zipPathBox.Location = new System.Drawing.Point(110, 21);
+            this.zipPathBox.Name = "zipPathBox";
+            this.zipPathBox.ReadOnly = true;
+            this.zipPathBox.Size = new System.Drawing.Size(725, 25);
+            this.zipPathBox.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.zipPathBox, "Double Click to open zip file location.");
+            this.zipPathBox.DoubleClick += new System.EventHandler(this.zipPathBox_DoubleClick);
+            // 
             // groupBox8
             // 
             this.groupBox8.BackColor = System.Drawing.SystemColors.Window;
@@ -592,27 +656,6 @@
             this.groupBox8.Text = "Paths";
             this.groupBox8.Enter += new System.EventHandler(this.groupBox8_Enter);
             // 
-            // rootTextBox
-            // 
-            this.rootTextBox.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rootTextBox.Location = new System.Drawing.Point(110, 117);
-            this.rootTextBox.Name = "rootTextBox";
-            this.rootTextBox.ReadOnly = true;
-            this.rootTextBox.Size = new System.Drawing.Size(725, 25);
-            this.rootTextBox.TabIndex = 6;
-            this.rootTextBox.TextChanged += new System.EventHandler(this.rootTextBox_TextChanged);
-            this.rootTextBox.DoubleClick += new System.EventHandler(this.rootTextBox_DoubleClick);
-            // 
-            // excelPathBox
-            // 
-            this.excelPathBox.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.excelPathBox.Location = new System.Drawing.Point(110, 70);
-            this.excelPathBox.Name = "excelPathBox";
-            this.excelPathBox.ReadOnly = true;
-            this.excelPathBox.Size = new System.Drawing.Size(725, 25);
-            this.excelPathBox.TabIndex = 3;
-            this.excelPathBox.DoubleClick += new System.EventHandler(this.excelPathBox_DoubleClick);
-            // 
             // label7
             // 
             this.label7.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -621,16 +664,6 @@
             this.label7.Size = new System.Drawing.Size(97, 23);
             this.label7.TabIndex = 2;
             this.label7.Text = "Excel File:";
-            // 
-            // zipPathBox
-            // 
-            this.zipPathBox.Font = new System.Drawing.Font("Times New Roman", 11.25F);
-            this.zipPathBox.Location = new System.Drawing.Point(110, 21);
-            this.zipPathBox.Name = "zipPathBox";
-            this.zipPathBox.ReadOnly = true;
-            this.zipPathBox.Size = new System.Drawing.Size(725, 25);
-            this.zipPathBox.TabIndex = 1;
-            this.zipPathBox.DoubleClick += new System.EventHandler(this.zipPathBox_DoubleClick);
             // 
             // zipLabel
             // 
@@ -641,51 +674,49 @@
             this.zipLabel.TabIndex = 0;
             this.zipLabel.Text = "Zip File:";
             // 
-            // tabPage5
+            // tabControl2
             // 
-            this.tabPage5.Controls.Add(this.summaryGridView);
-            this.tabPage5.Font = new System.Drawing.Font("Times New Roman", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabPage5.Location = new System.Drawing.Point(4, 26);
-            this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(624, 499);
-            this.tabPage5.TabIndex = 3;
-            this.tabPage5.Text = "Summary";
+            this.tabControl2.Controls.Add(this.tabPage1);
+            this.tabControl2.Controls.Add(this.excelTab);
+            this.tabControl2.Controls.Add(this.tabPage5);
+            this.tabControl2.Controls.Add(this.tabPage3);
+            this.tabControl2.Controls.Add(this.tabPage4);
+            this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl2.Font = new System.Drawing.Font("Monotype Corsiva", 11.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabControl2.Location = new System.Drawing.Point(0, 0);
+            this.tabControl2.Name = "tabControl2";
+            this.tabControl2.SelectedIndex = 0;
+            this.tabControl2.Size = new System.Drawing.Size(631, 532);
+            this.tabControl2.TabIndex = 4;
+            this.tabControl2.SelectedIndexChanged += new System.EventHandler(this.tabControl2_SelectedIndexChanged);
             // 
-            // summaryGridView
+            // tabPage1
             // 
-            this.summaryGridView.AllowUserToAddRows = false;
-            this.summaryGridView.AllowUserToDeleteRows = false;
-            this.summaryGridView.AllowUserToResizeColumns = false;
-            this.summaryGridView.AllowUserToResizeRows = false;
-            this.summaryGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.summaryGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.summaryGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.qntColumn,
-            this.topperColumn});
-            this.summaryGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.summaryGridView.Location = new System.Drawing.Point(0, 0);
-            this.summaryGridView.Name = "summaryGridView";
-            this.summaryGridView.ReadOnly = true;
-            this.summaryGridView.ShowCellErrors = false;
-            this.summaryGridView.Size = new System.Drawing.Size(624, 499);
-            this.summaryGridView.TabIndex = 9;
+            this.tabPage1.Controls.Add(this.textBox1);
+            this.tabPage1.Location = new System.Drawing.Point(4, 26);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(623, 502);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "WorkflowStatus";
+            this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // qntColumn
+            // textBox1
             // 
-            this.qntColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.qntColumn.FillWeight = 5F;
-            this.qntColumn.HeaderText = "Quantity";
-            this.qntColumn.Name = "qntColumn";
-            this.qntColumn.ReadOnly = true;
-            this.qntColumn.Width = 80;
-            // 
-            // topperColumn
-            // 
-            this.topperColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.topperColumn.FillWeight = 30F;
-            this.topperColumn.HeaderText = "Topper";
-            this.topperColumn.Name = "topperColumn";
-            this.topperColumn.ReadOnly = true;
+            this.textBox1.AllowDrop = true;
+            this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBox1.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox1.Location = new System.Drawing.Point(3, 3);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBox1.Size = new System.Drawing.Size(617, 496);
+            this.textBox1.TabIndex = 0;
+            this.textBox1.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBox1_DragDrop);
+            this.textBox1.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBox1_DragEnter);
+            this.textBox1.DragLeave += new System.EventHandler(this.textBox1_DragLeave);
+            this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
             // 
             // excelTab
             // 
@@ -694,7 +725,7 @@
             this.excelTab.Location = new System.Drawing.Point(4, 26);
             this.excelTab.Name = "excelTab";
             this.excelTab.Padding = new System.Windows.Forms.Padding(3);
-            this.excelTab.Size = new System.Drawing.Size(624, 499);
+            this.excelTab.Size = new System.Drawing.Size(623, 502);
             this.excelTab.TabIndex = 2;
             this.excelTab.Text = "ExcelPreview";
             this.excelTab.UseVisualStyleBackColor = true;
@@ -709,6 +740,7 @@
             this.previewGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.previewGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.previewGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.CountryColumn,
             this.numeCol,
             this.nameCol,
             this.qntCol});
@@ -718,9 +750,16 @@
             this.previewGridView.ReadOnly = true;
             this.previewGridView.RowTemplate.ReadOnly = true;
             this.previewGridView.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.previewGridView.ShowCellErrors = false;
-            this.previewGridView.Size = new System.Drawing.Size(618, 493);
+            this.previewGridView.Size = new System.Drawing.Size(617, 496);
             this.previewGridView.TabIndex = 8;
+            // 
+            // CountryColumn
+            // 
+            this.CountryColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.CountryColumn.HeaderText = "Country";
+            this.CountryColumn.Name = "CountryColumn";
+            this.CountryColumn.ReadOnly = true;
+            this.CountryColumn.Width = 77;
             // 
             // numeCol
             // 
@@ -752,42 +791,51 @@
             this.qntCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.qntCol.Width = 61;
             // 
-            // tabPage1
+            // tabPage5
             // 
-            this.tabPage1.Controls.Add(this.textBox1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 26);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(624, 499);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "WorkflowStatus";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tabPage5.Controls.Add(this.summaryGridView);
+            this.tabPage5.Font = new System.Drawing.Font("Times New Roman", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabPage5.Location = new System.Drawing.Point(4, 26);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Size = new System.Drawing.Size(623, 502);
+            this.tabPage5.TabIndex = 3;
+            this.tabPage5.Text = "Summary";
             // 
-            // textBox1
+            // summaryGridView
             // 
-            this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox1.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(3, 3);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox1.Size = new System.Drawing.Size(618, 493);
-            this.textBox1.TabIndex = 0;
+            this.summaryGridView.AllowUserToAddRows = false;
+            this.summaryGridView.AllowUserToDeleteRows = false;
+            this.summaryGridView.AllowUserToResizeColumns = false;
+            this.summaryGridView.AllowUserToResizeRows = false;
+            this.summaryGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.summaryGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.summaryGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.qntColumn,
+            this.topperColumn});
+            this.summaryGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.summaryGridView.Location = new System.Drawing.Point(0, 0);
+            this.summaryGridView.Name = "summaryGridView";
+            this.summaryGridView.ReadOnly = true;
+            this.summaryGridView.ShowCellErrors = false;
+            this.summaryGridView.Size = new System.Drawing.Size(623, 502);
+            this.summaryGridView.TabIndex = 9;
             // 
-            // tabControl2
+            // qntColumn
             // 
-            this.tabControl2.Controls.Add(this.tabPage1);
-            this.tabControl2.Controls.Add(this.excelTab);
-            this.tabControl2.Controls.Add(this.tabPage5);
-            this.tabControl2.Controls.Add(this.tabPage3);
-            this.tabControl2.Font = new System.Drawing.Font("Monotype Corsiva", 11.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabControl2.Location = new System.Drawing.Point(0, 3);
-            this.tabControl2.Name = "tabControl2";
-            this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(632, 529);
-            this.tabControl2.TabIndex = 4;
-            this.tabControl2.SelectedIndexChanged += new System.EventHandler(this.tabControl2_SelectedIndexChanged);
+            this.qntColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.qntColumn.FillWeight = 5F;
+            this.qntColumn.HeaderText = "Quantity";
+            this.qntColumn.Name = "qntColumn";
+            this.qntColumn.ReadOnly = true;
+            this.qntColumn.Width = 80;
+            // 
+            // topperColumn
+            // 
+            this.topperColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.topperColumn.FillWeight = 30F;
+            this.topperColumn.HeaderText = "Topper";
+            this.topperColumn.Name = "topperColumn";
+            this.topperColumn.ReadOnly = true;
             // 
             // tabPage3
             // 
@@ -795,7 +843,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 26);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(624, 499);
+            this.tabPage3.Size = new System.Drawing.Size(623, 502);
             this.tabPage3.TabIndex = 4;
             this.tabPage3.Text = "Imagini";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -803,22 +851,93 @@
             // imagePanel
             // 
             this.imagePanel.AutoScroll = true;
+            this.imagePanel.AutoScrollMinSize = new System.Drawing.Size(50, 50);
+            this.imagePanel.AutoSize = true;
             this.imagePanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.imagePanel.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.imagePanel.Location = new System.Drawing.Point(3, 3);
             this.imagePanel.Name = "imagePanel";
-            this.imagePanel.Size = new System.Drawing.Size(618, 493);
+            this.imagePanel.Size = new System.Drawing.Size(617, 496);
             this.imagePanel.TabIndex = 0;
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.button8);
+            this.tabPage4.Controls.Add(this.button7);
+            this.tabPage4.Controls.Add(this.button6);
+            this.tabPage4.Controls.Add(this.button5);
+            this.tabPage4.Controls.Add(this.textBox2);
+            this.tabPage4.Controls.Add(this.dataGridView1);
+            this.tabPage4.Location = new System.Drawing.Point(4, 26);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(623, 502);
+            this.tabPage4.TabIndex = 5;
+            this.tabPage4.Text = "Products";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(4, 36);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(506, 463);
+            this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick_1);
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(6, 6);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(423, 24);
+            this.textBox2.TabIndex = 1;
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(435, 7);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(75, 23);
+            this.button5.TabIndex = 2;
+            this.button5.Text = "button5";
+            this.button5.UseVisualStyleBackColor = true;
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(527, 93);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(75, 23);
+            this.button6.TabIndex = 3;
+            this.button6.Text = "button6";
+            this.button6.UseVisualStyleBackColor = true;
+            // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(527, 242);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(75, 23);
+            this.button7.TabIndex = 4;
+            this.button7.Text = "button7";
+            this.button7.UseVisualStyleBackColor = true;
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(527, 397);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(75, 23);
+            this.button8.TabIndex = 5;
+            this.button8.Text = "button8";
+            this.button8.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.ClientSize = new System.Drawing.Size(842, 683);
+            this.Controls.Add(this.tabControl2);
             this.Controls.Add(panel1);
             this.Controls.Add(this.groupBox8);
-            this.Controls.Add(this.tabControl2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.HelpButton = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -829,7 +948,8 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Shown += new System.EventHandler(this.Form1_Shown);
-            this.DragOver += new System.Windows.Forms.DragEventHandler(this.Form1_DragOver);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
+            this.DragLeave += new System.EventHandler(this.Form1_DragLeave);
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
             panel1.ResumeLayout(false);
@@ -845,14 +965,18 @@
             this.groupBox1.PerformLayout();
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
-            this.tabPage5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.summaryGridView)).EndInit();
-            this.excelTab.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.previewGridView)).EndInit();
+            this.tabControl2.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
-            this.tabControl2.ResumeLayout(false);
+            this.excelTab.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.previewGridView)).EndInit();
+            this.tabPage5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.summaryGridView)).EndInit();
             this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -880,26 +1004,35 @@
         internal System.Windows.Forms.Label zipLabel;
         internal System.Windows.Forms.TextBox excelPathBox;
         internal System.Windows.Forms.TextBox rootTextBox;
-        private System.Windows.Forms.TabPage tabPage5;
-        private System.Windows.Forms.TabPage excelTab;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabControl tabControl2;
-        internal System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.DataGridView summaryGridView;
-        private System.Windows.Forms.DataGridView previewGridView;
-        private System.Windows.Forms.DataGridViewTextBoxColumn numeCol;
-        private System.Windows.Forms.DataGridViewTextBoxColumn nameCol;
-        private System.Windows.Forms.DataGridViewTextBoxColumn qntCol;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.Panel imagePanel;
         internal System.Windows.Forms.ComboBox drawComboBox;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.TabControl tabControl2;
+        private System.Windows.Forms.TabPage tabPage1;
+        internal System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TabPage excelTab;
+        private System.Windows.Forms.DataGridView previewGridView;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CountryColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn numeCol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn nameCol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn qntCol;
+        private System.Windows.Forms.TabPage tabPage5;
+        private System.Windows.Forms.DataGridView summaryGridView;
         private System.Windows.Forms.DataGridViewTextBoxColumn qntColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn topperColumn;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.Panel imagePanel;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.DataGridView dataGridView1;
     }
 }
 

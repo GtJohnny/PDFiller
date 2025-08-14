@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -211,18 +212,14 @@ namespace PDFiller
         /// We just take all columns from the first row,
         /// Regardless of their order.
         /// </summary>
-        /// <param name="sheet">The worksheet with all the orders</param>
+        /// <param name="data">A string matrix containing the data read from the excel sheet</param>
+        /// <param name="nrCol">Number of columns</param>
         /// <returns>A dictionary that has as key the header of each column, and the index of the column in a byte</returns>
-        private Dictionary<string, byte> GetExcelColumns(Worksheet sheet)
+        private Dictionary<string, byte> GetExcelColumns(string[,] data,int nrCol)
         {
             Dictionary<string, byte> columns = new Dictionary<string, byte>();
-            byte col = 1;
-            while (true)
-            {
-                string value = sheet.Cells[1, col].Value2;
-                if (value == null) break;
-                columns.Add(value, col);
-                col++;
+            for(byte col = 1; col <= nrCol; col++){
+                columns.Add(data[1, col], col);
             }
             return columns;
         }
@@ -260,6 +257,22 @@ namespace PDFiller
            
         }
 
+        private byte GetHeader(Dictionary<string, byte> columns, string[] headers)
+        {
+            foreach (string header in headers)
+            {
+                if (columns.ContainsKey(header))
+                {
+                    return columns[header];
+                }
+            }
+            throw new KeyNotFoundException($"The excel file doesn't contain any the required column headers: {string.Join(", ", headers)}");
+        }
+
+
+
+
+
         /// <summary>
         /// Read the excel file, and return a list of orders.
         /// Note that if the excel column headers change, this code will also be changed.
@@ -274,52 +287,85 @@ namespace PDFiller
             Excel.Application app = new Excel.Application();
             List<Order> orders = new List<Order>();
             Workbook book = app.Workbooks.Open(excel.FullName);
-            Worksheet sheet;
+            Worksheet sheet = null;
             try
             {
                 sheet = book.Worksheets[1];
-                Dictionary<string, byte> columns = GetExcelColumns(sheet);
+            }
+            catch (COMException ex)
+            {
+                form.textBox1.AppendText("The excel file is empty or doesn't contain any worksheets.\r\n");
+                form.textBox1.AppendText(ex.Message);
+                book.Close(0);
+                app.Quit();
+                return null;
+            }
+            Range range = sheet.UsedRange;
+            int x = range.Rows.Count;
+            int y = range.Columns.Count;
+            string[,] data = new string[x + 1, y + 1];
+            for (int i = 1; i <= x; i++)
+            {
+                for (int j = 1; j <= y; j++)
+                {
+                    data[i, j] = sheet.Cells[i, j].Value2?.ToString();
+                }
+            }
+            book.Close(0);
+            app.Quit();
+            Marshal.ReleaseComObject(book);
+            Marshal.ReleaseComObject(app);
+            GC.Collect();
+            try
+            {
+                Dictionary<string, byte> columns = GetExcelColumns(data, y);
+                byte IDCOL, AWBCOL, TOPPER_NAME_COL, IDPRODUCT, TOPPER_QUANTITY_COL, CLIENT_NAME, SHIPPING_ADDRESS;
 
-                byte IDCOL = columns["Nr. comanda"];
-                byte AWBCOL;
                 try
                 {
-                    AWBCOL = columns["Numar AWB"];
-
+                    IDCOL = GetHeader(columns, new string[] { "Nr. comanda", "Order number" });
+                    AWBCOL = GetHeader(columns, new string[] { "Numar AWB", "AWB number" });
+                    TOPPER_NAME_COL = GetHeader(columns, new string[] { "Nume produs", "Product name" });
+                    IDPRODUCT = GetHeader(columns, new string[] { "Cod produs", "Product code" });
+                    TOPPER_QUANTITY_COL = GetHeader(columns, new string[] { "Cantitate", "Quantity" });
+                    CLIENT_NAME = GetHeader(columns, new string[] { "Nume client", "Shipping name" });
+                    SHIPPING_ADDRESS = GetHeader(columns, new string[] { "Adresa de livrare", "Shipping address" });
                 }
-                catch (KeyNotFoundException)
+                catch (KeyNotFoundException ex)
                 {
-                    form.textBox1.AppendText("The excel file doesn't contain the 'Numar AWB' column. Trying 'AWB number'\r\n");
-                    AWBCOL = columns["AWB number"];
+                    form.textBox1.AppendText("The excel file doesn't contain all the required column headers.\r\n");
+                    form.textBox1.AppendText(ex.Message);
+                    return new List<Order>();
                 }
-                byte TOPPER_NAME_COL = columns["Nume produs"];
-                byte IDPRODUCT = columns["Cod produs"];
-                byte TOPPER_QUANTITY_COL = columns["Cantitate"];
-                byte CLIENT_NAME = columns["Nume client"];
-                byte SHIPPING_ADDRESS = columns["Adresa de livrare"];
+
                 Order order = new Order();
-                string id = "first value";
+                string id = "";
 
-                for(int row = 2;row <= sheet.Rows.Count;row++)
+                for (int row = 2; row <= x; row++)
                 {
-                    id = sheet.Cells[row, IDCOL].Value2;
-                    if(id == null)
+                    id = data[row, IDCOL];
+                    if (id == null)
                     {
                         break;
                     }
 
-
-                    string awb = sheet.Cells[row, AWBCOL].Value2;
-                    string name = sheet.Cells[row, CLIENT_NAME].Value2;
-                    string tName = sheet.Cells[row, TOPPER_NAME_COL].Value2;
-                    string idProduct = sheet.Cells[row, IDPRODUCT].Value2;
-                    string shippingAddress = sheet.Cells[row, SHIPPING_ADDRESS].Value2;
-                    int qnt = (int)sheet.Cells[row, TOPPER_QUANTITY_COL].Value2;
+                    string awb = data[row, AWBCOL];
+                    string name = data[row, CLIENT_NAME];
+                    string tName = data[row, TOPPER_NAME_COL];
+                    string idProduct = data[row, IDPRODUCT];
+                    string shippingAddress = data[row, SHIPPING_ADDRESS];
+                    int qnt = int.Parse(data[row, TOPPER_QUANTITY_COL]);
                     tName = ModifyName(idProduct, tName);
 
                     string country = shippingAddress.Split(',').Last().Trim();
-                    country = new RegionInfo(country).EnglishName;
-
+                    try
+                    {
+                        country = new RegionInfo(country).EnglishName;
+                    }catch(ArgumentException)
+                    {
+                        form.textBox1.AppendText($"Couldn't find country name for:{id}\r\n");
+                        country = "";
+                    }
                     if (id == order.id)
                     {
                         order.toppers.Add(new Order.topper(tName, qnt, idProduct));
@@ -337,47 +383,16 @@ namespace PDFiller
 
                 }
                 AddOrderToList(orders, order);
-
-
-                book.Close();
-                app.Quit();
-
                 return orders;
             }
             catch (Exception ex)
             {
 
                 form.textBox1.AppendText(ex.Message);
-                book.Close();
-                app.Workbooks.Close();
-                app.Quit();
                 return new List<Order>();
             }
-            finally
-            {
-                Marshal.ReleaseComObject(book);
-                Marshal.ReleaseComObject(app);
-            }
+
         }
-
-
-
-
-
-
-        //internal void ReadExcelTable(List<Order> orders, DataGridViewRowCollection rows)
-        //{
-        //    //    System.Data.DataTable dt = new System.Data.DataTable("Order Preview");
-        //    rows.Clear();
-        //    foreach (Order o in orders)
-        //    {
-        //        rows.Add(o.name, o.toppere[0].tName, o.toppere[0].tQuantity);
-        //        foreach (Order.topper tp in o.toppere.GetRange(1, o.toppere.Count - 1))
-        //        {
-        //            rows.Add(null, tp.tName, tp.tQuantity);
-        //        }
-        //    }
-        //}
 
 
 
@@ -460,8 +475,8 @@ namespace PDFiller
         /// Aswell as the country of origin based on the AWB format.
         /// </summary>
         /// <param name="page">Page to read text from</param>
-        /// <param name="idAWB">AWB number</param>
-        /// <param name="country">Country of origin</param>
+        /// <param name="orders">Orders from which one should have a matching AWB code</param>
+        /// <param name="awb">The AWB code in question</param>
         /// <returns>True if successfull, false if not</returns>
         public bool ReadAwbId(UglyToad.PdfPig.Content.Page page, List<Order> orders, out string awb)
         {
@@ -663,15 +678,28 @@ namespace PDFiller
 
             }
 
-            //byte[] bytes = tName.ToCharArray()
-            //   .Select(c => (byte)c)
-            //   .ToArray();
-            //string decodedString = System.Text.Encoding.UTF8.GetString(bytes);
-            
             //improvizatie pentru bulgaria  
-            if(tName.StartsWith("Комплект украса"))
+
+            if(tName.StartsWith("Комплект украса за торта "))
             {
-                return tName.Substring(tName.IndexOf('/'), tName.IndexOf(',') - tName.IndexOf('/')).Trim(',', '/', ' ', '\\');
+                try
+                {
+                    tName = tName.Replace("Комплект украса за торта ", "");
+                    if (tName.Contains("/") && tName.IndexOf("/") < tName.Length)
+                    {
+                        tName = tName.Substring(tName.IndexOf("/") + 1).Trim();
+                    }
+
+                    if (tName.Contains(","))
+                    {
+                        tName = tName.Substring(0, tName.IndexOf(","));
+                    }
+                    return tName;
+                }catch(Exception)
+                {
+
+                    return tName;
+                }
             }
 
             return tName;
