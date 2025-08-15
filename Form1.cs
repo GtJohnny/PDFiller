@@ -38,14 +38,14 @@ namespace PDFiller
         }
 
         private string DebugPath = Environment.CurrentDirectory + "\\debugTests\\";
-
+        private string connectionString = $"Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename={Environment.CurrentDirectory+"\\Database1.mdf"};Integrated Security=True";
         private DirectoryInfo rootDir = null;
         private DirectoryInfo workDir = null;
         private FileInfo zip = null;
         private FileInfo excel = null;
         private List<FileInfo> unzippedList = null;
         private Shipment shipment = new Shipment();
-
+        private ProductViewer productViewer;
 
 
 
@@ -136,7 +136,7 @@ namespace PDFiller
         private void Form1_Load(object sender, EventArgs e)
         {
             this.versionLabel.Text = "v1.4.2";
-
+            this.productViewer = new ProductViewer(this.productsGridView, this.productSearchButton, this.productViewButton, this.productSearchBox, connectionString);
             this.shipment.Subscribe(new SummaryObserver(summaryGridView));
             this.shipment.Subscribe(new PreviewObserver(previewGridView));
             this.shipment.Subscribe(new ImagesObserver(imagePanel));
@@ -746,57 +746,11 @@ namespace PDFiller
 
 
 
-
         private void TestButtonClick(object sender, EventArgs e)
         {
+         
 
 
-
-            //Builder menu = PDFiller.Builder.GetInstance();
-            //List<Order> orders = menu.ReadExcel(this.excel);
-            //Dictionary<string, string> dict = new Dictionary<string, string>();
-
-
-
-            SqlConnection conn = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\ionut\\source\\repos\\PDFiller\\Database1.mdf;Integrated Security=True");
-            conn.Open();
-            SqlCommand cmd = new SqlCommand("UPDATE TOPPERS SET NAME = @NAME WHERE ID = @ID;", conn);
-
-
-            //cmd.CommandText = "UPDATE TOPPERS SET NAME = 'test' WHERE ID = '5941933302128';";
-            //cmd.ExecuteNonQuery();
-
-            Builder builder = Builder.GetInstance();
-
-            Dictionary<string, string> dict = builder.GetDictionary();
-
-            SqlParameter nameParam = new SqlParameter("NAME", SqlDbType.VarChar);
-            SqlParameter idParam = new SqlParameter("ID", SqlDbType.Char);
-
-            foreach (var pair in dict)
-            {
-                string key = pair.Key;
-                string val = pair.Value;
-
-
-                nameParam.Value = val;
-                idParam.Value = key;
-                cmd.Parameters.Add(nameParam);
-                cmd.Parameters.Add(idParam);
-                try
-                {
-                    cmd.ExecuteNonQuery();
-                    cmd.Parameters.Clear();
-                    textBox1.AppendText(key + " -> " + val);
-                }
-                catch (Exception ex)
-                {
-                    textBox1.AppendText(ex.Message);
-                    conn.Close();
-                    return;
-                }
-            }
-            conn.Close();
         }
 
         private void UpdateTabIndex()
@@ -1043,6 +997,21 @@ namespace PDFiller
         }
 
         private void dataGridView1_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            productsGridView.Rows.Clear();
+        }
+
+        private void productSearchButton_Click(object sender, EventArgs e)
         {
 
         }

@@ -256,6 +256,7 @@
     <Compile Include="OptionsReader.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="PreviewObserver.cs" />
+    <Compile Include="ProductViewer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shipment.cs" />
@@ -302,6 +303,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AppPDF.ico" />
+    <Content Include="bin\Debug\Database1.mdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bin\Debug\Database1_log.ldf">
+      <DependentUpon>Database1.mdf</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="bin\Debug\debugTests\Set 13 figurine tortbriose Roblox, KZE Prints, Photo Paper Glossy.jpg" />
     <Content Include="bin\Debug\PDFiller.exe" />
     <Content Include="bin\Debug\PDFiller.pdb" />

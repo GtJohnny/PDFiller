@@ -44,6 +44,9 @@
             System.Windows.Forms.Label label13;
             System.Windows.Forms.Label label14;
             System.Windows.Forms.Panel panel1;
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.openPdfCheck = new System.Windows.Forms.CheckBox();
             this.drawComboBox = new System.Windows.Forms.ComboBox();
@@ -91,12 +94,10 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.imagePanel = new System.Windows.Forms.Panel();
             this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.button8 = new System.Windows.Forms.Button();
-            this.button7 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.productViewButton = new System.Windows.Forms.Button();
+            this.productSearchButton = new System.Windows.Forms.Button();
+            this.productSearchBox = new System.Windows.Forms.TextBox();
+            this.productsGridView = new System.Windows.Forms.DataGridView();
             this.IdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
             this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -132,7 +133,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.summaryGridView)).BeginInit();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.productsGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox3
@@ -859,7 +860,7 @@
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage3.Size = new System.Drawing.Size(623, 502);
             this.tabPage3.TabIndex = 4;
-            this.tabPage3.Text = "Imagini";
+            this.tabPage3.Text = "Images";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // imagePanel
@@ -876,12 +877,10 @@
             // 
             // tabPage4
             // 
-            this.tabPage4.Controls.Add(this.button8);
-            this.tabPage4.Controls.Add(this.button7);
-            this.tabPage4.Controls.Add(this.button6);
-            this.tabPage4.Controls.Add(this.button5);
-            this.tabPage4.Controls.Add(this.textBox2);
-            this.tabPage4.Controls.Add(this.dataGridView1);
+            this.tabPage4.Controls.Add(this.productViewButton);
+            this.tabPage4.Controls.Add(this.productSearchButton);
+            this.tabPage4.Controls.Add(this.productSearchBox);
+            this.tabPage4.Controls.Add(this.productsGridView);
             this.tabPage4.Location = new System.Drawing.Point(4, 26);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
@@ -890,74 +889,87 @@
             this.tabPage4.Text = "Products";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
-            // button8
+            // productViewButton
             // 
-            this.button8.Location = new System.Drawing.Point(527, 397);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(75, 23);
-            this.button8.TabIndex = 5;
-            this.button8.Text = "button8";
-            this.button8.UseVisualStyleBackColor = true;
+            this.productViewButton.Location = new System.Drawing.Point(3, 6);
+            this.productViewButton.Name = "productViewButton";
+            this.productViewButton.Size = new System.Drawing.Size(104, 26);
+            this.productViewButton.TabIndex = 3;
+            this.productViewButton.Text = "View";
+            this.productViewButton.UseVisualStyleBackColor = true;
             // 
-            // button7
+            // productSearchButton
             // 
-            this.button7.Location = new System.Drawing.Point(527, 242);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(75, 23);
-            this.button7.TabIndex = 4;
-            this.button7.Text = "button7";
-            this.button7.UseVisualStyleBackColor = true;
+            this.productSearchButton.Location = new System.Drawing.Point(516, 6);
+            this.productSearchButton.Name = "productSearchButton";
+            this.productSearchButton.Size = new System.Drawing.Size(104, 26);
+            this.productSearchButton.TabIndex = 2;
+            this.productSearchButton.Text = "Search";
+            this.productSearchButton.UseVisualStyleBackColor = true;
+            this.productSearchButton.Click += new System.EventHandler(this.productSearchButton_Click);
             // 
-            // button6
+            // productSearchBox
             // 
-            this.button6.Location = new System.Drawing.Point(527, 93);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(75, 23);
-            this.button6.TabIndex = 3;
-            this.button6.Text = "button6";
-            this.button6.UseVisualStyleBackColor = true;
+            this.productSearchBox.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.productSearchBox.Location = new System.Drawing.Point(114, 6);
+            this.productSearchBox.Name = "productSearchBox";
+            this.productSearchBox.Size = new System.Drawing.Size(394, 26);
+            this.productSearchBox.TabIndex = 1;
             // 
-            // button5
+            // productsGridView
             // 
-            this.button5.Location = new System.Drawing.Point(435, 7);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(75, 23);
-            this.button5.TabIndex = 2;
-            this.button5.Text = "button5";
-            this.button5.UseVisualStyleBackColor = true;
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(6, 6);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(423, 24);
-            this.textBox2.TabIndex = 1;
-            // 
-            // dataGridView1
-            // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.productsGridView.AllowUserToAddRows = false;
+            this.productsGridView.AllowUserToDeleteRows = false;
+            this.productsGridView.AllowUserToOrderColumns = true;
+            this.productsGridView.AllowUserToResizeRows = false;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Monotype Corsiva", 11.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.NullValue = "0";
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.LightBlue;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.productsGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.productsGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.productsGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IdColumn,
             this.ImageColumn,
             this.NameColumn});
-            this.dataGridView1.Location = new System.Drawing.Point(4, 36);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(506, 463);
-            this.dataGridView1.TabIndex = 0;
-            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick_1);
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Monotype Corsiva", 11.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.LightBlue;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.productsGridView.DefaultCellStyle = dataGridViewCellStyle3;
+            this.productsGridView.Location = new System.Drawing.Point(3, 38);
+            this.productsGridView.Name = "productsGridView";
+            this.productsGridView.ReadOnly = true;
+            this.productsGridView.RowHeadersVisible = false;
+            this.productsGridView.Size = new System.Drawing.Size(617, 461);
+            this.productsGridView.TabIndex = 0;
+            this.productsGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick_1);
             // 
             // IdColumn
             // 
-            this.IdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            this.IdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.IdColumn.HeaderText = "PN";
             this.IdColumn.Name = "IdColumn";
-            this.IdColumn.Width = 21;
+            this.IdColumn.ReadOnly = true;
+            this.IdColumn.Width = 52;
             // 
             // ImageColumn
             // 
             this.ImageColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.NullValue = "Null";
+            this.ImageColumn.DefaultCellStyle = dataGridViewCellStyle2;
             this.ImageColumn.HeaderText = "Image";
+            this.ImageColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
             this.ImageColumn.Name = "ImageColumn";
+            this.ImageColumn.ReadOnly = true;
             this.ImageColumn.Width = 47;
             // 
             // NameColumn
@@ -965,6 +977,7 @@
             this.NameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.NameColumn.HeaderText = "Name";
             this.NameColumn.Name = "NameColumn";
+            this.NameColumn.ReadOnly = true;
             // 
             // Form1
             // 
@@ -1014,7 +1027,7 @@
             this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.productsGridView)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1065,16 +1078,14 @@
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.Panel imagePanel;
         private System.Windows.Forms.TabPage tabPage4;
-        private System.Windows.Forms.Button button8;
-        private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Button productSearchButton;
+        private System.Windows.Forms.TextBox productSearchBox;
+        private System.Windows.Forms.DataGridView productsGridView;
         private System.Windows.Forms.Label versionLabel;
         private System.Windows.Forms.DataGridViewTextBoxColumn IdColumn;
         private System.Windows.Forms.DataGridViewImageColumn ImageColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
+        private System.Windows.Forms.Button productViewButton;
     }
 }
 
