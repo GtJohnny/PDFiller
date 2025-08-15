@@ -1015,6 +1015,11 @@ namespace PDFiller
         {
 
         }
+
+        private void productViewButton_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
 
