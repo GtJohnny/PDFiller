@@ -371,7 +371,7 @@ namespace PDFiller
                     }
                     if (id == order.id)
                     {
-                        order.toppers.Add(new Order.topper(tName, qnt, idProduct));
+                        order.toppers.Add(new Topper(tName, qnt, idProduct));
                     }
                     else
                     {
@@ -718,7 +718,7 @@ namespace PDFiller
         /// <param name="gfx">AWB graphics to be written and/or drawn on</param>
         /// <param name="toppere">What to write on the page (qnt + name + image)</param>
         /// <returns>True if successfull, false if not</returns>
-        private bool WriteOnPage(XGraphics gfx, List<Order.topper> toppere)
+        private bool WriteOnPage(XGraphics gfx, List<Product> toppere)
         {
 
             Dictionary<string, XImage> images = new Dictionary<string, XImage>();
@@ -731,7 +731,7 @@ namespace PDFiller
 
             int perPage = form.drawComboBox.SelectedIndex * 2;
 
-            foreach (Order.topper topper in toppere)
+            foreach (Product topper in toppere)
             {
                 if (perPage > 0)
                 {

@@ -89,6 +89,9 @@ namespace PDFiller
             SqlCommand cmd = new SqlCommand("SELECT * FROM TOPPERS WHERE LOWER(NAME) LIKE @searchText OR ID LIKE @searchText;", conn);
             cmd.Parameters.AddWithValue("searchText", $"%{searchText}%");
             SqlDataReader reader = null;
+
+
+
             try
             {
                 reader = cmd.ExecuteReader();
@@ -121,7 +124,7 @@ namespace PDFiller
             await Task.Delay(1000); // Debounce delay
             await SearchDB(searchTextBox.Text);
             searchTextBox.TextChanged += SearchTextBox_TextChanged; // Resubscribe
-        }
+        }   
 
 
         class TOPPERDBO

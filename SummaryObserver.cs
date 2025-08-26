@@ -40,7 +40,7 @@ namespace PDFiller
 
             foreach (Order o in orders)
             {
-                foreach (Order.topper tp in o.toppers)
+                foreach (Order.Topper tp in o.toppers)
                 {
                     //KeyValuePair<string, string> key = new KeyValuePair<string, string>(tp.tName, tp.tId);
                     string key = tp.name;

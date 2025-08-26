@@ -34,7 +34,7 @@ namespace PDFiller
             foreach (Order o in orders)
             {
                 rows.Add(o.country, o.name, o.toppers[0].name, o.toppers[0].quantity);
-                foreach (Order.topper tp in o.toppers.GetRange(1, o.toppers.Count - 1))
+                foreach (Order.Topper tp in o.toppers.GetRange(1, o.toppers.Count - 1))
                 {
                     rows.Add(null,null, tp.name, tp.quantity);
                 }

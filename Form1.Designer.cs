@@ -95,12 +95,12 @@
             this.imagePanel = new System.Windows.Forms.Panel();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.productViewButton = new System.Windows.Forms.Button();
+            this.productSearchButton = new System.Windows.Forms.Button();
             this.productSearchBox = new System.Windows.Forms.TextBox();
             this.productsGridView = new System.Windows.Forms.DataGridView();
             this.IdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
             this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.productSearchButton = new System.Windows.Forms.Button();
             groupBox3 = new System.Windows.Forms.GroupBox();
             label3 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
@@ -901,6 +901,19 @@
             this.productViewButton.UseVisualStyleBackColor = true;
             this.productViewButton.Click += new System.EventHandler(this.productViewButton_Click);
             // 
+            // productSearchButton
+            // 
+            this.productSearchButton.AutoSize = true;
+            this.productSearchButton.Font = new System.Drawing.Font("Monotype Corsiva", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.productSearchButton.Location = new System.Drawing.Point(534, 3);
+            this.productSearchButton.Name = "productSearchButton";
+            this.productSearchButton.Size = new System.Drawing.Size(84, 32);
+            this.productSearchButton.TabIndex = 2;
+            this.productSearchButton.Text = "New";
+            this.productSearchButton.UseVisualStyleBackColor = true;
+            this.productSearchButton.Visible = false;
+            this.productSearchButton.Click += new System.EventHandler(this.productSearchButton_Click);
+            // 
             // productSearchBox
             // 
             this.productSearchBox.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -971,19 +984,6 @@
             this.NameColumn.HeaderText = "Name";
             this.NameColumn.Name = "NameColumn";
             this.NameColumn.ReadOnly = true;
-            // 
-            // productSearchButton
-            // 
-            this.productSearchButton.AutoSize = true;
-            this.productSearchButton.Font = new System.Drawing.Font("Monotype Corsiva", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.productSearchButton.Location = new System.Drawing.Point(534, 3);
-            this.productSearchButton.Name = "productSearchButton";
-            this.productSearchButton.Size = new System.Drawing.Size(84, 32);
-            this.productSearchButton.TabIndex = 2;
-            this.productSearchButton.Text = "New";
-            this.productSearchButton.UseVisualStyleBackColor = true;
-            this.productSearchButton.Visible = false;
-            this.productSearchButton.Click += new System.EventHandler(this.productSearchButton_Click);
             // 
             // Form1
             // 

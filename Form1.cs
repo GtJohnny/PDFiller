@@ -1020,6 +1020,11 @@ namespace PDFiller
         {
 
         }
+
+        private void productSearchBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
 
