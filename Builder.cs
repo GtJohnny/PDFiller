@@ -116,8 +116,14 @@ namespace PDFiller
                 throw new DirectoryNotFoundException("Root Directory contains no subdirectories.\r\n");
             }
 
-            DirectoryInfo workDir;
-            workDir = dirs.OrderByDescending(d => d.CreationTime).ToArray().First();
+            DirectoryInfo workDir = dirs[0];
+            foreach (DirectoryInfo dir in dirs)
+            {
+                if (dir.CreationTime > workDir.CreationTime)
+                {
+                    workDir = dir;
+                }
+            }
             return workDir;
         }
 
@@ -225,6 +231,7 @@ namespace PDFiller
             }
            
         }
+
 
         private byte GetHeader(Dictionary<string, byte> columns, string[] headers)
         {
