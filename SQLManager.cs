@@ -16,7 +16,7 @@ namespace PDFiller
         private static readonly object lockObject = new object();
 
         Regex idRegex = new Regex(@"^[0-9]{13}$");
-        Regex nameRegex = new Regex(@"^[a-zA-Z0-9\s&]{1,100}$");
+        //Regex nameRegex = new Regex(@"^[a-zA-Z0-9\s&]{1,100}$");
 
         public static SQLManager GetInstance()
         {

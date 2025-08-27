@@ -215,7 +215,7 @@ namespace PDFiller
                     form.textBox1.AppendText($"-> {a}\r\n");
 
                     order.awb = a.Trim();
-                    order.note = awbs.Count()+"awbs";
+                    order.note = "!!";
                     orders.Add(new Order(order));
                 }
             }
@@ -345,16 +345,17 @@ namespace PDFiller
                     }
                     else
                     {
+                        order = new Order(id, awb, customerName, product, country);
+
                         if (order.id != "")
                         {
                             AddOrderToList(orders, order);
                         }
-                        order = new Order(id,awb,customerName, product,country);
                         //order = new Order(id, awb, name, tName, qnt, idProduct, country);
                     }
 
                 }
-                AddOrderToList(orders, order);
+                //AddOrderToList(orders, order);
                 return orders;
             }
             catch (Exception ex)
@@ -644,13 +645,15 @@ namespace PDFiller
                 if (perPage > 0)
                 {
                     XImage img = null;
-                    MemoryStream ms = new MemoryStream(product.ImageBuffer);
+                    using (MemoryStream ms = new MemoryStream(product.ImageBuffer))
+                    {
 
-                    //MATH =====>>       (scales with images/row)+ (pageH=90 +30 space)+no out of bounds  
-                    if (img != null && perPage >= 2 && i < 3 * perPage)
-                        gfx.DrawImage(img, (i % perPage) * (90 + perPage * 12) + 20 + (perPage == 2 ? gfx.PageSize.Width / 2 : 20), (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75, 90, 90);
+                        img = XImage.FromStream(() => ms);
+                        //MATH =====>>       (scales with images/row)+ (pageH=90 +30 space)+no out of bounds  
+                        if (img != null && perPage >= 2 && i < 3 * perPage)
+                            gfx.DrawImage(img, (i % perPage) * (90 + perPage * 12) + 20 + (perPage == 2 ? gfx.PageSize.Width / 2 : 20), (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75, 90, 90);
+                    }
                 }
-
                 string temp_name = $"{product.Quantity}:{product.Name}";
                 if (perPage == 4)
                 {

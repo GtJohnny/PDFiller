@@ -83,10 +83,6 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.excelTab = new System.Windows.Forms.TabPage();
             this.previewGridView = new System.Windows.Forms.DataGridView();
-            this.CountryColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.numeCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.nameCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.qntCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.summaryGridView = new System.Windows.Forms.DataGridView();
             this.qntColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -101,6 +97,10 @@
             this.IdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
             this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.CountryColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.numeCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.nameCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.qntCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             groupBox3 = new System.Windows.Forms.GroupBox();
             label3 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
@@ -732,6 +732,7 @@
             // 
             // excelTab
             // 
+            this.excelTab.BackColor = System.Drawing.SystemColors.Control;
             this.excelTab.Controls.Add(this.previewGridView);
             this.excelTab.Font = new System.Drawing.Font("Times New Roman", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.excelTab.Location = new System.Drawing.Point(4, 26);
@@ -740,7 +741,6 @@
             this.excelTab.Size = new System.Drawing.Size(623, 502);
             this.excelTab.TabIndex = 2;
             this.excelTab.Text = "ExcelPreview";
-            this.excelTab.UseVisualStyleBackColor = true;
             // 
             // previewGridView
             // 
@@ -763,44 +763,6 @@
             this.previewGridView.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.previewGridView.Size = new System.Drawing.Size(617, 496);
             this.previewGridView.TabIndex = 8;
-            // 
-            // CountryColumn
-            // 
-            this.CountryColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.CountryColumn.HeaderText = "Country";
-            this.CountryColumn.Name = "CountryColumn";
-            this.CountryColumn.ReadOnly = true;
-            this.CountryColumn.Width = 77;
-            // 
-            // numeCol
-            // 
-            this.numeCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.numeCol.HeaderText = "Name";
-            this.numeCol.Name = "numeCol";
-            this.numeCol.ReadOnly = true;
-            this.numeCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.numeCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.numeCol.Width = 44;
-            // 
-            // nameCol
-            // 
-            this.nameCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.nameCol.HeaderText = "Topper";
-            this.nameCol.Name = "nameCol";
-            this.nameCol.ReadOnly = true;
-            this.nameCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.nameCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // qntCol
-            // 
-            this.qntCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.qntCol.HeaderText = "Quantity";
-            this.qntCol.MinimumWidth = 20;
-            this.qntCol.Name = "qntCol";
-            this.qntCol.ReadOnly = true;
-            this.qntCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.qntCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.qntCol.Width = 61;
             // 
             // tabPage5
             // 
@@ -978,6 +940,45 @@
             this.NameColumn.Name = "NameColumn";
             this.NameColumn.ReadOnly = true;
             // 
+            // CountryColumn
+            // 
+            this.CountryColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.CountryColumn.HeaderText = "Country";
+            this.CountryColumn.Name = "CountryColumn";
+            this.CountryColumn.ReadOnly = true;
+            this.CountryColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.CountryColumn.Width = 58;
+            // 
+            // numeCol
+            // 
+            this.numeCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.numeCol.HeaderText = "Name";
+            this.numeCol.Name = "numeCol";
+            this.numeCol.ReadOnly = true;
+            this.numeCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.numeCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.numeCol.Width = 44;
+            // 
+            // nameCol
+            // 
+            this.nameCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.nameCol.HeaderText = "Topper";
+            this.nameCol.Name = "nameCol";
+            this.nameCol.ReadOnly = true;
+            this.nameCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.nameCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // qntCol
+            // 
+            this.qntCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.qntCol.HeaderText = "Quantity";
+            this.qntCol.MinimumWidth = 20;
+            this.qntCol.Name = "qntCol";
+            this.qntCol.ReadOnly = true;
+            this.qntCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.qntCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.qntCol.Width = 61;
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -1066,10 +1067,6 @@
         internal System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TabPage excelTab;
         private System.Windows.Forms.DataGridView previewGridView;
-        private System.Windows.Forms.DataGridViewTextBoxColumn CountryColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn numeCol;
-        private System.Windows.Forms.DataGridViewTextBoxColumn nameCol;
-        private System.Windows.Forms.DataGridViewTextBoxColumn qntCol;
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.DataGridView summaryGridView;
         private System.Windows.Forms.DataGridViewTextBoxColumn qntColumn;
@@ -1085,6 +1082,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
         private System.Windows.Forms.Button productViewButton;
         private System.Windows.Forms.Button productSearchButton;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CountryColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn numeCol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn nameCol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn qntCol;
     }
 }
 
