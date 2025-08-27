@@ -321,6 +321,7 @@ namespace PDFiller
             GC.Collect();
             try
             {
+                ProductFactory factory = ProductFactory.GetInstance();
                 Dictionary<string, byte> columns = GetExcelColumns(data, y);
                 byte IDCOL, AWBCOL, TOPPER_NAME_COL, IDPRODUCT, TOPPER_QUANTITY_COL, CLIENT_NAME, SHIPPING_ADDRESS;
 
@@ -353,35 +354,37 @@ namespace PDFiller
                     }
 
                     string awb = data[row, AWBCOL];
-                    string name = data[row, CLIENT_NAME];
-                    string tName = data[row, TOPPER_NAME_COL];
-                    string idProduct = data[row, IDPRODUCT];
+                    string customerName = data[row, CLIENT_NAME];
+                    string productName = data[row, TOPPER_NAME_COL];
+                    string productId = data[row, IDPRODUCT];
                     string shippingAddress = data[row, SHIPPING_ADDRESS];
-                    int qnt = int.Parse(data[row, TOPPER_QUANTITY_COL]);
-                    tName = ModifyName(idProduct, tName);
+                    int productQuantity = int.Parse(data[row, TOPPER_QUANTITY_COL]);
+
+                    Product p = factory.GetProduct(productId);
+                    SoldProduct product = new SoldProduct(p, productQuantity);
 
                     string country = shippingAddress.Split(',').Last().Trim();
                     try
                     {
                         country = new RegionInfo(country).EnglishName;
-                    }catch(ArgumentException)
+                    }
+                    catch(ArgumentException)
                     {
                         form.textBox1.AppendText($"Couldn't find country name for:{id}\r\n");
-                        country = "";
+                        country = "Ro";
                     }
                     if (id == order.id)
                     {
-                        order.toppers.Add(new Topper(tName, qnt, idProduct));
+                        order.AddProduct(product);
                     }
                     else
                     {
                         if (order.id != "")
                         {
-
                             AddOrderToList(orders, order);
-
                         }
-                        order = new Order(id, awb, name, tName, qnt, idProduct, country);
+                        order = new Order(id,awb,customerName, product,country);
+                        //order = new Order(id, awb, name, tName, qnt, idProduct, country);
                     }
 
                 }
@@ -588,7 +591,7 @@ namespace PDFiller
                     //Write the country in the middle
                     gfx.DrawString(o.country+o.note, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, gfx.PageSize.Width *0.5f , gfx.PageSize.Height * 0.5f+65, XStringFormats.Center);
 
-                    if (!WriteOnPage(gfx, o.toppers))
+                    if (!WriteOnPage(gfx, o.products))
                     {
                         errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
                         failed++;
@@ -652,63 +655,6 @@ namespace PDFiller
         }
 
 
-        /// <summary>
-        /// Modifies the name of the topper, if it is in the special swaps dictionary.
-        /// Otherwise, it trims the worthless words out.
-        /// </summary>
-        /// <param name="tId">The Product Number (PN) of the product</param>
-        /// <param name="tName">The original name of said product</param>
-        /// <returns>The name with </returns>
-        private string ModifyName(string tId, string tName)
-        {
-            //Sa vad ce naiba fac cu numele in bulgara, cum le editez 
-            if (SpecialSwaps.ContainsKey(tId))
-            {
-                return tName = SpecialSwaps[tId];
-            }
-            /*
-             омплект украса за торта KZE Prints Пес Патрул/ Paw Patrol, Гланцова хартия, Многоцветен, 17 бр
-             */
-
-            string[] list = { "briose de ", "briose ", "tort ", };
-            foreach (string s in list)
-            {
-                int index = tName.LastIndexOf(s);
-                if (index > 0)
-                {
-                    return tName = tName.Substring(index + s.Length).Replace(", KZE Prints, Photo Paper Glossy", "");
-                }
-
-            }
-
-            //improvizatie pentru bulgaria  
-
-            if(tName.StartsWith("Комплект украса за торта "))
-            {
-                try
-                {
-                    tName = tName.Replace("Комплект украса за торта ", "");
-                    if (tName.Contains("/") && tName.IndexOf("/") < tName.Length)
-                    {
-                        tName = tName.Substring(tName.IndexOf("/") + 1).Trim();
-                    }
-
-                    if (tName.Contains(","))
-                    {
-                        tName = tName.Substring(0, tName.IndexOf(","));
-                    }
-                    return tName;
-                }catch(Exception)
-                {
-
-                    return tName;
-                }
-            }
-
-            return tName;
-
-        }
-
 
 
         /// <summary>
@@ -716,9 +662,9 @@ namespace PDFiller
         /// write the order contents: topper count, name and image (if exists).
         /// </summary>
         /// <param name="gfx">AWB graphics to be written and/or drawn on</param>
-        /// <param name="toppere">What to write on the page (qnt + name + image)</param>
+        /// <param name="products">What to write on the page (qnt + name + image)</param>
         /// <returns>True if successfull, false if not</returns>
-        private bool WriteOnPage(XGraphics gfx, List<Product> toppere)
+        private bool WriteOnPage(XGraphics gfx, List<SoldProduct> products)
         {
 
             Dictionary<string, XImage> images = new Dictionary<string, XImage>();
@@ -731,35 +677,35 @@ namespace PDFiller
 
             int perPage = form.drawComboBox.SelectedIndex * 2;
 
-            foreach (Product topper in toppere)
+            foreach (SoldProduct product in products)
             {
                 if (perPage > 0)
                 {
                     XImage img = null;
-                    if (images.ContainsKey(topper.id))
+                    if (images.ContainsKey(product.id))
                     {
-                        img = images[topper.id];
+                        img = images[product.id];
                     }
                     else
                     {
-                        img = TryFindImage(topper.id);
+                        img = TryFindImage(product.id);
                         if (img != null)
                         {
-                            images.Add(topper.id, img);
+                            images.Add(product.id, img);
                         }
                         else
                         {
                             try
                             {
-                                client.DownloadFile($@"https://raw.githubusercontent.com/GtJohnny/PDFillerImages/main/{topper.id}.png", $"{imagesDir}/{topper.id}.png");
+                                client.DownloadFile($@"https://raw.githubusercontent.com/GtJohnny/PDFillerImages/main/{product.id}.png", $"{imagesDir}/{product.id}.png");
 
                             }
                             catch (WebException)
                             {
-                                form.textBox1.Text += $"Couldn't download image for {topper.id}.\r\n";
+                                form.textBox1.Text += $"Couldn't download image for {product.id}.\r\n";
                             }
 
-                            img = TryFindImage(topper.id);
+                            img = TryFindImage(product.id);
                         }
                     }
 
@@ -768,12 +714,12 @@ namespace PDFiller
                         gfx.DrawImage(img, (i % perPage) * (90 + perPage * 12) + 20 + (perPage == 2 ? gfx.PageSize.Width / 2 : 20), (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75, 90, 90);
                 }
 
-                string temp_name = $"{topper.quantity}:{topper.name}";
+                string temp_name = $"{product.quantity}:{product.name}";
                 if (perPage == 4)
                 {
                     //MATH =====>>
                     //per position *  (pageH=90 +30 space + space with img/row) - (center text) + (even abscise per img/row (2= right column, 3=wide)
-                    gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage * 12) + 65 - 5.7f * (topper.name.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2 : 16), (perPage == 2 ? 250 : 100) + (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75);
+                    gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage * 12) + 65 - 5.7f * (product.name.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2 : 16), (perPage == 2 ? 250 : 100) + (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75);
                     if(i == 3 * perPage)
                     {
                         return true;

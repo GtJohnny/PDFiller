@@ -28,6 +28,31 @@ namespace PDFiller
             return instance;
         }
 
+        public ProductFactory()
+        {
+        }
+
+
+        public List<Product> GetAllProducts()
+        {
+            SQLManager sqlManager = SQLManager.GetInstance();
+            try
+            {
+                List<Product> allProducts = sqlManager.GetAllProducts();
+                foreach (Product product in allProducts)
+                {
+                    if (!products.ContainsKey(product.Id))
+                    {
+                        products[product.Id] = product;
+                    }
+                }
+                return allProducts;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error getting products from database: " + ex.Message);
+            }
+        }
 
 
         /// <summary>

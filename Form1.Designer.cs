@@ -179,7 +179,6 @@
             this.drawComboBox.Name = "drawComboBox";
             this.drawComboBox.Size = new System.Drawing.Size(185, 29);
             this.drawComboBox.TabIndex = 15;
-            this.drawComboBox.SelectedIndexChanged += new System.EventHandler(this.drawComboBox_SelectedIndexChanged);
             this.drawComboBox.DropDownClosed += new System.EventHandler(this.drawComboBox_DropDownClosed);
             // 
             // autoFillCheck
@@ -372,7 +371,6 @@
             this.button2.TabIndex = 1;
             this.button2.Text = "button2";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.TestButtonClick);
             // 
             // button3
             // 
@@ -669,7 +667,6 @@
             this.groupBox8.TabIndex = 5;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Paths";
-            this.groupBox8.Enter += new System.EventHandler(this.groupBox8_Enter);
             // 
             // label7
             // 
@@ -744,7 +741,6 @@
             this.excelTab.TabIndex = 2;
             this.excelTab.Text = "ExcelPreview";
             this.excelTab.UseVisualStyleBackColor = true;
-            this.excelTab.Click += new System.EventHandler(this.excelTab_Click);
             // 
             // previewGridView
             // 
@@ -899,7 +895,6 @@
             this.productViewButton.TabIndex = 3;
             this.productViewButton.Text = "View";
             this.productViewButton.UseVisualStyleBackColor = true;
-            this.productViewButton.Click += new System.EventHandler(this.productViewButton_Click);
             // 
             // productSearchButton
             // 
@@ -912,7 +907,6 @@
             this.productSearchButton.Text = "New";
             this.productSearchButton.UseVisualStyleBackColor = true;
             this.productSearchButton.Visible = false;
-            this.productSearchButton.Click += new System.EventHandler(this.productSearchButton_Click);
             // 
             // productSearchBox
             // 
@@ -956,7 +950,6 @@
             this.productsGridView.RowHeadersVisible = false;
             this.productsGridView.Size = new System.Drawing.Size(617, 461);
             this.productsGridView.TabIndex = 0;
-            this.productsGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick_1);
             // 
             // IdColumn
             // 

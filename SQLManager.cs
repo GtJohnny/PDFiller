@@ -50,45 +50,46 @@ namespace PDFiller
 
 
 
-        public List<Product> SelectProductsByIdOrName(string str)
-        {
-            if(str == null)
-            {
-                throw new ArgumentNullException("Product search query string is null");
-            }
+        //public List<Product> SelectProductsByIdOrName(string str)
+        //{
+        //    if(str == null)
+        //    {
+        //        throw new ArgumentNullException("Product search query string is null");
+        //    }
 
-            if (nameRegex.IsMatch(str))
-            {
-                SqlCommand cmd = new SqlCommand("select * from toppers where id like @name or name like @name;", conn);
-                cmd.Parameters.AddWithValue("@name", "%" + str + "%");
-                SqlDataReader reader = cmd.ExecuteReader();
-                List<Product> products = new List<Product>();
-                try
-                {
-                    while (reader.Read())
-                    {
-                        string id = reader["id"].ToString();
-                        byte[] imgBytes = (byte[])reader["image"];
-                        string name = reader["name"].ToString();
-                        using (var ms = new System.IO.MemoryStream(imgBytes))
-                        {
-                            System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(ms);
-                            products.Add(new Product(id, bmp, name));
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error reading data: " + ex.Message);
-                }
-                reader.Close();
-                return products;
-            }
-            else
-            {
-                throw new ArgumentException("Invalid search query format");
-            }
-        }
+        //    if (nameRegex.IsMatch(str))
+        //    {
+        //        SqlCommand cmd = new SqlCommand("select * from toppers where id like @name or name like @name;", conn);
+        //        cmd.Parameters.AddWithValue("@name", "%" + str + "%");
+        //        SqlDataReader reader = cmd.ExecuteReader();
+        //        List<Product> products = new List<Product>();
+        //        try
+        //        {
+        //            while (reader.Read())
+        //            {
+        //                string id = reader["id"].ToString();
+        //                byte[] imgBytes = (byte[])reader["image"];
+        //                string name = reader["name"].ToString();
+        //                using (var ms = new System.IO.MemoryStream(imgBytes))
+        //                {
+        //                    System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(ms);
+        //                    Product product = new Product(id, bmp, name);
+        //                    products.Add(product);
+        //                }
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Console.WriteLine("Error reading data: " + ex.Message);
+        //        }
+        //        reader.Close();
+        //        return products;
+        //    }
+        //    else
+        //    {
+        //        throw new ArgumentException("Invalid search query format");
+        //    }
+        //}
 
 
 

@@ -10,11 +10,19 @@ using System.Windows.Forms;
 
 namespace PDFiller
 {
-    public partial class ProductViewForm : Form
+    internal partial class ProductViewForm : Form
     {
-        public ProductViewForm()
+
+        private Product product;
+        public ProductViewForm(Product product)
         {
+            this.product = product;
             InitializeComponent();
+        }
+
+        private void ProductViewForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

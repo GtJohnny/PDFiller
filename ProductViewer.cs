@@ -19,20 +19,6 @@ namespace PDFiller
         private Button viewButton;
         private TextBox searchTextBox;
 
-        private void FillDataGridView()
-        {
-            if (_dataGridView.Rows.Count > 0)
-            {
-                _dataGridView.Rows.Clear();
-            }
-            _dataGridView.RowTemplate.Height = 130;
-            ProductFactory factory = ProductFactory.GetInstance();
-            List<Product> allProducts = factory.GetAllProducts();
-            foreach (Product product in allProducts)
-            {
-                _dataGridView.Rows.Add(product.Id, product.Image, product.Name);
-            }
-        }
 
    
 
@@ -48,9 +34,29 @@ namespace PDFiller
             viewButton.Click += ViewButton_Click;
         }
 
+        private void FillDataGridView()
+        {
+
+            _dataGridView.Rows.Clear();
+
+            _dataGridView.RowTemplate.Height = 130;
+            ProductFactory factory = ProductFactory.GetInstance();
+            List<Product> allProducts = factory.GetAllProducts();
+            foreach (Product product in allProducts)
+            {
+                _dataGridView.Rows.Add(product.Id, product.Image, product.Name);
+            }
+        }
+
         private void ViewButton_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            var row = this._dataGridView.SelectedRows[0];
+            string productId = row.Cells[0].Value.ToString();
+            Bitmap bitmap= (Bitmap)row.Cells[1].Value;
+            string productName = row.Cells[2].Value.ToString();
+            Product product = new Product(productId, bitmap, productName);
+            ProductViewForm viewForm = new ProductViewForm(product);
+            viewForm.ShowDialog();
         }
 
         private void SearchButton_Click(object sender, EventArgs e)
