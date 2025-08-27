@@ -21,10 +21,8 @@ namespace PDFiller
         }
 
         public string Id { get => id; }
-        public Bitmap Bmp { get => bmp; }
+        public Bitmap Image { get => bmp; }
         public string Name { get => name; }
-
-
     };
 
 }

@@ -675,29 +675,6 @@ namespace PDFiller
         //}
 
 
-
-        private void excelTab_Click(object sender, EventArgs e)
-        {
-
-        }
-
-
-
-        private void groupBox8_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void groupBox4_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void rootTextBox_TextChanged(object sender, EventArgs e)
         {
 
@@ -710,10 +687,6 @@ namespace PDFiller
 
 
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void button2_Click_1(object sender, EventArgs e)
         {
@@ -739,19 +712,7 @@ namespace PDFiller
                 Process.Start(mergedPath);
         }
 
-        private void drawComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
 
-        }
-
-
-
-        private void TestButtonClick(object sender, EventArgs e)
-        {
-         
-
-
-        }
 
         private void UpdateTabIndex()
         {
@@ -996,35 +957,13 @@ namespace PDFiller
             }
         }
 
-        private void dataGridView1_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
-        {
 
-        }
-
-        private void button6_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void button7_Click(object sender, EventArgs e)
         {
             productsGridView.Rows.Clear();
         }
 
-        private void productSearchButton_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void productViewButton_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void productSearchBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }
 

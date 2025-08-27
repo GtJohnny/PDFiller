@@ -47,7 +47,10 @@ namespace PDFiller
             }
         }
 
-        public Product[] SelectProductsByIdOrName(string str)
+
+
+
+        public List<Product> SelectProductsByIdOrName(string str)
         {
             if(str == null)
             {
@@ -79,7 +82,7 @@ namespace PDFiller
                     Console.WriteLine("Error reading data: " + ex.Message);
                 }
                 reader.Close();
-                return products.ToArray();
+                return products;
             }
             else
             {
@@ -95,14 +98,21 @@ namespace PDFiller
         /// </summary>
         /// <param name="id">The unique identifier of the product to retrieve.</param>
         /// <returns>The <see cref="Product"/> associated with the specified identifier 
-        /// or <see cref="null"/></returns>
+        /// or <see cref="null"/> if nothing was found</returns>
         public Product GetProductById(string id)
         {
             Product product=null;
             try
             {
-                Product[] products = GetProductsById(new string[] { id });
-                product = products[0];
+                List<Product> products = GetProductsById(new string[] { id });
+                if(products.Count > 0)
+                {
+                    product = products[0];
+                }
+                else
+                {
+                    product = null;
+                }
             }
             catch(ArgumentException ex)
             {
@@ -121,7 +131,7 @@ namespace PDFiller
         /// <param name="ids">An array of all products ids</param>
         /// <returns>An array of all products from the database</returns>
         /// <exception cref="ArgumentException">Error reading from database</exception>
-        public Product[] GetProductsById(string[] ids)
+        public List<Product> GetProductsById(string[] ids)
         {
             SqlCommand cmd = new SqlCommand("select * from toppers where id in(@ids);",conn);
             foreach (string id in ids)
@@ -134,8 +144,7 @@ namespace PDFiller
 
             cmd.Parameters.AddWithValue("@ids", string.Join(",", ids));
             SqlDataReader reader = cmd.ExecuteReader();
-            Product[] products = new Product[ids.Length];
-            int index = 0;
+            List<Product> products = new List<Product>();
             try
             {
                 while (reader.Read())
@@ -146,7 +155,7 @@ namespace PDFiller
                     using (var ms = new System.IO.MemoryStream(imgBytes))
                     {
                         System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(ms);
-                        products[index++] = new Product(id, bmp, name);
+                        products.Add(new Product(id, bmp, name));
                     }
                 }
             }catch (Exception ex)
@@ -156,6 +165,40 @@ namespace PDFiller
             reader.Close();
             return products;
         }
+
+
+
+
+        public List<Product> GetAllProducts()
+        {
+            SqlCommand cmd = new SqlCommand("select * from toppers;", conn);
+            SqlDataReader reader = cmd.ExecuteReader();
+            List<Product> products = new List<Product>();
+            try
+            {
+                while (reader.Read())
+                {
+                    string id = reader["id"].ToString();
+                    byte[] imgBytes = (byte[])reader["image"];
+                    string name = reader["name"].ToString();
+                    using (var ms = new System.IO.MemoryStream(imgBytes))
+                    {
+                        System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(ms);
+                        products.Add(new Product(id, bmp, name));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error reading data: " + ex.Message);
+            }
+            reader.Close();
+            return products;
+        }
+
+
+
+
 
         /// <summary>
         /// Closes the database connection if it is open.

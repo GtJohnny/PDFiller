@@ -256,6 +256,7 @@
     <Compile Include="OptionsReader.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="PreviewObserver.cs" />
+    <Compile Include="ProductFactory.cs" />
     <Compile Include="ProductViewer.cs" />
     <Compile Include="ProductViewForm.cs">
       <SubType>Form</SubType>
@@ -266,9 +267,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shipment.cs" />
-    <Compile Include="SQLController.cs" />
+    <Compile Include="SQLManager.cs" />
     <Compile Include="SummaryObserver.cs" />
-    <Compile Include="Topper.cs" />
+    <Compile Include="Product.cs" />
     <Compile Include="Unsubscriber.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

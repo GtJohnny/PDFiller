@@ -15,12 +15,9 @@ namespace PDFiller
     internal class ProductViewer
     {
         private DataGridView _dataGridView;
-        private Button searchButton;
+        private Button newButton;
         private Button viewButton;
         private TextBox searchTextBox;
-        private Form viewForm;
-        private SqlConnection conn;
-        private DispatchWrapper _dispatchWrapper;
 
         private void FillDataGridView()
         {
@@ -28,40 +25,23 @@ namespace PDFiller
             {
                 _dataGridView.Rows.Clear();
             }
-            SqlCommand cmd = new SqlCommand("SELECT * FROM TOPPERS;", conn);
-            SqlDataReader reader = cmd.ExecuteReader();
             _dataGridView.RowTemplate.Height = 130;
-
-
-            while (reader.Read())
+            ProductFactory factory = ProductFactory.GetInstance();
+            List<Product> allProducts = factory.GetAllProducts();
+            foreach (Product product in allProducts)
             {
-                string id = reader["ID"].ToString();
-                byte[] image = (byte[])reader["IMAGE"];
-                string name = reader["NAME"].ToString();
-
-                Bitmap bmp = new Bitmap(new MemoryStream(image));
-                _dataGridView.Rows.Add(id, image, name);
+                _dataGridView.Rows.Add(product.Id, product.Image, product.Name);
             }
-            reader.Close();
         }
 
    
 
-        public ProductViewer(DataGridView dataGridView, Button searchButton, Button viewButton, TextBox searchTextBox, string connectionString)
+        public ProductViewer(DataGridView dataGridView, Button searchButton, Button viewButton, TextBox searchTextBox)
         {
             _dataGridView = dataGridView;
-            this.searchButton = searchButton;
+            this.newButton = searchButton;
             this.viewButton = viewButton;
             this.searchTextBox = searchTextBox;
-            this.conn = new SqlConnection(connectionString);
-            try
-            {
-                conn.Open();
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show("Error connecting to database: " + ex.Message);
-            }
             FillDataGridView();
             searchTextBox.TextChanged +=SearchTextBox_TextChanged;
             searchButton.Click += SearchButton_Click;
@@ -86,33 +66,21 @@ namespace PDFiller
                 return;
             }
             string searchText = searchTextBox.Text.ToLower();
-            SqlCommand cmd = new SqlCommand("SELECT * FROM TOPPERS WHERE LOWER(NAME) LIKE @searchText OR ID LIKE @searchText;", conn);
-            cmd.Parameters.AddWithValue("searchText", $"%{searchText}%");
-            SqlDataReader reader = null;
-
-
+            ProductFactory factory = ProductFactory.GetInstance();
+            List<Product> allProducts = factory.GetAllProducts();
 
             try
             {
-                reader = cmd.ExecuteReader();
-                if (_dataGridView.Rows.Count > 0)
+                _dataGridView.Rows.Clear();
+                foreach (Product product in allProducts.Where(p => p.Name.ToLower().Contains(searchText) || p.Id.ToLower().Contains(searchText)))
                 {
-                    _dataGridView.Rows.Clear();
+                    _dataGridView.Rows.Add(product.Id, product.Image, product.Name);
                 }
-                while (reader.Read())
-                {
-                    string id = reader["ID"].ToString();
-                    byte[] image = (byte[])reader["IMAGE"];
-                    string name = reader["NAME"].ToString();
-                    Bitmap bmp = new Bitmap(new MemoryStream(image));
-                    _dataGridView.Rows.Add(id, image, name);
-                }
-                reader.Close();
+
             }
-            catch (InvalidOperationException ex)
+            catch (Exception ex)
             {
-                reader.Close();
-                conn.Close();
+                MessageBox.Show("Error searching products: " + ex.Message);
             }
         }
 
@@ -127,11 +95,6 @@ namespace PDFiller
         }   
 
 
-        class TOPPERDBO
-        {
-            public int ID { get; set; }
-            public byte[] IMAGE { get; set; }
-            public string NAME { get; set; }
-        }
+
     }
 }
