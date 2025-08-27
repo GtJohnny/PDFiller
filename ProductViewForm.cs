@@ -14,9 +14,15 @@ namespace PDFiller
     {
 
         private Product product;
-        public ProductViewForm(Product product)
+        public ProductViewForm(string productId)
         {
-            this.product = product;
+            ProductFactory factory = ProductFactory.GetInstance();
+            this.product = factory.GetProduct(productId);
+            if (this.product == null)
+            {
+                this.DialogResult = DialogResult.Abort;
+                this.Close();
+            }
             InitializeComponent();
         }
 

@@ -28,12 +28,17 @@ namespace PDFiller
             this.newButton = searchButton;
             this.viewButton = viewButton;
             this.searchTextBox = searchTextBox;
-            FillDataGridView();
             searchTextBox.TextChanged +=SearchTextBox_TextChanged;
             searchButton.Click += SearchButton_Click;
             viewButton.Click += ViewButton_Click;
+            _dataGridView.Paint += DataGridView_Paint;
         }
 
+        private void DataGridView_Paint(object sender, PaintEventArgs e)
+        {
+            if(String.IsNullOrEmpty(this.searchTextBox.Text) && _dataGridView.Rows.Count == 0)
+                FillDataGridView();
+        }
         private void FillDataGridView()
         {
 
@@ -52,10 +57,7 @@ namespace PDFiller
         {
             var row = this._dataGridView.SelectedRows[0];
             string productId = row.Cells[0].Value.ToString();
-            Bitmap bitmap= (Bitmap)row.Cells[1].Value;
-            string productName = row.Cells[2].Value.ToString();
-            Product product = new Product(productId, bitmap, productName);
-            ProductViewForm viewForm = new ProductViewForm(product);
+            ProductViewForm viewForm = new ProductViewForm(productId);
             viewForm.ShowDialog();
         }
 

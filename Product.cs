@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,16 +21,31 @@ namespace PDFiller
             buff = null;
             name = "";
         }
-        public Product(string id, byte[] bmp, string name)
+        public Product(string id, byte[] buff, string name)
         {
             this.id = id;
-            this.buff = bmp;
+            this.buff = buff;
             this.name = name;
         }
 
         public string Id { get => id; }
-        public Bitmap Image { get => buff; }
+        public byte[] ImageBuffer { get => buff; }
         public string Name { get => name; }
+
+        public Bitmap Image
+        {
+            get
+            {
+                if (buff == null)
+                {
+                    return null;
+                }
+                using (var ms = new MemoryStream(buff))
+                {
+                    return new Bitmap(ms);
+                }
+            }
+        }
 
 
 

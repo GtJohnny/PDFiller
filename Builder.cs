@@ -42,45 +42,8 @@ namespace PDFiller
         /// Singleton instance of the Builder class.
         /// </summary>
         private static Builder menu = null;
-        
-
+        private static readonly object lockObject = new object();
         private Form1 form = null;
-
-
-        public Dictionary<string,string> GetDictionary()
-        {
-            return this.SpecialSwaps;
-        }
-
-
-        private readonly string imagesDir = Environment.CurrentDirectory + @"\images";
-
-        //TODO move this to a file and that's it. 
-        private readonly Dictionary<string, string> SpecialSwaps = new Dictionary<string, string>()
-        {
-            { "5941933302128", "Peppa Pig" },
-            { "5941933302135", "Paw Patrol tip1" },
-            { "5941933302197", "Minnie Mouse" },
-            { "5941933302227", "12 Inimi Roz <3" },
-            { "5941933302258", "Buburuza & Chat Noir" },
-            { "5941933302265", "12 Buburuze" },
-            { "5941933302326", "Albine mari" },
-            { "5941933302333", "Albinute mici" },
-            { "5941933302470", "Baby Boss tip3 (Logo)" },
-            { "5941933302487", "Baby Boss tip2 (baby)" },
-            { "5941933302517", "Barbie tip4 (cercuri)" },
-            { "5941933302524", "Barbie tip3 (silueta)" },
-            { "5941933302531", "Barbie tip2 (fancy)" },
-            { "5941933302548", "Barbie tip1 (funda)" },
-            { "5941933307475", "Paw Patrol tip2" },
-            { "5941933307536", "Gym" },
-            { "5941933307543", "Grizzy" },
-            { "5941933307567", "Eroi in Pijama" },
-            { "5941933307642", "BanBan" },
-            { "5941933307703", "Squid Game" },
-            { "5941933307758", "Cars" },
-            { "5941933307789", "Blaze" }
-        };
 
         private Builder()
         {
@@ -95,11 +58,14 @@ namespace PDFiller
 
         static public Builder GetInstance()
         {
-            if (menu == null)
+            lock (lockObject)
             {
-                menu = new Builder();
+                if (menu == null)
+                {
+                    menu = new Builder();
+                }
+                return menu;
             }
-            return menu;
         }
         public static Builder GetInstance(Form1 form)
         {
@@ -670,10 +636,6 @@ namespace PDFiller
             Dictionary<string, XImage> images = new Dictionary<string, XImage>();
             int i = 0;
             WebClient client = new WebClient();
-            if (!Directory.Exists(imagesDir))
-            {
-                Directory.CreateDirectory(imagesDir);
-            }
 
             int perPage = form.drawComboBox.SelectedIndex * 2;
 
@@ -682,44 +644,19 @@ namespace PDFiller
                 if (perPage > 0)
                 {
                     XImage img = null;
-                    if (images.ContainsKey(product.id))
-                    {
-                        img = images[product.id];
-                    }
-                    else
-                    {
-                        img = TryFindImage(product.id);
-                        if (img != null)
-                        {
-                            images.Add(product.id, img);
-                        }
-                        else
-                        {
-                            try
-                            {
-                                client.DownloadFile($@"https://raw.githubusercontent.com/GtJohnny/PDFillerImages/main/{product.id}.png", $"{imagesDir}/{product.id}.png");
-
-                            }
-                            catch (WebException)
-                            {
-                                form.textBox1.Text += $"Couldn't download image for {product.id}.\r\n";
-                            }
-
-                            img = TryFindImage(product.id);
-                        }
-                    }
+                    MemoryStream ms = new MemoryStream(product.ImageBuffer);
 
                     //MATH =====>>       (scales with images/row)+ (pageH=90 +30 space)+no out of bounds  
                     if (img != null && perPage >= 2 && i < 3 * perPage)
                         gfx.DrawImage(img, (i % perPage) * (90 + perPage * 12) + 20 + (perPage == 2 ? gfx.PageSize.Width / 2 : 20), (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75, 90, 90);
                 }
 
-                string temp_name = $"{product.quantity}:{product.name}";
+                string temp_name = $"{product.Quantity}:{product.Name}";
                 if (perPage == 4)
                 {
                     //MATH =====>>
                     //per position *  (pageH=90 +30 space + space with img/row) - (center text) + (even abscise per img/row (2= right column, 3=wide)
-                    gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage * 12) + 65 - 5.7f * (product.name.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2 : 16), (perPage == 2 ? 250 : 100) + (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75);
+                    gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage * 12) + 65 - 5.7f * (product.Name.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2 : 16), (perPage == 2 ? 250 : 100) + (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75);
                     if(i == 3 * perPage)
                     {
                         return true;
@@ -803,18 +740,18 @@ namespace PDFiller
         }
 
 
-        private XImage TryFindImage(string tId)
-        {
-            string[] extensions = { ".png", ".jpeg", ".jpg" };
-            foreach (string ext in extensions)
-            {
-                if (File.Exists($"{imagesDir}\\{tId}{ext}"))
-                {
-                    return XImage.FromFile($"{imagesDir}\\{tId}{ext}");
-                }
-            }
-            return null;
-        }
+        //private XImage TryFindImage(string tId)
+        //{
+        //    string[] extensions = { ".png", ".jpeg", ".jpg" };
+        //    foreach (string ext in extensions)
+        //    {
+        //        if (File.Exists($"{imagesDir}\\{tId}{ext}"))
+        //        {
+        //            return XImage.FromFile($"{imagesDir}\\{tId}{ext}");
+        //        }
+        //    }
+        //    return null;
+        //}
 
 
 

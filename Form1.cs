@@ -136,10 +136,10 @@ namespace PDFiller
         private void Form1_Load(object sender, EventArgs e)
         {
             this.versionLabel.Text = "v1.4.2";
-            this.productViewer = new ProductViewer(this.productsGridView, this.productSearchButton, this.productViewButton, this.productSearchBox, connectionString);
+            this.productViewer = new ProductViewer(this.productsGridView, this.productSearchButton, this.productViewButton, this.productSearchBox);
             this.shipment.Subscribe(new SummaryObserver(summaryGridView));
             this.shipment.Subscribe(new PreviewObserver(previewGridView));
-            this.shipment.Subscribe(new ImagesObserver(imagePanel));
+            //this.shipment.Subscribe(new ImagesObserver(imagePanel));
             if (File.Exists("options.ini"))
             {
                 readOptions();
@@ -168,12 +168,11 @@ namespace PDFiller
         {
             textBox1.AppendText("Please select a zip archive, an excel file," +
                " or a handful of awbs to begin!\r\n" +
-               "You can select them automatically, manually, Drag & Drop " +
+               "You can select them automatically, manually,\r\n Drag & Drop " +
                "or Copy & Paste them directly into this textbox!\r\n");
 
             if (autoFillCheck.Checked)
             {
-
                 AutoFill();
             }
            
@@ -568,6 +567,8 @@ namespace PDFiller
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             writeOptions();
+            SQLManager manager = SQLManager.GetInstance();
+            manager.CloseConnection();
             //   if (tabControl2.SelectedIndex == 1) updateTabIndex(); 
             //why tf did i put that there?
         }

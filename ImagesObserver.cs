@@ -15,55 +15,27 @@ namespace PDFiller
     
     internal class ImagesObserver : IObserver<Shipment>
     {
-        private struct TopperData
-        {
-            public string name;
-            public Bitmap bmp;
-            public TopperData(string name, Bitmap bmp)
-            {
-                this.name = name;
-                this.bmp = bmp;
-            }
-        }
+
 
 
         private Panel _panel;
 
         Graphics g;
         List<Order> _orders;
-        Dictionary<string, TopperData> _toppers = new Dictionary<string, TopperData>();
-        string path = Environment.CurrentDirectory + @"\Images";
-
-
-        private void LoadBMPs()
-        {
-            foreach (var order in _orders)
-            {
-                foreach (var topper in order.toppers)
-                {
-                    string key = topper.id;
-                    string file_path = $@"{path}\{key}.png";
-
-                    if (!_toppers.ContainsKey(key) && File.Exists(file_path)){ 
-                        
-                        Bitmap bmp = Bitmap.FromFile(file_path) as Bitmap;
-                        _toppers[key] = new TopperData(topper.name, bmp);
-                    }
-                }
-            }
-        }
+        Dictionary<string, SoldProduct> _dict = new Dictionary<string, SoldProduct>();
         private void Paint()
         {
 
-
             g.Clear(Color.White);
             if (_orders == null) return;
-            if (_toppers.Count == 0) LoadBMPs();
+
+
+
             int i = 0;
-            foreach(var data in _toppers)
+            foreach(var data in _dict)
             {
-                g.DrawImage(data.Value.bmp, new Rectangle((i % 4) * 150 + 25, (i / 4) * 130 + 10, 100, 100));
-                g.DrawString($"{data.Value.name}", new Font("Times New Roman", 14f), new SolidBrush(Color.Black), (i % 4) * 150 + 70 - 4.5f * data.Value.name.Length, (i / 4) * 130 + 110);
+                g.DrawImage(data.Value.Image, new Rectangle((i % 4) * 150 + 25, (i / 4) * 130 + 10, 100, 100));
+                g.DrawString($"{data.Value.Name}", new Font("Times New Roman", 14f), new SolidBrush(Color.Black), (i % 4) * 150 + 70 - 4.5f * data.Value.Name.Length, (i / 4) * 130 + 110);
                 i++;
             }
 
@@ -82,7 +54,7 @@ namespace PDFiller
         public void OnCompleted()
         {
             _orders = null;
-            _toppers.Clear();
+            _dict.Clear();
             _panel.Invalidate();
         }
 
@@ -90,14 +62,31 @@ namespace PDFiller
         public void OnError(Exception error)
         {
             _orders = null;
-            _toppers.Clear();
+            _dict.Clear();
             _panel.Invalidate();
         }
 
         public void OnNext(Shipment shipment)
         {
             this._orders = shipment.Orders;
-            _toppers.Clear();
+            _dict.Clear();
+            foreach (var order in this._orders)
+            {
+                foreach (SoldProduct soldProduct in order.products)
+                {
+                    if (!_dict.ContainsKey(soldProduct.Id))
+                    {
+                        _dict[soldProduct.Id] = soldProduct;
+                    }
+
+                }
+            }
+
+
+
+
+
+
             _panel.Invalidate();
         }
     }

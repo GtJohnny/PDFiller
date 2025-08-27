@@ -9,9 +9,7 @@ using System.Windows.Forms;
 
 namespace PDFiller
 {
-    /// <summary>
-    /// 
-    /// </summary>
+
     internal class SummaryObserver : IObserver<Shipment>
     {
         private DataGridView _dataGridView;
@@ -40,18 +38,18 @@ namespace PDFiller
 
             foreach (Order o in orders)
             {
-                foreach (Order.Topper tp in o.toppers)
+                foreach (SoldProduct product in o.products)
                 {
                     //KeyValuePair<string, string> key = new KeyValuePair<string, string>(tp.tName, tp.tId);
-                    string key = tp.name;
+                    string key = product.Name;
 
                     if (dict.ContainsKey(key))
                     {
-                        dict[key] += tp.quantity;
+                        dict[key] += product.Quantity;
                     }
                     else
                     {
-                        dict[key] = tp.quantity;
+                        dict[key] = product.Quantity;
                     }
                 }
             }

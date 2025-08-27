@@ -10,7 +10,7 @@ namespace PDFiller
 {
     internal class SQLManager
     {
-        private string connectionString = $"Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename{Environment.CurrentDirectory}\\Database1.mdf;Integrated Security=True";
+        private string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={Environment.CurrentDirectory}\Database1.mdf;Integrated Security=True";
         SqlConnection conn = new SqlConnection();
         private static SQLManager instance;
         private static readonly object lockObject = new object();
@@ -20,16 +20,15 @@ namespace PDFiller
 
         public static SQLManager GetInstance()
         {
-            if (instance == null)
+
+            lock (lockObject)
             {
-                lock (lockObject)
+                if (instance == null)
                 {
-                    if (instance == null)
-                    {
-                        instance = new SQLManager();
-                    }
+                    instance = new SQLManager();
                 }
             }
+
             return instance;
         }
 
@@ -153,11 +152,9 @@ namespace PDFiller
                     string id = reader["id"].ToString();
                     byte[] imgBytes = (byte[])reader["image"];
                     string name = reader["name"].ToString();
-                    using (var ms = new System.IO.MemoryStream(imgBytes))
-                    {
-                        System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(ms);
-                        products.Add(new Product(id, bmp, name));
-                    }
+
+                    products.Add(new Product(id, imgBytes, name));
+
                 }
             }catch (Exception ex)
             {
@@ -182,11 +179,8 @@ namespace PDFiller
                     string id = reader["id"].ToString();
                     byte[] imgBytes = (byte[])reader["image"];
                     string name = reader["name"].ToString();
-                    using (var ms = new System.IO.MemoryStream(imgBytes))
-                    {
-                        System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(ms);
-                        products.Add(new Product(id, bmp, name));
-                    }
+                    products.Add(new Product(id, imgBytes, name));
+
                 }
             }
             catch (Exception ex)
