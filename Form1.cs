@@ -251,7 +251,8 @@ namespace PDFiller
                     textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nFound.xlsx order summary at:\r\n" + excel.FullName + "\r\n");
                     if (this.tabControl2.SelectedIndex > 0 && this.tabControl2.SelectedIndex < 4)
                     {
-                        this.shipment.Update(new Shipment(menu.ReadExcel(excel), unzippedList, this.shipment.MergedPDF));
+                        List<Order> orders = menu.ReadExcel(excel);
+                        this.shipment.Update(new Shipment(orders, unzippedList, this.shipment.MergedPDF));
                     }
                     else
                     {
@@ -450,7 +451,8 @@ namespace PDFiller
                 if (shipment.Orders == null || shipment.Orders.Count == 0)
                 {
                     textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nReading the excel file.\r\n");
-                    this.shipment.Update(menu.WriteOnOrders(unzippedList, menu.ReadExcel(excel), saveDir, "CustomPDF"));
+                    List<Order> orders = menu.ReadExcel(excel);
+                    this.shipment.Update(menu.WriteOnOrders(unzippedList, orders, saveDir, "CustomPDF"));
                 }
                 else
                 {
@@ -511,7 +513,8 @@ namespace PDFiller
 
                 if (this.tabControl2.SelectedIndex > 0 && this.tabControl2.SelectedIndex < 4)
                 {
-                    this.shipment.Update(new Shipment(menu.ReadExcel(excel), unzippedList, this.shipment.MergedPDF));
+                    List<Order> _orders = menu.ReadExcel(excel);
+                    this.shipment.Update(new Shipment(_orders, unzippedList, this.shipment.MergedPDF));
                 }
                 else
                 {
@@ -928,7 +931,7 @@ namespace PDFiller
             textBox1.BackColor = SystemColors.Window;
 
             ReadGivenFiles(paths);
-
+            tabControlMenu.SelectedIndex = 1;
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
@@ -955,6 +958,8 @@ namespace PDFiller
                 {
                     ReadGivenFiles(paths);
                 }
+                tabControlMenu.SelectedIndex = 1;
+
             }
         }
 

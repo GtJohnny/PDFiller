@@ -26,6 +26,7 @@ using System.Web;
 using System.Windows.Forms;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using Excel = Microsoft.Office.Interop.Excel;
+using Task = System.Threading.Tasks.Task;
 
 
 
@@ -247,6 +248,18 @@ namespace PDFiller
 
 
 
+        /// <summary>
+        /// Reads the excel file asynchronously, and returns a list of orders.
+        /// </summary>
+        /// <param name="excel"></param>
+        /// <returns></returns>
+        public async Task<List<Order>> ReadExcelAsync(FileInfo excel)
+        {
+            return await Task.Run(() => ReadExcel(excel));
+        }
+
+
+
 
 
         /// <summary>
@@ -255,7 +268,7 @@ namespace PDFiller
         /// Also if an order has more than one AWB, then the order will be duplicated on purpose.
         /// </summary>
         /// <param name="excel">The excel file to be read</param>
-        /// <returns>A list of `Order` objects</returns>
+        /// <returns>A list of <see cref="Order"/> objects</returns>
         public List<Order> ReadExcel(FileInfo excel)
         {
             Cursor.Current = Cursors.WaitCursor;
@@ -263,19 +276,20 @@ namespace PDFiller
             Excel.Application app = new Excel.Application();
             List<Order> orders = new List<Order>();
             Workbook book = app.Workbooks.Open(excel.FullName);
-            Worksheet sheet = null;
-            try
+            if(book==null)
             {
-                sheet = book.Worksheets[1];
+                app.Quit();
+                throw new FileNotFoundException("The excel file is empty.\r\n");
             }
-            catch (COMException ex)
+            if (book.Sheets.Count == 0)
             {
-                form.textBox1.AppendText("The excel file is empty or doesn't contain any worksheets.\r\n");
-                form.textBox1.AppendText(ex.Message);
                 book.Close(0);
                 app.Quit();
-                return null;
+                throw new ArgumentException("The excel has no sheets");
             }
+             Worksheet sheet = book.Worksheets[1];
+
+
             Range range = sheet.UsedRange;
             int x = range.Rows.Count;
             int y = range.Columns.Count;
@@ -289,9 +303,6 @@ namespace PDFiller
             }
             book.Close(0);
             app.Quit();
-            Marshal.ReleaseComObject(book);
-            Marshal.ReleaseComObject(app);
-            GC.Collect();
             try
             {
                 ProductFactory factory = ProductFactory.GetInstance();
@@ -310,13 +321,23 @@ namespace PDFiller
                 }
                 catch (KeyNotFoundException ex)
                 {
-                    form.textBox1.AppendText("The excel file doesn't contain all the required column headers.\r\n");
-                    form.textBox1.AppendText(ex.Message);
-                    return new List<Order>();
+                    throw new KeyNotFoundException("The excel file doesn't contain all the required column headers.\r\n");
                 }
 
                 Order order = new Order();
                 string id = "";
+
+                string[] productIds = new string[x-1];
+                for (int row = 2; row <= x; row++)
+                {
+                    productIds[row - 2] = data[row, IDPRODUCT];
+                }
+                factory.GetProducts(productIds);
+
+
+
+
+
 
                 for (int row = 2; row <= x; row++)
                 {
@@ -341,7 +362,7 @@ namespace PDFiller
                     {
                         country = new RegionInfo(country).EnglishName;
                     }
-                    catch(ArgumentException)
+                    catch (ArgumentException)
                     {
                         form.textBox1.AppendText($"Couldn't find country name for:{id}\r\n");
                         country = "Ro";
@@ -369,7 +390,7 @@ namespace PDFiller
             {
 
                 form.textBox1.AppendText(ex.Message);
-                return new List<Order>();
+                return null;
             }
 
         }
@@ -403,7 +424,7 @@ namespace PDFiller
 
         /// <summary>
         /// Looks to find the zip files that do not have a matching unzipped folder.
-        /// Then proceeds to extract it.
+        /// Only looks for the last created zip file.
         /// </summary>
         /// <param name="workDir">Work directory.</param>
         /// <returns>The referece that represents the newest zip file found, or null if not found.</returns>
@@ -429,25 +450,18 @@ namespace PDFiller
             {
                 throw ex;
             }
-            bool found = false;
-            foreach (FileInfo zip in zips)
+            FileInfo zip = zips.OrderByDescending(z => z.CreationTime).First();
+            string expectedDir = Path.GetFileNameWithoutExtension(zip.FullName);
+
+            if(extractedZips.Contains(new DirectoryInfo(expectedDir)))
             {
-                foreach (DirectoryInfo dir in extractedZips)
-                {
-                    if (dir.Name == zip.Name.Replace(".zip", "")) //zip was unzipped
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
-                {
-                    form.zipLabel.Text = "Zip File:\r\n";
-                    form.zipPathBox.Text = zip.FullName;
-                    return zip;
-                }
+                form.textBox1.Text += "All zip files already extracted.\r\n";
+                throw new FileNotFoundException("All zip files already extracted.\r\n");
             }
-            throw new FileNotFoundException("All zip files already extracted.\r\n");
+            form.zipLabel.Text = "Zip File:\r\n";
+            form.zipPathBox.Text = zip.FullName;
+            return zip;
+
         }
 
         /// <summary>
@@ -563,7 +577,8 @@ namespace PDFiller
                     //lower half of the page
                     gfx.DrawRectangle(XBrushes.White, rect);
                     //Write the country in the middle
-                    gfx.DrawString(o.country+o.note, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, gfx.PageSize.Width *0.5f , gfx.PageSize.Height * 0.5f+65, XStringFormats.Center);
+                    if(o.country != "Romania")
+                        gfx.DrawString(o.country+o.note, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, gfx.PageSize.Width *0.5f , gfx.PageSize.Height * 0.5f+65, XStringFormats.Center);
 
                     if (!WriteOnPage(gfx, o.products))
                     {

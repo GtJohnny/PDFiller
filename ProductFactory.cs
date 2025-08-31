@@ -8,9 +8,10 @@ namespace PDFiller
 {
     internal class ProductFactory
     {
-        private Dictionary<string, Product> products = new Dictionary<string, Product>();
+        private Dictionary<string, Product> products;
         private static ProductFactory instance;
         private static readonly object lockObject = new object();
+        SQLManager sqlManager;
 
 
         public static ProductFactory GetInstance()
@@ -30,12 +31,13 @@ namespace PDFiller
 
         public ProductFactory()
         {
+            this.sqlManager = SQLManager.GetInstance();
+            this.products = new Dictionary<string, Product>();
         }
 
 
         public List<Product> GetAllProducts()
         {
-            SQLManager sqlManager = SQLManager.GetInstance();
             try
             {
                 List<Product> allProducts = sqlManager.GetAllProducts();
@@ -71,7 +73,6 @@ namespace PDFiller
             }
             if (!products.ContainsKey(id))
             {
-                SQLManager sqlManager = SQLManager.GetInstance();
                 try
                 {
                     Product product = sqlManager.GetProductById(id);
@@ -88,9 +89,29 @@ namespace PDFiller
                 }
             }
             return products[id];
-
         }
 
+
+        public List<Product> GetProducts(string[] ids)
+        {
+            List<Product> result = null;
+            try
+            {
+                result = sqlManager.GetProductsById(ids);
+                foreach (Product product in result)
+                {
+                    if (!products.ContainsKey(product.Id))
+                    {
+                        products[product.Id] = product;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return result;
+        }
 
     }
 }

@@ -66,7 +66,7 @@ namespace PDFiller
             throw new NotImplementedException();
         }
 
-        private async Task SearchDB(string searchString)
+        private void SearchDB(string searchString)
         {
             if (string.IsNullOrWhiteSpace(searchTextBox.Text))
             {
@@ -98,7 +98,7 @@ namespace PDFiller
         {
             searchTextBox.TextChanged -= SearchTextBox_TextChanged; // Unsubscribe to prevent multiple calls
             await Task.Delay(1000); // Debounce delay
-            await SearchDB(searchTextBox.Text);
+            SearchDB(searchTextBox.Text);
             searchTextBox.TextChanged += SearchTextBox_TextChanged; // Resubscribe
         }   
 

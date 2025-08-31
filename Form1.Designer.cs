@@ -53,6 +53,7 @@
             this.autoFillCheck = new System.Windows.Forms.CheckBox();
             this.tabControlMenu = new System.Windows.Forms.TabControl();
             this.AutoFillPage = new System.Windows.Forms.TabPage();
+            this.versionLabel = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.autoFillBtn = new System.Windows.Forms.Button();
@@ -62,7 +63,6 @@
             this.zipButton = new System.Windows.Forms.Button();
             this.mergeFillButton = new System.Windows.Forms.Button();
             this.ConfigPage = new System.Windows.Forms.TabPage();
-            this.versionLabel = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
             this.workButton = new System.Windows.Forms.Button();
             this.rootButton = new System.Windows.Forms.Button();
@@ -83,6 +83,10 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.excelTab = new System.Windows.Forms.TabPage();
             this.previewGridView = new System.Windows.Forms.DataGridView();
+            this.CountryColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.numeCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.nameCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.qntCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.summaryGridView = new System.Windows.Forms.DataGridView();
             this.qntColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -97,10 +101,6 @@
             this.IdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
             this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.CountryColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.numeCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.nameCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.qntCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             groupBox3 = new System.Windows.Forms.GroupBox();
             label3 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
@@ -350,6 +350,7 @@
             // 
             // AutoFillPage
             // 
+            this.AutoFillPage.Controls.Add(this.versionLabel);
             this.AutoFillPage.Controls.Add(this.button2);
             this.AutoFillPage.Controls.Add(label13);
             this.AutoFillPage.Controls.Add(this.button3);
@@ -363,6 +364,16 @@
             this.AutoFillPage.Text = "Autofill";
             this.AutoFillPage.UseVisualStyleBackColor = true;
             // 
+            // versionLabel
+            // 
+            this.versionLabel.AutoSize = true;
+            this.versionLabel.Font = new System.Drawing.Font("Monotype Corsiva", 11.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.versionLabel.Location = new System.Drawing.Point(157, 331);
+            this.versionLabel.Name = "versionLabel";
+            this.versionLabel.Size = new System.Drawing.Size(43, 17);
+            this.versionLabel.TabIndex = 19;
+            this.versionLabel.Text = "v1.X.Y";
+            // 
             // button2
             // 
             this.button2.Location = new System.Drawing.Point(35, 37);
@@ -371,6 +382,7 @@
             this.button2.TabIndex = 1;
             this.button2.Text = "button2";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Visible = false;
             // 
             // button3
             // 
@@ -475,7 +487,6 @@
             // 
             // ConfigPage
             // 
-            this.ConfigPage.Controls.Add(this.versionLabel);
             this.ConfigPage.Controls.Add(label14);
             this.ConfigPage.Controls.Add(this.button4);
             this.ConfigPage.Controls.Add(label12);
@@ -489,16 +500,6 @@
             this.ConfigPage.TabIndex = 1;
             this.ConfigPage.Text = "Config";
             this.ConfigPage.UseVisualStyleBackColor = true;
-            // 
-            // versionLabel
-            // 
-            this.versionLabel.AutoSize = true;
-            this.versionLabel.Font = new System.Drawing.Font("Monotype Corsiva", 11.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.versionLabel.Location = new System.Drawing.Point(157, 331);
-            this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(43, 17);
-            this.versionLabel.TabIndex = 19;
-            this.versionLabel.Text = "v1.X.Y";
             // 
             // button4
             // 
@@ -764,6 +765,45 @@
             this.previewGridView.Size = new System.Drawing.Size(617, 496);
             this.previewGridView.TabIndex = 8;
             // 
+            // CountryColumn
+            // 
+            this.CountryColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.CountryColumn.HeaderText = "Country";
+            this.CountryColumn.Name = "CountryColumn";
+            this.CountryColumn.ReadOnly = true;
+            this.CountryColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.CountryColumn.Width = 58;
+            // 
+            // numeCol
+            // 
+            this.numeCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.numeCol.HeaderText = "Name";
+            this.numeCol.Name = "numeCol";
+            this.numeCol.ReadOnly = true;
+            this.numeCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.numeCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.numeCol.Width = 44;
+            // 
+            // nameCol
+            // 
+            this.nameCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.nameCol.HeaderText = "Topper";
+            this.nameCol.Name = "nameCol";
+            this.nameCol.ReadOnly = true;
+            this.nameCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.nameCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // qntCol
+            // 
+            this.qntCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.qntCol.HeaderText = "Quantity";
+            this.qntCol.MinimumWidth = 20;
+            this.qntCol.Name = "qntCol";
+            this.qntCol.ReadOnly = true;
+            this.qntCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.qntCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.qntCol.Width = 61;
+            // 
             // tabPage5
             // 
             this.tabPage5.Controls.Add(this.summaryGridView);
@@ -850,10 +890,11 @@
             // productViewButton
             // 
             this.productViewButton.AutoSize = true;
-            this.productViewButton.Font = new System.Drawing.Font("Monotype Corsiva", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.productViewButton.Location = new System.Drawing.Point(436, 3);
+            this.productViewButton.Enabled = false;
+            this.productViewButton.Font = new System.Drawing.Font("Monotype Corsiva", 12.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.productViewButton.Location = new System.Drawing.Point(445, 6);
             this.productViewButton.Name = "productViewButton";
-            this.productViewButton.Size = new System.Drawing.Size(83, 32);
+            this.productViewButton.Size = new System.Drawing.Size(83, 30);
             this.productViewButton.TabIndex = 3;
             this.productViewButton.Text = "View";
             this.productViewButton.UseVisualStyleBackColor = true;
@@ -861,21 +902,21 @@
             // productSearchButton
             // 
             this.productSearchButton.AutoSize = true;
-            this.productSearchButton.Font = new System.Drawing.Font("Monotype Corsiva", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.productSearchButton.Location = new System.Drawing.Point(534, 3);
+            this.productSearchButton.Enabled = false;
+            this.productSearchButton.Font = new System.Drawing.Font("Monotype Corsiva", 12.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.productSearchButton.Location = new System.Drawing.Point(534, 6);
             this.productSearchButton.Name = "productSearchButton";
-            this.productSearchButton.Size = new System.Drawing.Size(84, 32);
+            this.productSearchButton.Size = new System.Drawing.Size(83, 30);
             this.productSearchButton.TabIndex = 2;
             this.productSearchButton.Text = "New";
             this.productSearchButton.UseVisualStyleBackColor = true;
-            this.productSearchButton.Visible = false;
             // 
             // productSearchBox
             // 
             this.productSearchBox.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.productSearchBox.Location = new System.Drawing.Point(3, 6);
             this.productSearchBox.Name = "productSearchBox";
-            this.productSearchBox.Size = new System.Drawing.Size(427, 29);
+            this.productSearchBox.Size = new System.Drawing.Size(436, 29);
             this.productSearchBox.TabIndex = 1;
             // 
             // productsGridView
@@ -939,45 +980,6 @@
             this.NameColumn.HeaderText = "Name";
             this.NameColumn.Name = "NameColumn";
             this.NameColumn.ReadOnly = true;
-            // 
-            // CountryColumn
-            // 
-            this.CountryColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.CountryColumn.HeaderText = "Country";
-            this.CountryColumn.Name = "CountryColumn";
-            this.CountryColumn.ReadOnly = true;
-            this.CountryColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.CountryColumn.Width = 58;
-            // 
-            // numeCol
-            // 
-            this.numeCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.numeCol.HeaderText = "Name";
-            this.numeCol.Name = "numeCol";
-            this.numeCol.ReadOnly = true;
-            this.numeCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.numeCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.numeCol.Width = 44;
-            // 
-            // nameCol
-            // 
-            this.nameCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.nameCol.HeaderText = "Topper";
-            this.nameCol.Name = "nameCol";
-            this.nameCol.ReadOnly = true;
-            this.nameCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.nameCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // qntCol
-            // 
-            this.qntCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.qntCol.HeaderText = "Quantity";
-            this.qntCol.MinimumWidth = 20;
-            this.qntCol.Name = "qntCol";
-            this.qntCol.ReadOnly = true;
-            this.qntCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.qntCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.qntCol.Width = 61;
             // 
             // Form1
             // 

@@ -133,7 +133,6 @@ namespace PDFiller
         /// <exception cref="ArgumentException">Error reading from database</exception>
         public List<Product> GetProductsById(string[] ids)
         {
-            SqlCommand cmd = new SqlCommand("select * from toppers where id in(@ids);",conn);
             foreach (string id in ids)
             {
                 if (!idRegex.IsMatch(id))
@@ -141,8 +140,19 @@ namespace PDFiller
                     throw new ArgumentException("Invalid ID format");
                 }
             }
+            SqlCommand cmd = conn.CreateCommand();
 
-            cmd.Parameters.AddWithValue("@ids", string.Join(",", ids));
+            var parameters = new List<string>();
+            for (int i = 0; i < ids.Length; i++)
+            {
+                parameters.Add($"@id{i}");
+                cmd.Parameters.AddWithValue($"@id{i}", ids[i]);
+            }
+            cmd.CommandText = $"select * from toppers where id in ({string.Join(",", parameters)});";
+
+
+
+            cmd.Parameters.AddWithValue("ids", "("+string.Join(",",ids)+")");
             SqlDataReader reader = cmd.ExecuteReader();
             List<Product> products = new List<Product>();
             try
