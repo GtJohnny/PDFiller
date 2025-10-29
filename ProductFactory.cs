@@ -82,9 +82,9 @@ namespace PDFiller
                     }
                     products[id] = product;
                 }
-                catch (Exception ex)
+                catch (ArgumentException ex)
                 {
-                    throw new Exception("Error getting product from database: " + ex.Message);
+                    throw new ArgumentException("Error getting product from database: " + ex.Message);
 
                 }
             }

@@ -1,9 +1,7 @@
 ﻿using Microsoft.Office.Interop.Excel;
 using Newtonsoft.Json.Linq;
-using PdfSharpCore.Drawing;
-using PdfSharpCore.Pdf;
-using PdfSharpCore.Pdf.Content.Objects;
-using PdfSharpCore.Pdf.IO;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf.IO;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -319,7 +317,7 @@ namespace PDFiller
                     CLIENT_NAME = GetHeader(columns, new string[] { "Nume client", "Shipping name" });
                     SHIPPING_ADDRESS = GetHeader(columns, new string[] { "Adresa de livrare", "Shipping address" });
                 }
-                catch (KeyNotFoundException ex)
+                catch (KeyNotFoundException)
                 {
                     throw new KeyNotFoundException("The excel file doesn't contain all the required column headers.\r\n");
                 }
@@ -353,9 +351,21 @@ namespace PDFiller
                     string productId = data[row, IDPRODUCT];
                     string shippingAddress = data[row, SHIPPING_ADDRESS];
                     int productQuantity = int.Parse(data[row, TOPPER_QUANTITY_COL]);
+                    SoldProduct product;
 
-                    Product p = factory.GetProduct(productId);
-                    SoldProduct product = new SoldProduct(p, productQuantity);
+
+
+
+                    try
+                    {
+                        Product p = factory.GetProduct(productId);
+                        product = new SoldProduct(p, productQuantity);
+                    }
+                    catch (Exception e)
+                    {
+                        form.textBox1.AppendText($"{productId} not found in database. Using excel info. {e.Message}");
+                        product = new SoldProduct(new Product(productId, null, productName), productQuantity);
+                    }
 
                     string country = shippingAddress.Split(',').Last().Trim();
                     try
@@ -429,7 +439,7 @@ namespace PDFiller
         /// <param name="workDir">Work directory.</param>
         /// <returns>The referece that represents the newest zip file found, or null if not found.</returns>
         /// <exception cref="ArgumentNullException">Work directory doesn't exist.</exception>
-        public FileInfo FindZipsUnzipped(DirectoryInfo workDir)
+        public FileInfo FindUnzippedArchive(DirectoryInfo workDir)
         {
             if (workDir == null || !workDir.Exists)
             {
@@ -451,11 +461,10 @@ namespace PDFiller
                 throw ex;
             }
             FileInfo zip = zips.OrderByDescending(z => z.CreationTime).First();
-            string expectedDir = Path.GetFileNameWithoutExtension(zip.FullName);
+            DirectoryInfo dir = new DirectoryInfo(zip.FullName.Replace(".zip", ""));
 
-            if(extractedZips.Contains(new DirectoryInfo(expectedDir)))
+            if(dir.Exists)
             {
-                form.textBox1.Text += "All zip files already extracted.\r\n";
                 throw new FileNotFoundException("All zip files already extracted.\r\n");
             }
             form.zipLabel.Text = "Zip File:\r\n";
@@ -466,25 +475,21 @@ namespace PDFiller
 
         /// <summary>
         /// Identifies the AWB number from the given page.
-        /// Aswell as the country of origin based on the AWB format.
         /// </summary>
         /// <param name="page">Page to read text from</param>
         /// <param name="orders">Orders from which one should have a matching AWB code</param>
-        /// <param name="awb">The AWB code in question</param>
-        /// <returns>True if successfull, false if not</returns>
-        public bool ReadAwbId(UglyToad.PdfPig.Content.Page page, List<Order> orders, out string awb)
+        /// <returns>The order corresponding to the AWB, or null</returns>
+        public Order FindMatchingOrder(UglyToad.PdfPig.Content.Page page, List<Order> orders)
         {
-            awb = "";
             string text = page.Text;
             foreach(Order o in orders)
             {
-                if(text.Contains(o.awb))
+                if(o.awb != "" && text.Contains(o.awb))
                 {
-                    awb = o.awb;
-                    return true;
+                    return o;
                 }
             }
-            return false;
+            return null;
 
         }
 
@@ -501,33 +506,32 @@ namespace PDFiller
         /// Given a PDF file, reads the AWB number from it, and writes the order details on the page.
         /// Also clears out the lower half and writes the country name in the middle.
         /// </summary>
+        /// <remarks> A file may have multiple pages, each of which could be an AWB</remarks>
         /// <param name="pdfMerge">The final document upon which we constantly attach pages on</param>
         /// <param name="file">The pdf file that we'll complete page by page</param>
-        /// <param name="orders">The entire orders file from the excel</param>
+        /// <param name="orders">The entire orders list from the excel</param>
         /// <returns></returns>
-        private List<string> WriteOnFile(PdfSharpCore.Pdf.PdfDocument pdfMerge, FileInfo file, List<Order> orders)
+        private List<string> WriteOnFile(PdfSharp.Pdf.PdfDocument pdfMerge, FileInfo file, List<Order> orders)
         {
             List<string> errorMessages = new List<string>();
-            PdfSharpCore.Pdf.PdfDocument pdfWrite = PdfReader.Open(file.FullName, PdfDocumentOpenMode.Import);
+            PdfSharp.Pdf.PdfDocument pdfWrite = PdfReader.Open(file.FullName, PdfDocumentOpenMode.Import);
             using (var pdfRead = UglyToad.PdfPig.PdfDocument.Open(file.FullName))
             {
                 total += pdfWrite.PageCount;
                 for (int i = 0; i < pdfWrite.PageCount; i++)
                 {
-                    string awb = "";
-                    if (!ReadAwbId(pdfRead.GetPage(i + 1), orders, out awb))
-                    {
-                        errorMessages.Add($"Couldn't find AWB number for page {i + 1} for:\r\n{file.Name}\r\n");
-                        failed++;
-                        continue;
-                    }
-
-                    Order o = orders.Find(p => p.awb == awb);
-                    //Sometimes the excel file may NOT have the AWB id that we need
-                    //but we may still be able to match the order with the file name and order id.
-                    //as last resort only
+                    Order o = FindMatchingOrder(pdfRead.GetPage(i + 1), orders);
                     if (o == null)
                     {
+                        errorMessages.Add($"Couldn't find AWB number for page {i + 1} for:\r\n{file.Name}\r\n");
+                        //failed++;
+                        //continue;
+                    
+
+                        //Sometimes the excel file may NOT have the AWB id that we need
+                        //but we may still be able to match the order with the file name and order id.
+                        //as last resort only
+
                         string fileId = file.Name.Split('_')[0];
                         o = orders.Find(p => p.id == fileId);
 
@@ -543,7 +547,8 @@ namespace PDFiller
                                 errorMessages.Add($"Couldn't find an order match for:\r\n{file.Name}\r\n");
                             }
                             failed++;
-                            continue;
+                            //continue;
+                            o = new Order();
                         }
                         else
                         {
@@ -563,28 +568,28 @@ namespace PDFiller
 
 
                     pdfMerge.AddPage(pdfWrite.Pages[i]);
+                    if (o.products.Count == 0)
+                        continue;
+
 
                     XGraphics gfx = XGraphics.FromPdfPage(pdfMerge.Pages[pdfMerge.PageCount - 1]);
                     XRect rect = new XRect(0, gfx.PageSize.Height / 2 - 15, gfx.PageSize.Width, gfx.PageSize.Height / 2 + 15);
 
 
-                    //for(int index = 0;index < 30; index++)
-                    //{
-                    //    o.toppers.Add(o.toppers[0]);
-                    //}
-
+          
 
                     //lower half of the page
                     gfx.DrawRectangle(XBrushes.White, rect);
                     //Write the country in the middle
                     if(o.country != "Romania")
-                        gfx.DrawString(o.country+o.note, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, gfx.PageSize.Width *0.5f , gfx.PageSize.Height * 0.5f+65, XStringFormats.Center);
+                        gfx.DrawString(o.country+o.note, new XFont("Times New Roman", 12,XFontStyleEx.Regular), XBrushes.Black, gfx.PageSize.Width *0.5f , gfx.PageSize.Height * 0.5f+65, XStringFormats.Center);
+
+      
 
                     if (!WriteOnPage(gfx, o.products))
                     {
                         errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
                         failed++;
-                        continue;
                     }
                 }
             }
@@ -606,7 +611,7 @@ namespace PDFiller
         public Shipment WriteOnOrders(List<FileInfo> unzippedList, List<Order> orders, string saveDir, string saveName)
         {
             failed = total = 0;
-            PdfSharpCore.Pdf.PdfDocument pdfMerge = new PdfSharpCore.Pdf.PdfDocument();
+            PdfSharp.Pdf.PdfDocument pdfMerge = new PdfSharp.Pdf.PdfDocument();
             foreach (FileInfo file in unzippedList)
             {
                 if (file == null || !file.Exists)
@@ -614,6 +619,9 @@ namespace PDFiller
                     form.textBox1.Text += $"File {file.Name} doesn't exist.\r\n";
                     continue;
                 }
+
+
+
 
 
                 List<string> errorMessages = WriteOnFile(pdfMerge, file, orders);
@@ -656,9 +664,10 @@ namespace PDFiller
         private bool WriteOnPage(XGraphics gfx, List<SoldProduct> products)
         {
 
+
             Dictionary<string, XImage> images = new Dictionary<string, XImage>();
             int i = 0;
-            WebClient client = new WebClient();
+            //WebClient client = new WebClient();
 
             int perPage = form.drawComboBox.SelectedIndex * 2;
 
@@ -670,7 +679,7 @@ namespace PDFiller
                     using (MemoryStream ms = new MemoryStream(product.ImageBuffer))
                     {
 
-                        img = XImage.FromStream(() => ms);
+                        img = XImage.FromStream(ms);
                         //MATH =====>>       (scales with images/row)+ (pageH=90 +30 space)+no out of bounds  
                         if (img != null && perPage >= 2 && i < 3 * perPage)
                             gfx.DrawImage(img, (i % perPage) * (90 + perPage * 12) + 20 + (perPage == 2 ? gfx.PageSize.Width / 2 : 20), (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75, 90, 90);
@@ -681,7 +690,8 @@ namespace PDFiller
                 {
                     //MATH =====>>
                     //per position *  (pageH=90 +30 space + space with img/row) - (center text) + (even abscise per img/row (2= right column, 3=wide)
-                    gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage * 12) + 65 - 5.7f * (product.Name.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2 : 16), (perPage == 2 ? 250 : 100) + (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75);
+                    XFont font = new XFont("Times New Roman", 12, XFontStyleEx.Regular);
+                    gfx.DrawString(temp_name, font, XBrushes.Black, (i % perPage) * (90 + perPage * 12) + 65 - 5.7f * (product.Name.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2 : 16), (perPage == 2 ? 250 : 100) + (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75);
                     if(i == 3 * perPage)
                     {
                         return true;
@@ -689,7 +699,7 @@ namespace PDFiller
                 }
                 else
                 {
-                    gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, 50, gfx.PageSize.Height * 0.60f + 15 * i);
+                    gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyleEx.Regular), XBrushes.Black, 50, gfx.PageSize.Height * 0.60f + 15 * i);
                     if(i == 20)
                     {
                         return true;
