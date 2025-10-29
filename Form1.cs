@@ -1,6 +1,6 @@
-﻿using PdfSharpCore.Drawing;
-using PdfSharpCore.Pdf;
-using PdfSharpCore.Pdf.IO;
+﻿using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,7 +22,8 @@ using System.Data.Odbc;
 using System.Threading;
 using System.Text.RegularExpressions;
 using System.Globalization;
-
+using System.Data.SqlClient;
+using PdfSharp.Fonts;
 
 
 
@@ -38,15 +39,15 @@ namespace PDFiller
         }
 
         private string DebugPath = Environment.CurrentDirectory + "\\debugTests\\";
-
+        private string connectionString = $"Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename={Environment.CurrentDirectory+"\\Database1.mdf"};Integrated Security=True";
         private DirectoryInfo rootDir = null;
         private DirectoryInfo workDir = null;
         private FileInfo zip = null;
         private FileInfo excel = null;
         private List<FileInfo> unzippedList = null;
         private Shipment shipment = new Shipment();
-
-
+        private ProductViewer productViewer;
+        private string versionTag = "v1.4.3";
 
 
 
@@ -135,9 +136,11 @@ namespace PDFiller
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.versionLabel.Text = this.versionTag;
+            this.productViewer = new ProductViewer(this.productsGridView, this.productSearchButton, this.productViewButton, this.productSearchBox);
             this.shipment.Subscribe(new SummaryObserver(summaryGridView));
             this.shipment.Subscribe(new PreviewObserver(previewGridView));
-            this.shipment.Subscribe(new ImagesObserver(imagePanel));
+            //this.shipment.Subscribe(new ImagesObserver(imagePanel));
             if (File.Exists("options.ini"))
             {
                 readOptions();
@@ -156,19 +159,25 @@ namespace PDFiller
                 writeOptions();
                 return;
             }
+
+
+
         }
 
 
         private void Form1_Shown(object sender, EventArgs e)
         {
+            GlobalFontSettings.UseWindowsFontsUnderWindows = true;
+
+
+
             textBox1.AppendText("Please select a zip archive, an excel file," +
                " or a handful of awbs to begin!\r\n" +
-               "You can select them automatically, manually, Drag & Drop " +
-               "or Copy & Paste them directly into this textbox!\r\n");
+               "You can select them automatically, manually, and even \r\n" +
+               "Drag & Drop or Copy & Paste them directly into this textbox!\r\n");
 
             if (autoFillCheck.Checked)
             {
-
                 AutoFill();
             }
            
@@ -247,7 +256,8 @@ namespace PDFiller
                     textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nFound.xlsx order summary at:\r\n" + excel.FullName + "\r\n");
                     if (this.tabControl2.SelectedIndex > 0 && this.tabControl2.SelectedIndex < 4)
                     {
-                        this.shipment.Update(new Shipment(menu.ReadExcel(excel), unzippedList, this.shipment.MergedPDF));
+                        List<Order> orders = menu.ReadExcel(excel);
+                        this.shipment.Update(new Shipment(orders, unzippedList, this.shipment.MergedPDF));
                     }
                     else
                     {
@@ -393,7 +403,7 @@ namespace PDFiller
                         //updateTabIndex();
 
 
-                        zip = menu.FindZipsUnzipped(workDir);
+                        zip = menu.FindUnzippedArchive(workDir);
                         zipPathBox.Text = zip.FullName;
 
 
@@ -446,7 +456,8 @@ namespace PDFiller
                 if (shipment.Orders == null || shipment.Orders.Count == 0)
                 {
                     textBox1.AppendText($"[{DateTime.Now.ToString("HH:mm:ss")}]\r\nReading the excel file.\r\n");
-                    this.shipment.Update(menu.WriteOnOrders(unzippedList, menu.ReadExcel(excel), saveDir, "CustomPDF"));
+                    List<Order> orders = menu.ReadExcel(excel);
+                    this.shipment.Update(menu.WriteOnOrders(unzippedList, orders, saveDir, "CustomPDF"));
                 }
                 else
                 {
@@ -494,7 +505,7 @@ namespace PDFiller
                 Builder menu = PDFiller.Builder.GetInstance(this);
                 workDir = menu.FindWorkDir(rootDir);
                 textBox1.AppendText($"Found work directory at:\r\n{workDir.FullName}\r\n");
-                zip = menu.FindZipsUnzipped(workDir);
+                zip = menu.FindUnzippedArchive(workDir);
                 textBox1.AppendText($"Found zip archive at:\r\n{zip.FullName}\r\n");
                 zipPathBox.Text = zip.FullName;
                 string extractedDir = null;
@@ -507,7 +518,8 @@ namespace PDFiller
 
                 if (this.tabControl2.SelectedIndex > 0 && this.tabControl2.SelectedIndex < 4)
                 {
-                    this.shipment.Update(new Shipment(menu.ReadExcel(excel), unzippedList, this.shipment.MergedPDF));
+                    List<Order> _orders = menu.ReadExcel(excel);
+                    this.shipment.Update(new Shipment(_orders, unzippedList, this.shipment.MergedPDF));
                 }
                 else
                 {
@@ -563,6 +575,8 @@ namespace PDFiller
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             writeOptions();
+            SQLManager manager = SQLManager.GetInstance();
+            manager.CloseConnection();
             //   if (tabControl2.SelectedIndex == 1) updateTabIndex(); 
             //why tf did i put that there?
         }
@@ -670,29 +684,6 @@ namespace PDFiller
         //}
 
 
-
-        private void excelTab_Click(object sender, EventArgs e)
-        {
-
-        }
-
-
-
-        private void groupBox8_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void groupBox4_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void rootTextBox_TextChanged(object sender, EventArgs e)
         {
 
@@ -705,10 +696,6 @@ namespace PDFiller
 
 
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void button2_Click_1(object sender, EventArgs e)
         {
@@ -734,21 +721,7 @@ namespace PDFiller
                 Process.Start(mergedPath);
         }
 
-        private void drawComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
 
-        }
-
-
-        private void TestButtonClick(object sender, EventArgs e)
-        {
-            Icon icon = Icon.ExtractAssociatedIcon(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Balatro.url");
-            Graphics g = textBox1.CreateGraphics();
-            textBox1.Invalidate();
-            g.DrawIcon(icon, new Rectangle(Cursor.Position.X, Cursor.Position.Y, 32, 32));
-            g.Save();
-
-        }
 
         private void UpdateTabIndex()
         {
@@ -963,7 +936,7 @@ namespace PDFiller
             textBox1.BackColor = SystemColors.Window;
 
             ReadGivenFiles(paths);
-
+            tabControlMenu.SelectedIndex = 1;
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
@@ -990,13 +963,18 @@ namespace PDFiller
                 {
                     ReadGivenFiles(paths);
                 }
+                tabControlMenu.SelectedIndex = 1;
+
             }
         }
 
-        private void dataGridView1_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
-        {
 
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            productsGridView.Rows.Clear();
         }
+
     }
 }
 

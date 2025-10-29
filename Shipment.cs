@@ -10,8 +10,16 @@ namespace PDFiller
     /// <summary>
     /// Object representing the entire shipment of the day, as in 
     /// the orders with their corespinding AWB's and shipment information from the excel spreadsheet.
-    /// 
     /// </summary>
+    /// <remarks>
+    /// In order to make the flow of the app as lazy as possible,
+    /// The <see cref="Shipment"/> object will hold the current state of the orders,
+    /// once the excel/pdfs file were processed, to distinguish them from
+    /// other files selected by the user.
+    /// The <see cref="Shipment"/> object is observable, so any class that needs to
+    /// read that state can subscribe to it.
+    /// </remarks>
+    /// 
     internal class Shipment:IObservable<Shipment>
     {
         /// <summary>

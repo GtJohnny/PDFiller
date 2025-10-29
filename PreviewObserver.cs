@@ -33,10 +33,10 @@ namespace PDFiller
             rows.Clear();
             foreach (Order o in orders)
             {
-                rows.Add(o.country, o.name, o.toppers[0].name, o.toppers[0].quantity);
-                foreach (Order.topper tp in o.toppers.GetRange(1, o.toppers.Count - 1))
+                rows.Add(o.country, o.customerName, o.products[0].Name, o.products[0].Quantity);
+                foreach (SoldProduct product in o.products.GetRange(1, o.products.Count - 1))
                 {
-                    rows.Add(null,null, tp.name, tp.quantity);
+                    rows.Add(null,null, product.Name, product.Quantity);
                 }
             }
         }

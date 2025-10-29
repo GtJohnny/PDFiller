@@ -1,9 +1,7 @@
 ﻿using Microsoft.Office.Interop.Excel;
 using Newtonsoft.Json.Linq;
-using PdfSharpCore.Drawing;
-using PdfSharpCore.Pdf;
-using PdfSharpCore.Pdf.Content.Objects;
-using PdfSharpCore.Pdf.IO;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf.IO;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -26,6 +24,7 @@ using System.Web;
 using System.Windows.Forms;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using Excel = Microsoft.Office.Interop.Excel;
+using Task = System.Threading.Tasks.Task;
 
 
 
@@ -42,42 +41,8 @@ namespace PDFiller
         /// Singleton instance of the Builder class.
         /// </summary>
         private static Builder menu = null;
-
-
+        private static readonly object lockObject = new object();
         private Form1 form = null;
-
-
-
-
-
-        private readonly string imagesDir = Environment.CurrentDirectory + @"\images";
-
-        //TODO move this to a file and that's it. 
-        private readonly Dictionary<string, string> SpecialSwaps = new Dictionary<string, string>()
-        {
-            { "5941933302128", "Peppa Pig" },
-            { "5941933302135", "Paw Patrol tip1" },
-            { "5941933302197", "Minnie Mouse" },
-            { "5941933302227", "12 Inimi Roz <3" },
-            { "5941933302258", "Buburuza & Chat Noir" },
-            { "5941933302265", "12 Buburuze" },
-            { "5941933302326", "Albine mari" },
-            { "5941933302333", "Albinute mici" },
-            { "5941933302470", "Baby Boss tip3 (Logo)" },
-            { "5941933302487", "Baby Boss tip2 (baby)" },
-            { "5941933302517", "Barbie tip4 (cercuri)" },
-            { "5941933302524", "Barbie tip3 (silueta)" },
-            { "5941933302531", "Barbie tip2 (fancy)" },
-            { "5941933302548", "Barbie tip1 (funda)" },
-            { "5941933307475", "Paw Patrol tip2" },
-            { "5941933307536", "Gym" },
-            { "5941933307543", "Grizzy" },
-            { "5941933307567", "Eroi in Pijama" },
-            { "5941933307642", "BanBan" },
-            { "5941933307703", "Squid Game" },
-            { "5941933307758", "Cars" },
-            { "5941933307789", "Blaze" }
-        };
 
         private Builder()
         {
@@ -92,11 +57,14 @@ namespace PDFiller
 
         static public Builder GetInstance()
         {
-            if (menu == null)
+            lock (lockObject)
             {
-                menu = new Builder();
+                if (menu == null)
+                {
+                    menu = new Builder();
+                }
+                return menu;
             }
-            return menu;
         }
         public static Builder GetInstance(Form1 form)
         {
@@ -147,8 +115,14 @@ namespace PDFiller
                 throw new DirectoryNotFoundException("Root Directory contains no subdirectories.\r\n");
             }
 
-            DirectoryInfo workDir;
-            workDir = dirs.OrderByDescending(d => d.CreationTime).ToArray().First();
+            DirectoryInfo workDir = dirs[0];
+            foreach (DirectoryInfo dir in dirs)
+            {
+                if (dir.CreationTime > workDir.CreationTime)
+                {
+                    workDir = dir;
+                }
+            }
             return workDir;
         }
 
@@ -246,7 +220,7 @@ namespace PDFiller
                     form.textBox1.AppendText($"-> {a}\r\n");
 
                     order.awb = a.Trim();
-                    order.note = awbs.Count()+"awbs";
+                    order.note = "!!";
                     orders.Add(new Order(order));
                 }
             }
@@ -256,6 +230,7 @@ namespace PDFiller
             }
            
         }
+
 
         private byte GetHeader(Dictionary<string, byte> columns, string[] headers)
         {
@@ -271,6 +246,18 @@ namespace PDFiller
 
 
 
+        /// <summary>
+        /// Reads the excel file asynchronously, and returns a list of orders.
+        /// </summary>
+        /// <param name="excel"></param>
+        /// <returns></returns>
+        public async Task<List<Order>> ReadExcelAsync(FileInfo excel)
+        {
+            return await Task.Run(() => ReadExcel(excel));
+        }
+
+
+
 
 
         /// <summary>
@@ -279,7 +266,7 @@ namespace PDFiller
         /// Also if an order has more than one AWB, then the order will be duplicated on purpose.
         /// </summary>
         /// <param name="excel">The excel file to be read</param>
-        /// <returns>A list of `Order` objects</returns>
+        /// <returns>A list of <see cref="Order"/> objects</returns>
         public List<Order> ReadExcel(FileInfo excel)
         {
             Cursor.Current = Cursors.WaitCursor;
@@ -287,19 +274,20 @@ namespace PDFiller
             Excel.Application app = new Excel.Application();
             List<Order> orders = new List<Order>();
             Workbook book = app.Workbooks.Open(excel.FullName);
-            Worksheet sheet = null;
-            try
+            if(book==null)
             {
-                sheet = book.Worksheets[1];
+                app.Quit();
+                throw new FileNotFoundException("The excel file is empty.\r\n");
             }
-            catch (COMException ex)
+            if (book.Sheets.Count == 0)
             {
-                form.textBox1.AppendText("The excel file is empty or doesn't contain any worksheets.\r\n");
-                form.textBox1.AppendText(ex.Message);
                 book.Close(0);
                 app.Quit();
-                return null;
+                throw new ArgumentException("The excel has no sheets");
             }
+             Worksheet sheet = book.Worksheets[1];
+
+
             Range range = sheet.UsedRange;
             int x = range.Rows.Count;
             int y = range.Columns.Count;
@@ -313,11 +301,9 @@ namespace PDFiller
             }
             book.Close(0);
             app.Quit();
-            Marshal.ReleaseComObject(book);
-            Marshal.ReleaseComObject(app);
-            GC.Collect();
             try
             {
+                ProductFactory factory = ProductFactory.GetInstance();
                 Dictionary<string, byte> columns = GetExcelColumns(data, y);
                 byte IDCOL, AWBCOL, TOPPER_NAME_COL, IDPRODUCT, TOPPER_QUANTITY_COL, CLIENT_NAME, SHIPPING_ADDRESS;
 
@@ -331,15 +317,25 @@ namespace PDFiller
                     CLIENT_NAME = GetHeader(columns, new string[] { "Nume client", "Shipping name" });
                     SHIPPING_ADDRESS = GetHeader(columns, new string[] { "Adresa de livrare", "Shipping address" });
                 }
-                catch (KeyNotFoundException ex)
+                catch (KeyNotFoundException)
                 {
-                    form.textBox1.AppendText("The excel file doesn't contain all the required column headers.\r\n");
-                    form.textBox1.AppendText(ex.Message);
-                    return new List<Order>();
+                    throw new KeyNotFoundException("The excel file doesn't contain all the required column headers.\r\n");
                 }
 
                 Order order = new Order();
                 string id = "";
+
+                string[] productIds = new string[x-1];
+                for (int row = 2; row <= x; row++)
+                {
+                    productIds[row - 2] = data[row, IDPRODUCT];
+                }
+                factory.GetProducts(productIds);
+
+
+
+
+
 
                 for (int row = 2; row <= x; row++)
                 {
@@ -350,46 +346,61 @@ namespace PDFiller
                     }
 
                     string awb = data[row, AWBCOL];
-                    string name = data[row, CLIENT_NAME];
-                    string tName = data[row, TOPPER_NAME_COL];
-                    string idProduct = data[row, IDPRODUCT];
+                    string customerName = data[row, CLIENT_NAME];
+                    string productName = data[row, TOPPER_NAME_COL];
+                    string productId = data[row, IDPRODUCT];
                     string shippingAddress = data[row, SHIPPING_ADDRESS];
-                    int qnt = int.Parse(data[row, TOPPER_QUANTITY_COL]);
-                    tName = ModifyName(idProduct, tName);
+                    int productQuantity = int.Parse(data[row, TOPPER_QUANTITY_COL]);
+                    SoldProduct product;
+
+
+
+
+                    try
+                    {
+                        Product p = factory.GetProduct(productId);
+                        product = new SoldProduct(p, productQuantity);
+                    }
+                    catch (Exception e)
+                    {
+                        form.textBox1.AppendText($"{productId} not found in database. Using excel info. {e.Message}");
+                        product = new SoldProduct(new Product(productId, null, productName), productQuantity);
+                    }
 
                     string country = shippingAddress.Split(',').Last().Trim();
                     try
                     {
                         country = new RegionInfo(country).EnglishName;
-                    }catch(ArgumentException)
+                    }
+                    catch (ArgumentException)
                     {
                         form.textBox1.AppendText($"Couldn't find country name for:{id}\r\n");
-                        country = "";
+                        country = "Ro";
                     }
                     if (id == order.id)
                     {
-                        order.toppers.Add(new Order.topper(tName, qnt, idProduct));
+                        order.AddProduct(product);
                     }
                     else
                     {
+                        order = new Order(id, awb, customerName, product, country);
+
                         if (order.id != "")
                         {
-
                             AddOrderToList(orders, order);
-
                         }
-                        order = new Order(id, awb, name, tName, qnt, idProduct, country);
+                        //order = new Order(id, awb, name, tName, qnt, idProduct, country);
                     }
 
                 }
-                AddOrderToList(orders, order);
+                //AddOrderToList(orders, order);
                 return orders;
             }
             catch (Exception ex)
             {
 
                 form.textBox1.AppendText(ex.Message);
-                return new List<Order>();
+                return null;
             }
 
         }
@@ -423,12 +434,12 @@ namespace PDFiller
 
         /// <summary>
         /// Looks to find the zip files that do not have a matching unzipped folder.
-        /// Then proceeds to extract it.
+        /// Only looks for the last created zip file.
         /// </summary>
         /// <param name="workDir">Work directory.</param>
         /// <returns>The referece that represents the newest zip file found, or null if not found.</returns>
         /// <exception cref="ArgumentNullException">Work directory doesn't exist.</exception>
-        public FileInfo FindZipsUnzipped(DirectoryInfo workDir)
+        public FileInfo FindUnzippedArchive(DirectoryInfo workDir)
         {
             if (workDir == null || !workDir.Exists)
             {
@@ -449,48 +460,36 @@ namespace PDFiller
             {
                 throw ex;
             }
-            bool found = false;
-            foreach (FileInfo zip in zips)
+            FileInfo zip = zips.OrderByDescending(z => z.CreationTime).First();
+            DirectoryInfo dir = new DirectoryInfo(zip.FullName.Replace(".zip", ""));
+
+            if(dir.Exists)
             {
-                foreach (DirectoryInfo dir in extractedZips)
-                {
-                    if (dir.Name == zip.Name.Replace(".zip", "")) //zip was unzipped
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
-                {
-                    form.zipLabel.Text = "Zip File:\r\n";
-                    form.zipPathBox.Text = zip.FullName;
-                    return zip;
-                }
+                throw new FileNotFoundException("All zip files already extracted.\r\n");
             }
-            throw new FileNotFoundException("All zip files already extracted.\r\n");
+            form.zipLabel.Text = "Zip File:\r\n";
+            form.zipPathBox.Text = zip.FullName;
+            return zip;
+
         }
 
         /// <summary>
         /// Identifies the AWB number from the given page.
-        /// Aswell as the country of origin based on the AWB format.
         /// </summary>
         /// <param name="page">Page to read text from</param>
         /// <param name="orders">Orders from which one should have a matching AWB code</param>
-        /// <param name="awb">The AWB code in question</param>
-        /// <returns>True if successfull, false if not</returns>
-        public bool ReadAwbId(UglyToad.PdfPig.Content.Page page, List<Order> orders, out string awb)
+        /// <returns>The order corresponding to the AWB, or null</returns>
+        public Order FindMatchingOrder(UglyToad.PdfPig.Content.Page page, List<Order> orders)
         {
-            awb = "";
             string text = page.Text;
             foreach(Order o in orders)
             {
-                if(text.Contains(o.awb))
+                if(o.awb != "" && text.Contains(o.awb))
                 {
-                    awb = o.awb;
-                    return true;
+                    return o;
                 }
             }
-            return false;
+            return null;
 
         }
 
@@ -507,33 +506,32 @@ namespace PDFiller
         /// Given a PDF file, reads the AWB number from it, and writes the order details on the page.
         /// Also clears out the lower half and writes the country name in the middle.
         /// </summary>
+        /// <remarks> A file may have multiple pages, each of which could be an AWB</remarks>
         /// <param name="pdfMerge">The final document upon which we constantly attach pages on</param>
         /// <param name="file">The pdf file that we'll complete page by page</param>
-        /// <param name="orders">The entire orders file from the excel</param>
+        /// <param name="orders">The entire orders list from the excel</param>
         /// <returns></returns>
-        private List<string> WriteOnFile(PdfSharpCore.Pdf.PdfDocument pdfMerge, FileInfo file, List<Order> orders)
+        private List<string> WriteOnFile(PdfSharp.Pdf.PdfDocument pdfMerge, FileInfo file, List<Order> orders)
         {
             List<string> errorMessages = new List<string>();
-            PdfSharpCore.Pdf.PdfDocument pdfWrite = PdfReader.Open(file.FullName, PdfDocumentOpenMode.Import);
+            PdfSharp.Pdf.PdfDocument pdfWrite = PdfReader.Open(file.FullName, PdfDocumentOpenMode.Import);
             using (var pdfRead = UglyToad.PdfPig.PdfDocument.Open(file.FullName))
             {
                 total += pdfWrite.PageCount;
                 for (int i = 0; i < pdfWrite.PageCount; i++)
                 {
-                    string awb = "";
-                    if (!ReadAwbId(pdfRead.GetPage(i + 1), orders, out awb))
-                    {
-                        errorMessages.Add($"Couldn't find AWB number for page {i + 1} for:\r\n{file.Name}\r\n");
-                        failed++;
-                        continue;
-                    }
-
-                    Order o = orders.Find(p => p.awb == awb);
-                    //Sometimes the excel file may NOT have the AWB id that we need
-                    //but we may still be able to match the order with the file name and order id.
-                    //as last resort only
+                    Order o = FindMatchingOrder(pdfRead.GetPage(i + 1), orders);
                     if (o == null)
                     {
+                        errorMessages.Add($"Couldn't find AWB number for page {i + 1} for:\r\n{file.Name}\r\n");
+                        //failed++;
+                        //continue;
+                    
+
+                        //Sometimes the excel file may NOT have the AWB id that we need
+                        //but we may still be able to match the order with the file name and order id.
+                        //as last resort only
+
                         string fileId = file.Name.Split('_')[0];
                         o = orders.Find(p => p.id == fileId);
 
@@ -549,7 +547,8 @@ namespace PDFiller
                                 errorMessages.Add($"Couldn't find an order match for:\r\n{file.Name}\r\n");
                             }
                             failed++;
-                            continue;
+                            //continue;
+                            o = new Order();
                         }
                         else
                         {
@@ -569,27 +568,28 @@ namespace PDFiller
 
 
                     pdfMerge.AddPage(pdfWrite.Pages[i]);
+                    if (o.products.Count == 0)
+                        continue;
+
 
                     XGraphics gfx = XGraphics.FromPdfPage(pdfMerge.Pages[pdfMerge.PageCount - 1]);
                     XRect rect = new XRect(0, gfx.PageSize.Height / 2 - 15, gfx.PageSize.Width, gfx.PageSize.Height / 2 + 15);
 
 
-                    //for(int index = 0;index < 30; index++)
-                    //{
-                    //    o.toppers.Add(o.toppers[0]);
-                    //}
-
+          
 
                     //lower half of the page
                     gfx.DrawRectangle(XBrushes.White, rect);
                     //Write the country in the middle
-                    gfx.DrawString(o.country+o.note, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, gfx.PageSize.Width *0.5f , gfx.PageSize.Height * 0.5f+65, XStringFormats.Center);
+                    if(o.country != "Romania")
+                        gfx.DrawString(o.country+o.note, new XFont("Times New Roman", 12,XFontStyleEx.Regular), XBrushes.Black, gfx.PageSize.Width *0.5f , gfx.PageSize.Height * 0.5f+65, XStringFormats.Center);
 
-                    if (!WriteOnPage(gfx, o.toppers))
+      
+
+                    if (!WriteOnPage(gfx, o.products))
                     {
                         errorMessages.Add($"Couldn't write on page {i + 1} for:\r\n{file.Name}\r\n");
                         failed++;
-                        continue;
                     }
                 }
             }
@@ -611,7 +611,7 @@ namespace PDFiller
         public Shipment WriteOnOrders(List<FileInfo> unzippedList, List<Order> orders, string saveDir, string saveName)
         {
             failed = total = 0;
-            PdfSharpCore.Pdf.PdfDocument pdfMerge = new PdfSharpCore.Pdf.PdfDocument();
+            PdfSharp.Pdf.PdfDocument pdfMerge = new PdfSharp.Pdf.PdfDocument();
             foreach (FileInfo file in unzippedList)
             {
                 if (file == null || !file.Exists)
@@ -619,6 +619,9 @@ namespace PDFiller
                     form.textBox1.Text += $"File {file.Name} doesn't exist.\r\n";
                     continue;
                 }
+
+
+
 
 
                 List<string> errorMessages = WriteOnFile(pdfMerge, file, orders);
@@ -649,63 +652,6 @@ namespace PDFiller
         }
 
 
-        /// <summary>
-        /// Modifies the name of the topper, if it is in the special swaps dictionary.
-        /// Otherwise, it trims the worthless words out.
-        /// </summary>
-        /// <param name="tId">The Product Number (PN) of the product</param>
-        /// <param name="tName">The original name of said product</param>
-        /// <returns>The name with </returns>
-        private string ModifyName(string tId, string tName)
-        {
-            //Sa vad ce naiba fac cu numele in bulgara, cum le editez 
-            if (SpecialSwaps.ContainsKey(tId))
-            {
-                return tName = SpecialSwaps[tId];
-            }
-            /*
-             омплект украса за торта KZE Prints Пес Патрул/ Paw Patrol, Гланцова хартия, Многоцветен, 17 бр
-             */
-
-            string[] list = { "briose de ", "briose ", "tort ", };
-            foreach (string s in list)
-            {
-                int index = tName.LastIndexOf(s);
-                if (index > 0)
-                {
-                    return tName = tName.Substring(index + s.Length).Replace(", KZE Prints, Photo Paper Glossy", "");
-                }
-
-            }
-
-            //improvizatie pentru bulgaria  
-
-            if(tName.StartsWith("Комплект украса за торта "))
-            {
-                try
-                {
-                    tName = tName.Replace("Комплект украса за торта ", "");
-                    if (tName.Contains("/") && tName.IndexOf("/") < tName.Length)
-                    {
-                        tName = tName.Substring(tName.IndexOf("/") + 1).Trim();
-                    }
-
-                    if (tName.Contains(","))
-                    {
-                        tName = tName.Substring(0, tName.IndexOf(","));
-                    }
-                    return tName;
-                }catch(Exception)
-                {
-
-                    return tName;
-                }
-            }
-
-            return tName;
-
-        }
-
 
 
         /// <summary>
@@ -713,64 +659,39 @@ namespace PDFiller
         /// write the order contents: topper count, name and image (if exists).
         /// </summary>
         /// <param name="gfx">AWB graphics to be written and/or drawn on</param>
-        /// <param name="toppere">What to write on the page (qnt + name + image)</param>
+        /// <param name="products">What to write on the page (qnt + name + image)</param>
         /// <returns>True if successfull, false if not</returns>
-        private bool WriteOnPage(XGraphics gfx, List<Order.topper> toppere)
+        private bool WriteOnPage(XGraphics gfx, List<SoldProduct> products)
         {
+
 
             Dictionary<string, XImage> images = new Dictionary<string, XImage>();
             int i = 0;
-            WebClient client = new WebClient();
-            if (!Directory.Exists(imagesDir))
-            {
-                Directory.CreateDirectory(imagesDir);
-            }
+            //WebClient client = new WebClient();
 
             int perPage = form.drawComboBox.SelectedIndex * 2;
 
-            foreach (Order.topper topper in toppere)
+            foreach (SoldProduct product in products)
             {
                 if (perPage > 0)
                 {
                     XImage img = null;
-                    if (images.ContainsKey(topper.id))
+                    using (MemoryStream ms = new MemoryStream(product.ImageBuffer))
                     {
-                        img = images[topper.id];
+
+                        img = XImage.FromStream(ms);
+                        //MATH =====>>       (scales with images/row)+ (pageH=90 +30 space)+no out of bounds  
+                        if (img != null && perPage >= 2 && i < 3 * perPage)
+                            gfx.DrawImage(img, (i % perPage) * (90 + perPage * 12) + 20 + (perPage == 2 ? gfx.PageSize.Width / 2 : 20), (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75, 90, 90);
                     }
-                    else
-                    {
-                        img = TryFindImage(topper.id);
-                        if (img != null)
-                        {
-                            images.Add(topper.id, img);
-                        }
-                        else
-                        {
-                            try
-                            {
-                                client.DownloadFile($@"https://raw.githubusercontent.com/GtJohnny/PDFillerImages/main/{topper.id}.png", $"{imagesDir}/{topper.id}.png");
-
-                            }
-                            catch (WebException)
-                            {
-                                form.textBox1.Text += $"Couldn't download image for {topper.id}.\r\n";
-                            }
-
-                            img = TryFindImage(topper.id);
-                        }
-                    }
-
-                    //MATH =====>>       (scales with images/row)+ (pageH=90 +30 space)+no out of bounds  
-                    if (img != null && perPage >= 2 && i < 3 * perPage)
-                        gfx.DrawImage(img, (i % perPage) * (90 + perPage * 12) + 20 + (perPage == 2 ? gfx.PageSize.Width / 2 : 20), (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75, 90, 90);
                 }
-
-                string temp_name = $"{topper.quantity}:{topper.name}";
+                string temp_name = $"{product.Quantity}:{product.Name}";
                 if (perPage == 4)
                 {
                     //MATH =====>>
                     //per position *  (pageH=90 +30 space + space with img/row) - (center text) + (even abscise per img/row (2= right column, 3=wide)
-                    gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, (i % perPage) * (90 + perPage * 12) + 65 - 5.7f * (topper.name.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2 : 16), (perPage == 2 ? 250 : 100) + (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75);
+                    XFont font = new XFont("Times New Roman", 12, XFontStyleEx.Regular);
+                    gfx.DrawString(temp_name, font, XBrushes.Black, (i % perPage) * (90 + perPage * 12) + 65 - 5.7f * (product.Name.Count() / 2) + (perPage == 2 ? gfx.PageSize.Width / 2 : 16), (perPage == 2 ? 250 : 100) + (i / perPage) * 120 + gfx.PageSize.Height / 2 + 75);
                     if(i == 3 * perPage)
                     {
                         return true;
@@ -778,7 +699,7 @@ namespace PDFiller
                 }
                 else
                 {
-                    gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyle.Regular), XBrushes.Black, 50, gfx.PageSize.Height * 0.60f + 15 * i);
+                    gfx.DrawString(temp_name, new XFont("Times New Roman", 12, XFontStyleEx.Regular), XBrushes.Black, 50, gfx.PageSize.Height * 0.60f + 15 * i);
                     if(i == 20)
                     {
                         return true;
@@ -854,18 +775,18 @@ namespace PDFiller
         }
 
 
-        private XImage TryFindImage(string tId)
-        {
-            string[] extensions = { ".png", ".jpeg", ".jpg" };
-            foreach (string ext in extensions)
-            {
-                if (File.Exists($"{imagesDir}\\{tId}{ext}"))
-                {
-                    return XImage.FromFile($"{imagesDir}\\{tId}{ext}");
-                }
-            }
-            return null;
-        }
+        //private XImage TryFindImage(string tId)
+        //{
+        //    string[] extensions = { ".png", ".jpeg", ".jpg" };
+        //    foreach (string ext in extensions)
+        //    {
+        //        if (File.Exists($"{imagesDir}\\{tId}{ext}"))
+        //        {
+        //            return XImage.FromFile($"{imagesDir}\\{tId}{ext}");
+        //        }
+        //    }
+        //    return null;
+        //}
 
 
 

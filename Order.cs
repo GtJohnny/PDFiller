@@ -10,26 +10,36 @@ namespace PDFiller
 {
 
     internal class Order
-    {   
+    {
+        /// <summary>
+        /// Order id (13 digit number)
+        /// </summary>
         public string id;
-        public string awb;
-        public string name;
-        public List<topper> toppers;
-        public string country;
-        public string note;
-        public struct topper
-        {
-            public string name;
-            public int quantity;
-            public string id;
-            public topper(string tName, int tQuantity,string tId)
-            {
-                this.name = tName;
-                this.quantity = tQuantity;
-                this.id = tId;
-            }
 
-        };
+        /// <summary>
+        /// Order AWB code (13 digit number)
+        /// </summary>
+        public string awb;
+
+        /// <summary>
+        /// Customer full name
+        /// </summary>
+        public string customerName;
+
+        /// <summary>
+        /// List of all products in the order + quantity of each product
+        /// </summary>
+        public List<SoldProduct> products;
+
+        /// <summary>
+        /// Shipping address country
+        /// </summary>
+        public string country;
+
+        /// <summary>
+        /// Extra note for the order
+        /// </summary>
+        public string note;
 
 
         /// <summary>
@@ -37,13 +47,14 @@ namespace PDFiller
         /// </summary>
         public Order()
         {
-            this.id = "";
-            this.name = "";
-            this.awb = "";
-            this.country = "";
-            this.toppers = new List<topper>();
-            this.note = "";
+            this.products = new List<SoldProduct>();
         }
+
+        public Order(string Note)
+        {
+            this.note = Note;
+        }
+
 
 
         /// <summary>
@@ -55,8 +66,8 @@ namespace PDFiller
             this.country = order.country;
             this.id = order.id;
             this.awb = order.awb;
-            this.name = order.name;
-            this.toppers = new List<topper>(order.toppers);
+            this.customerName = order.customerName;
+            this.products = order.products;
             this.note = order.note;
         }
 
@@ -65,20 +76,72 @@ namespace PDFiller
         /// </summary>
         /// <param name="id">Order ID</param>
         /// <param name="awb">AWB ID</param>
-        /// <param name="name">The full name of the customer</param>
-        /// <param name="tName">The name of the first topper</param>
-        /// <param name="tQuantity">The bought quantity of the first topper.</param>
-        /// <param name="idProduct">The ID of the first topper product.</param>
+        /// <param name="customerName">The full name of the customer</param>
+        /// <param name="product"> A product in the order</param>
         /// <param name="country"> The country of the customer.</param>
-        public Order(string id, string awb,string name, string tName, int tQuantity, string idProduct, string country)
+        public Order(string id, string awb, string customerName, SoldProduct product, string country)
         {
             this.id = id;
             this.awb = awb;
-            this.name = name;
-            this.toppers = new List<topper>();
+            this.customerName = customerName;
+            this.products = new List<SoldProduct>();
             this.country = country;
-            this.note = "";
-            toppers.Add(new topper(tName, tQuantity, idProduct));
+            this.note = null;
+            this.products.Add(product);
+        }
+        /// <summary>
+        /// Correctly instantiates an Order object
+        /// </summary>
+        /// <param name="id">Order ID</param>
+        /// <param name="awb">AWB ID</param>
+        /// <param name="customerName">The full name of the customer</param>
+        /// <param name="product"> A product in the order</param>
+        /// <param name="country"> The country of the customer.</param>
+        /// <param name="note"> Extra note for the order</param>
+        public Order(string id, string awb, string customerName, SoldProduct product, string country, string note)
+        {
+            this.id = id;
+            this.awb = awb;
+            this.customerName = customerName;
+            this.products = new List<SoldProduct>();
+            this.country = country;
+            this.note = note;
+            this.products.Add(product);
+        }
+
+
+
+        /// <summary>
+        /// Adds a product to the order, default quantity is 1
+        /// </summary>
+        /// <param name="product"></param>
+        public void AddProduct(Product product)
+        {
+            SoldProduct soldProduct = new SoldProduct(product, 1);
+            this.products.Add(soldProduct);
+        }
+
+        /// <summary>
+        /// Adds a product to the order
+        /// </summary>
+        /// <param name="product"></param>
+        /// <param name="quantity"></param>
+        public void AddProduct(Product product, int quantity)
+        {
+            SoldProduct soldProduct = new SoldProduct(product, quantity);
+            this.products.Add(soldProduct);
+        }
+
+        /// <summary>
+        /// Adds a <see cref="SoldProduct"/> to the order
+        /// </summary>
+        /// <param name="product"></param>
+        public void AddProduct(SoldProduct product)
+        {
+            if (product != null)
+            {
+                this.products.Add(product);
+            }
         }
     }
 }
