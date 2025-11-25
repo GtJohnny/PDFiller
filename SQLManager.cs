@@ -32,7 +32,6 @@ namespace PDFiller
             return instance;
         }
 
-
         private SQLManager()
         {
             conn.ConnectionString = connectionString;
@@ -49,56 +48,12 @@ namespace PDFiller
 
 
 
-        //public List<Product> SelectProductsByIdOrName(string str)
-        //{
-        //    if(str == null)
-        //    {
-        //        throw new ArgumentNullException("Product search query string is null");
-        //    }
-
-        //    if (nameRegex.IsMatch(str))
-        //    {
-        //        SqlCommand cmd = new SqlCommand("select * from toppers where id like @name or name like @name;", conn);
-        //        cmd.Parameters.AddWithValue("@name", "%" + str + "%");
-        //        SqlDataReader reader = cmd.ExecuteReader();
-        //        List<Product> products = new List<Product>();
-        //        try
-        //        {
-        //            while (reader.Read())
-        //            {
-        //                string id = reader["id"].ToString();
-        //                byte[] imgBytes = (byte[])reader["image"];
-        //                string name = reader["name"].ToString();
-        //                using (var ms = new System.IO.MemoryStream(imgBytes))
-        //                {
-        //                    System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(ms);
-        //                    Product product = new Product(id, bmp, name);
-        //                    products.Add(product);
-        //                }
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Console.WriteLine("Error reading data: " + ex.Message);
-        //        }
-        //        reader.Close();
-        //        return products;
-        //    }
-        //    else
-        //    {
-        //        throw new ArgumentException("Invalid search query format");
-        //    }
-        //}
-
-
-
-
         /// <summary>
         /// Retrieves a product by its unique identifier.
         /// </summary>
         /// <param name="id">The unique identifier of the product to retrieve.</param>
         /// <returns>The <see cref="Product"/> associated with the specified identifier 
-        /// or <see cref="null"/> if nothing was found</returns>
+        /// or null if nothing was found</returns>
         public Product GetProductById(string id)
         {
             Product product=null;
@@ -202,8 +157,116 @@ namespace PDFiller
         }
 
 
+        public bool InsertProduct(Product product)
+        {
+            //see if product id already exists
+            SqlCommand check_cmd = conn.CreateCommand();
+            check_cmd.CommandText = "select count(*) from toppers where id = @id;";
+            check_cmd.Parameters.AddWithValue("@id", product.Id);
+            int count = (int)check_cmd.ExecuteScalar();
+            if (count > 0)
+            {
+                //product already exists
+                throw new ArgumentException("Product with this ID already exists");
+            }
+            try
+            {
+
+                SqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = "insert into toppers (id, image, name) values (@id, @image, @name);";
+
+                cmd.Parameters.AddWithValue("@id", product.Id);
+                SqlParameter p1 = new SqlParameter("@image", System.Data.SqlDbType.VarBinary);
+                p1.Value = product.ImageBuffer;
+
+                cmd.Parameters.Add(p1);
+                cmd.Parameters.AddWithValue("@name", product.Name);
+                int rows = cmd.ExecuteNonQuery();
+                if (rows == 0)
+                {
+                    throw new Exception("No rows inserted");
+                }
+                return rows == 1;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error inserting product: " + ex.Message);
+                return false;
+
+            }
+
+        }
+        /// <summary>
+        /// Updates a product in the database.
+        /// </summary>
+        /// <remarks>This is meant in ProductViewForm</remarks>
+        /// <param name="product">Old product</param>
+        /// <param name="newId">New id</param>
+        /// <param name="imageBuffer">New image, can be null for no change</param>
+        /// <param name="name">New name</param>
+        public bool updateProduct(Product product, string newId, byte[] imageBuffer, string name)
+        {
+            //check if id already exists and is not the same as the old id
+            if (newId != product.Id)
+            {
+                SqlCommand check_cmd = conn.CreateCommand();
+                check_cmd.CommandText = "select count(*) from toppers where id = @id;";
+                check_cmd.Parameters.AddWithValue("@id", newId);
+                int count = (int)check_cmd.ExecuteScalar();
+                if (count > 0)
+                {
+                    //product already exists
+                    throw new ArgumentException("Product with this ID already exists");
+                }
+
+            }
 
 
+
+
+                SqlCommand cmd = conn.CreateCommand();
+            if (imageBuffer != null)
+            {
+                cmd.CommandText = "update toppers set id=@newId, image = @image, name = @name where id = @oldId;";
+                SqlParameter p1 = new SqlParameter("@image", System.Data.SqlDbType.VarBinary);
+                p1.Value = imageBuffer;
+                cmd.Parameters.Add(p1);
+            }
+            else
+            {
+                cmd.CommandText = "update toppers set id=@newId, name = @name where id = @oldId;";
+            }
+            cmd.Parameters.AddWithValue("@oldId", product.Id);
+            cmd.Parameters.AddWithValue("@newId", newId);
+            cmd.Parameters.AddWithValue("@name", name);
+            try
+            {
+                int rows = cmd.ExecuteNonQuery();
+                return rows == 1;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error updating product: " + ex.Message);
+                return false;
+            }
+        }
+
+        public bool DeleteProduct(string id)
+        {
+            SqlCommand cmd = conn.CreateCommand();
+            cmd.CommandText = "delete from toppers where id = @id;";
+            cmd.Parameters.AddWithValue("@id", id);
+            try
+            {
+                int rows = cmd.ExecuteNonQuery();
+                return rows == 1;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error deleting product: " + ex.Message);
+                return false;
+            }
+        }
 
         /// <summary>
         /// Closes the database connection if it is open.

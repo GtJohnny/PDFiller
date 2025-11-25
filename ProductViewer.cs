@@ -22,15 +22,15 @@ namespace PDFiller
 
    
 
-        public ProductViewer(DataGridView dataGridView, Button searchButton, Button viewButton, TextBox searchTextBox)
+        public ProductViewer(DataGridView dataGridView, Button newButton, Button viewButton, TextBox searchTextBox)
         {
             _dataGridView = dataGridView;
-            this.newButton = searchButton;
+            this.newButton = newButton;
             this.viewButton = viewButton;
             this.searchTextBox = searchTextBox;
             searchTextBox.TextChanged +=SearchTextBox_TextChanged;
-            searchButton.Click += SearchButton_Click;
             viewButton.Click += ViewButton_Click;
+            newButton.Click += NewButton_Click;
             _dataGridView.Paint += DataGridView_Paint;
         }
 
@@ -55,15 +55,24 @@ namespace PDFiller
 
         private void ViewButton_Click(object sender, EventArgs e)
         {
-            var row = this._dataGridView.SelectedRows[0];
-            string productId = row.Cells[0].Value.ToString();
-            ProductViewForm viewForm = new ProductViewForm(productId);
-            viewForm.ShowDialog();
+            int rowId = this._dataGridView.CurrentCell.RowIndex;
+            string selectedId = this._dataGridView.Rows[rowId].Cells[0].Value.ToString();
+            Form viewForm = new ProductViewForm(selectedId);
+            if(viewForm.ShowDialog() == DialogResult.OK)
+            {
+                //refresh grid
+                SearchDB(this.searchTextBox.Text);
+            }
+            //viewForm.ShowDialog();
         }
 
-        private void SearchButton_Click(object sender, EventArgs e)
+        private void NewButton_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            Form viewForm = new ProductViewForm("None");
+            if (viewForm.ShowDialog() == DialogResult.OK)
+            {
+                this.FillDataGridView();
+            }
         }
 
         private void SearchDB(string searchString)
@@ -73,7 +82,7 @@ namespace PDFiller
                 FillDataGridView();
                 return;
             }
-            string searchText = searchTextBox.Text.ToLower();
+            string searchText = searchTextBox.Text.ToLower().Trim();
             ProductFactory factory = ProductFactory.GetInstance();
             List<Product> allProducts = factory.GetAllProducts();
 

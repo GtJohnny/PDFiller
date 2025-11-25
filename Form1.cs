@@ -137,7 +137,7 @@ namespace PDFiller
         private void Form1_Load(object sender, EventArgs e)
         {
             this.versionLabel.Text = this.versionTag;
-            this.productViewer = new ProductViewer(this.productsGridView, this.productSearchButton, this.productViewButton, this.productSearchBox);
+            this.productViewer = new ProductViewer(this.productsGridView, this.productNewButton, this.productViewButton, this.productSearchBox);
             this.shipment.Subscribe(new SummaryObserver(summaryGridView));
             this.shipment.Subscribe(new PreviewObserver(previewGridView));
             //this.shipment.Subscribe(new ImagesObserver(imagePanel));
@@ -864,7 +864,7 @@ namespace PDFiller
                             this.excel = file;
                             excelPathBox.Text = excel.FullName;
                             textBox1.AppendText($"Excel file set to:\"{excel.Name}\"\r\n");
-                            ///Remember to update statistics tabs if needed.
+                            //Remember to update statistics tabs if needed.
                             if (this.tabControl2.SelectedIndex > 0 && this.tabControl2.SelectedIndex < 4)
                             {
                                 this.shipment.Update(new Shipment(Builder.GetInstance().ReadExcel(excel), unzippedList, this.shipment.MergedPDF));
@@ -975,6 +975,46 @@ namespace PDFiller
             productsGridView.Rows.Clear();
         }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            SQLManager manager = SQLManager.GetInstance();
+            OpenFileDialog open = new OpenFileDialog()
+            {
+                Filter = ".png files (.png)|*.png",
+                Multiselect = true,
+                Title = "Select product images to add to database.",
+                DefaultExt = ".png",
+                RestoreDirectory = true
+            };
+
+            if (open.ShowDialog() == DialogResult.OK)
+            {
+                string[] files = open.FileNames;
+                foreach (string file in files)
+                {
+                    FileInfo fi = new FileInfo(file);
+                    string id = Path.GetFileNameWithoutExtension(fi.Name);
+                    byte[] imageBytes = File.ReadAllBytes(fi.FullName);
+
+                    Product product = new Product(id, imageBytes, "New Product");
+                    try
+                    {
+                        manager.InsertProduct(product);
+                        textBox1.AppendText($"Inserted product {product.Id} successfully.\r\n");
+                    }
+                    catch (Exception ex)
+                    {
+                        textBox1.AppendText($"Failed inserting product {product.Id}: {ex.Message}\r\n");
+                    }
+                }
+
+            }
+
+
+
+        }
+
+   
     }
 }
 

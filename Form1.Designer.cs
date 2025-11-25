@@ -95,7 +95,7 @@
             this.imagePanel = new System.Windows.Forms.Panel();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.productViewButton = new System.Windows.Forms.Button();
-            this.productSearchButton = new System.Windows.Forms.Button();
+            this.productNewButton = new System.Windows.Forms.Button();
             this.productSearchBox = new System.Windows.Forms.TextBox();
             this.productsGridView = new System.Windows.Forms.DataGridView();
             this.IdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -382,7 +382,7 @@
             this.button2.TabIndex = 1;
             this.button2.Text = "button2";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Visible = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button3
             // 
@@ -876,7 +876,7 @@
             // tabPage4
             // 
             this.tabPage4.Controls.Add(this.productViewButton);
-            this.tabPage4.Controls.Add(this.productSearchButton);
+            this.tabPage4.Controls.Add(this.productNewButton);
             this.tabPage4.Controls.Add(this.productSearchBox);
             this.tabPage4.Controls.Add(this.productsGridView);
             this.tabPage4.Location = new System.Drawing.Point(4, 26);
@@ -890,7 +890,6 @@
             // productViewButton
             // 
             this.productViewButton.AutoSize = true;
-            this.productViewButton.Enabled = false;
             this.productViewButton.Font = new System.Drawing.Font("Monotype Corsiva", 12.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.productViewButton.Location = new System.Drawing.Point(445, 6);
             this.productViewButton.Name = "productViewButton";
@@ -899,17 +898,16 @@
             this.productViewButton.Text = "View";
             this.productViewButton.UseVisualStyleBackColor = true;
             // 
-            // productSearchButton
+            // productNewButton
             // 
-            this.productSearchButton.AutoSize = true;
-            this.productSearchButton.Enabled = false;
-            this.productSearchButton.Font = new System.Drawing.Font("Monotype Corsiva", 12.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.productSearchButton.Location = new System.Drawing.Point(534, 6);
-            this.productSearchButton.Name = "productSearchButton";
-            this.productSearchButton.Size = new System.Drawing.Size(83, 30);
-            this.productSearchButton.TabIndex = 2;
-            this.productSearchButton.Text = "New";
-            this.productSearchButton.UseVisualStyleBackColor = true;
+            this.productNewButton.AutoSize = true;
+            this.productNewButton.Font = new System.Drawing.Font("Monotype Corsiva", 12.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.productNewButton.Location = new System.Drawing.Point(534, 6);
+            this.productNewButton.Name = "productNewButton";
+            this.productNewButton.Size = new System.Drawing.Size(83, 30);
+            this.productNewButton.TabIndex = 2;
+            this.productNewButton.Text = "New";
+            this.productNewButton.UseVisualStyleBackColor = true;
             // 
             // productSearchBox
             // 
@@ -948,9 +946,11 @@
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.productsGridView.DefaultCellStyle = dataGridViewCellStyle3;
             this.productsGridView.Location = new System.Drawing.Point(3, 38);
+            this.productsGridView.MultiSelect = false;
             this.productsGridView.Name = "productsGridView";
             this.productsGridView.ReadOnly = true;
             this.productsGridView.RowHeadersVisible = false;
+            this.productsGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.productsGridView.Size = new System.Drawing.Size(617, 461);
             this.productsGridView.TabIndex = 0;
             // 
@@ -1083,7 +1083,7 @@
         private System.Windows.Forms.DataGridViewImageColumn ImageColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
         private System.Windows.Forms.Button productViewButton;
-        private System.Windows.Forms.Button productSearchButton;
+        private System.Windows.Forms.Button productNewButton;
         private System.Windows.Forms.DataGridViewTextBoxColumn CountryColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn numeCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn nameCol;
