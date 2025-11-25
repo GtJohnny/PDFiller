@@ -62,9 +62,8 @@ namespace PDFiller
         /// otherwise fetches it from the database and adds it to the pool.
         /// </summary>
         /// <param name="id">Product id</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">Thrown if product id couldn't be found in the database</exception>
-        /// <exception cref="Exception">Thrown otherwise</exception>
+        /// <returns>The product, or NULL if it doesn't exist</returns>
+        /// <exception cref="Exception">If anything went wrong</exception>
         public Product GetProduct(string id)
         {
             if (id == null)
@@ -78,21 +77,20 @@ namespace PDFiller
                     Product product = sqlManager.GetProductById(id);
                     if (product == null)
                     {
-                        throw new ArgumentException("Product not found in database");
+                        return null;
                     }
                     products[id] = product;
                 }
                 catch (ArgumentException ex)
                 {
-                    throw new ArgumentException("Error getting product from database: " + ex.Message);
-
+                    throw new Exception("Error getting product from database: " + ex.Message);
                 }
             }
             return products[id];
         }
 
 
-        public List<Product> GetProducts(string[] ids)
+        public List<Product> FillProducts(string[] ids)
         {
             List<Product> result = null;
             try
