@@ -332,7 +332,7 @@ namespace PDFiller
                 {
                     productIds[row - 2] = data[row, IDPRODUCT];
                 }
-                factory.GetProducts(productIds);
+                factory.FillProducts(productIds);
 
 
 
@@ -355,6 +355,10 @@ namespace PDFiller
                     int productQuantity = int.Parse(data[row, TOPPER_QUANTITY_COL]);
 
                     Product p = factory.GetProduct(productId);
+                    if(p == null)
+                    {
+                        p = new Product("0", null, "Unknown/New");
+                    }
                     SoldProduct product = new SoldProduct(p, productQuantity);
 
                     string country = shippingAddress.Split(',').Last().Trim();
@@ -658,15 +662,16 @@ namespace PDFiller
 
             Dictionary<string, XImage> images = new Dictionary<string, XImage>();
             int i = 0;
-            WebClient client = new WebClient();
 
             int perPage = form.drawComboBox.SelectedIndex * 2;
 
             foreach (SoldProduct product in products)
             {
-                if (perPage > 0)
+
+                if (perPage > 0 && product.Id!="0")
                 {
                     XImage img = null;
+
                     using (MemoryStream ms = new MemoryStream(product.ImageBuffer))
                     {
 
@@ -757,7 +762,6 @@ namespace PDFiller
 
 
             WebClient client = new WebClient();
-            byte[] image = client.DownloadData(@"https://raw.githubusercontent.com/GtJohnny/PDFillerImages/main/5941933302180.png");
             //File.WriteAllBytes($"5941933302180.png", image);
 
 
