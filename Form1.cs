@@ -1,6 +1,6 @@
-﻿using PdfSharpCore.Drawing;
-using PdfSharpCore.Pdf;
-using PdfSharpCore.Pdf.IO;
+﻿using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,6 +23,7 @@ using System.Threading;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Data.SqlClient;
+using PdfSharp.Fonts;
 
 
 
@@ -46,7 +47,7 @@ namespace PDFiller
         private List<FileInfo> unzippedList = null;
         private Shipment shipment = new Shipment();
         private ProductViewer productViewer;
-
+        private string versionTag = "v1.4.3";
 
 
 
@@ -135,7 +136,7 @@ namespace PDFiller
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.versionLabel.Text = "v1.4.2";
+            this.versionLabel.Text = this.versionTag;
             this.productViewer = new ProductViewer(this.productsGridView, this.productSearchButton, this.productViewButton, this.productSearchBox);
             this.shipment.Subscribe(new SummaryObserver(summaryGridView));
             this.shipment.Subscribe(new PreviewObserver(previewGridView));
@@ -166,10 +167,14 @@ namespace PDFiller
 
         private void Form1_Shown(object sender, EventArgs e)
         {
+            GlobalFontSettings.UseWindowsFontsUnderWindows = true;
+
+
+
             textBox1.AppendText("Please select a zip archive, an excel file," +
                " or a handful of awbs to begin!\r\n" +
-               "You can select them automatically, manually,\r\n Drag & Drop " +
-               "or Copy & Paste them directly into this textbox!\r\n");
+               "You can select them automatically, manually, and even \r\n" +
+               "Drag & Drop or Copy & Paste them directly into this textbox!\r\n");
 
             if (autoFillCheck.Checked)
             {
@@ -398,7 +403,7 @@ namespace PDFiller
                         //updateTabIndex();
 
 
-                        zip = menu.FindZipsUnzipped(workDir);
+                        zip = menu.FindUnzippedArchive(workDir);
                         zipPathBox.Text = zip.FullName;
 
 
@@ -500,7 +505,7 @@ namespace PDFiller
                 Builder menu = PDFiller.Builder.GetInstance(this);
                 workDir = menu.FindWorkDir(rootDir);
                 textBox1.AppendText($"Found work directory at:\r\n{workDir.FullName}\r\n");
-                zip = menu.FindZipsUnzipped(workDir);
+                zip = menu.FindUnzippedArchive(workDir);
                 textBox1.AppendText($"Found zip archive at:\r\n{zip.FullName}\r\n");
                 zipPathBox.Text = zip.FullName;
                 string extractedDir = null;

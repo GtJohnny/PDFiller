@@ -50,6 +50,12 @@ namespace PDFiller
             this.products = new List<SoldProduct>();
         }
 
+        public Order(string Note)
+        {
+            this.note = Note;
+        }
+
+
 
         /// <summary>
         /// Copy all contents from another Order object
