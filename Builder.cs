@@ -351,7 +351,6 @@ namespace PDFiller
                     string productId = data[row, IDPRODUCT];
                     string shippingAddress = data[row, SHIPPING_ADDRESS];
                     int productQuantity = int.Parse(data[row, TOPPER_QUANTITY_COL]);
-                    SoldProduct product;
 
                     Product p = factory.GetProduct(productId);
                     if(p == null)
@@ -370,6 +369,7 @@ namespace PDFiller
                         form.textBox1.AppendText($"Couldn't find country name for:{id}\r\n");
                         country = "Ro";
                     }
+
                     if (id == order.id)
                     {
                         order.AddProduct(product);
