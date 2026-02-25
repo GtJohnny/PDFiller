@@ -47,7 +47,7 @@ namespace PDFiller
         private List<FileInfo> unzippedList = null;
         private Shipment shipment = new Shipment();
         private ProductViewer productViewer;
-        private string versionTag = "v1.4.3";
+        private string versionTag = "v1.4.5";
 
 
 
@@ -977,38 +977,8 @@ namespace PDFiller
 
         private void button2_Click(object sender, EventArgs e)
         {
-            SQLManager manager = SQLManager.GetInstance();
-            OpenFileDialog open = new OpenFileDialog()
-            {
-                Filter = ".png files (.png)|*.png",
-                Multiselect = true,
-                Title = "Select product images to add to database.",
-                DefaultExt = ".png",
-                RestoreDirectory = true
-            };
-
-            if (open.ShowDialog() == DialogResult.OK)
-            {
-                string[] files = open.FileNames;
-                foreach (string file in files)
-                {
-                    FileInfo fi = new FileInfo(file);
-                    string id = Path.GetFileNameWithoutExtension(fi.Name);
-                    byte[] imageBytes = File.ReadAllBytes(fi.FullName);
-
-                    Product product = new Product(id, imageBytes, "New Product");
-                    try
-                    {
-                        manager.InsertProduct(product);
-                        textBox1.AppendText($"Inserted product {product.Id} successfully.\r\n");
-                    }
-                    catch (Exception ex)
-                    {
-                        textBox1.AppendText($"Failed inserting product {product.Id}: {ex.Message}\r\n");
-                    }
-                }
-
-            }
+           OracleManager manager = OracleManager.GetInstance();
+            
 
 
 

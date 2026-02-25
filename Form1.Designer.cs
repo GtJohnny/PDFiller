@@ -91,8 +91,6 @@
             this.summaryGridView = new System.Windows.Forms.DataGridView();
             this.qntColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.topperColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.imagePanel = new System.Windows.Forms.Panel();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.productViewButton = new System.Windows.Forms.Button();
             this.productNewButton = new System.Windows.Forms.Button();
@@ -131,7 +129,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.previewGridView)).BeginInit();
             this.tabPage5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.summaryGridView)).BeginInit();
-            this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.productsGridView)).BeginInit();
             this.SuspendLayout();
@@ -692,7 +689,6 @@
             this.tabControl2.Controls.Add(this.tabPage1);
             this.tabControl2.Controls.Add(this.excelTab);
             this.tabControl2.Controls.Add(this.tabPage5);
-            this.tabControl2.Controls.Add(this.tabPage3);
             this.tabControl2.Controls.Add(this.tabPage4);
             this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl2.Font = new System.Drawing.Font("Monotype Corsiva", 11.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -850,29 +846,6 @@
             this.topperColumn.Name = "topperColumn";
             this.topperColumn.ReadOnly = true;
             // 
-            // tabPage3
-            // 
-            this.tabPage3.Controls.Add(this.imagePanel);
-            this.tabPage3.Location = new System.Drawing.Point(4, 26);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(623, 502);
-            this.tabPage3.TabIndex = 4;
-            this.tabPage3.Text = "Images";
-            this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // imagePanel
-            // 
-            this.imagePanel.AutoScroll = true;
-            this.imagePanel.AutoScrollMinSize = new System.Drawing.Size(50, 50);
-            this.imagePanel.AutoSize = true;
-            this.imagePanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.imagePanel.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.imagePanel.Location = new System.Drawing.Point(3, 3);
-            this.imagePanel.Name = "imagePanel";
-            this.imagePanel.Size = new System.Drawing.Size(617, 496);
-            this.imagePanel.TabIndex = 0;
-            // 
             // tabPage4
             // 
             this.tabPage4.Controls.Add(this.productViewButton);
@@ -1025,8 +998,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.previewGridView)).EndInit();
             this.tabPage5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.summaryGridView)).EndInit();
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.productsGridView)).EndInit();
@@ -1073,8 +1044,6 @@
         private System.Windows.Forms.DataGridView summaryGridView;
         private System.Windows.Forms.DataGridViewTextBoxColumn qntColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn topperColumn;
-        private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.Panel imagePanel;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.TextBox productSearchBox;
         private System.Windows.Forms.DataGridView productsGridView;

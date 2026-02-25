@@ -11,27 +11,34 @@ namespace PDFiller
 {
     internal class Product
     {
-        private string id;
+        private int id;
+        private string pnk;
         private byte[] buff;
         private string name;
+        private int id_category;
 
         public Product()
         {
-            id = "";
+            id = 0;
+            pnk = "";
             buff = null;
             name = "";
+            id_category = 1;
         }
-        public Product(string id, byte[] buff, string name)
+        public Product(int id, string pnk, byte[] buff, string name, int id_category)
         {
             this.id = id;
+            this.pnk = pnk;
             this.buff = buff;
             this.name = name;
+            this.id_category = id_category;
         }
-
-        public string Id { get => id; }
+        public int Id { get => id; }
+        public string Pnk { get => pnk; }
         public byte[] ImageBuffer { get => buff; }
         public string Name { get => name; }
 
+        public int Id_category { get => id_category; }
         public Bitmap Image
         {
             get
@@ -47,69 +54,6 @@ namespace PDFiller
             }
         }
 
-
-
-
-
-
-        /*
-        /// <summary>
-        /// Modifies the name of the topper, if it is in the special swaps dictionary.
-        /// Otherwise, it trims the worthless words out.
-        /// </summary>
-        /// <param name="tId">The Product Number (PN) of the product</param>
-        /// <param name="tName">The original name of said product</param>
-        /// <returns>The name with </returns>
-        //private string ModifyName(string tId, string tName)
-        //{
-        //    //Sa vad ce naiba fac cu numele in bulgara, cum le editez 
-        //    if (SpecialSwaps.ContainsKey(tId))
-        //    {
-        //        return tName = SpecialSwaps[tId];
-        //    }
-        //    /*
-        //     омплект украса за торта KZE Prints Пес Патрул/ Paw Patrol, Гланцова хартия, Многоцветен, 17 бр
-        //     */
-
-        //    string[] list = { "briose de ", "briose ", "tort ", };
-        //    foreach (string s in list)
-        //    {
-        //        int index = tName.LastIndexOf(s);
-        //        if (index > 0)
-        //        {
-        //            return tName = tName.Substring(index + s.Length).Replace(", KZE Prints, Photo Paper Glossy", "");
-        //        }
-
-        //    }
-
-        //    //improvizatie pentru bulgaria  
-
-        //    if (tName.StartsWith("Комплект украса за торта "))
-        //    {
-        //        try
-        //        {
-        //            tName = tName.Replace("Комплект украса за торта ", "");
-        //            if (tName.Contains("/") && tName.IndexOf("/") < tName.Length)
-        //            {
-        //                tName = tName.Substring(tName.IndexOf("/") + 1).Trim();
-        //            }
-
-        //            if (tName.Contains(","))
-        //            {
-        //                tName = tName.Substring(0, tName.IndexOf(","));
-        //            }
-        //            return tName;
-        //        }
-        //        catch (Exception)
-        //        {
-
-        //            return tName;
-        //        }
-        //    }
-
-        //    return tName;
-
-        //}
     }
 
 }
